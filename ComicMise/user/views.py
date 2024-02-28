@@ -19,7 +19,7 @@ def login(request):
                 if user.is_superadmin:
                     # User is a superadmin
                     request.session['user_id']=user.id
-                    auth_login(request, user)
+                    auth_login (request, user)
                     return redirect('adminDashboard')
                 elif user.is_staff:
                     # User is a staff member
@@ -43,3 +43,6 @@ def adminDashboard(request):
 
 def category(request):
     return render(request,'evara-backend/page-categories.html')
+
+def customers_list(request):
+    return render(request,'evara-backend/page-customers-list.html')
