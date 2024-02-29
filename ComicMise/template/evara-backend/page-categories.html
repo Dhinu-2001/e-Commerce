@@ -15,7 +15,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
-                            <form method="post" action="{% url 'categoryView' %}">
+                            <form method="post" action="{% url 'categoryView' %}" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Name</label>
@@ -52,7 +52,7 @@
                                             <th>Name</th>
                                             <th>Description</th>
                                             <th>Slug</th>
-                                            <!-- <th>Image</th> -->
+                                            <th>Image</th>
                                             <th class="text-end">Action</th>
                                         </tr>
                                     </thead>
@@ -68,7 +68,11 @@
                                             <td><b>{{ obj.category_name }}</b></td>
                                             <td>{{ obj.description }}</td>
                                             <td>{{ obj.slug }}</td>
-                                            
+                                            <td>
+                                             <div class="left">
+                                                <img src="{{ obj.cat_image.url }}" class="img-sm img-avatar" alt="Userpic">
+                                            </div>
+                                            </td> 
                                             <td class="text-end">
                                                 <div class="dropdown">
                                                     <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
