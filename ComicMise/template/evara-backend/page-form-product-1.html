@@ -3,13 +3,22 @@
 {% block content %}
         <section class="content-main">
             <div class="row">
+                <form method="post" action="{% url 'add_product' %}" enctype="multipart/form-data">
+                {% csrf_token %}
                 <div class="col-9">
                     <div class="content-header">
                         <h2 class="content-title">Add New Product</h2>
                         <div>
                             <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
-                            <button class="btn btn-md rounded font-sm hover-up">Publich</button>
+                            <button type="submit" class="btn btn-primary">Publish</button>
                         </div>
+                    </div>
+                    <div class="d-flex justify-content-center text-danger">
+                        {% for message in messages %}
+                           
+                                {{message}}
+                            
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="col-lg-6">
@@ -18,21 +27,35 @@
                             <h4>Basic</h4>
                         </div>
                         <div class="card-body">
-                            <form>
+                            
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Product title</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="product_name">
+                                    <input type="text" placeholder="Type here" class="form-control" id="product_name" name="product_name">
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Full description</label>
-                                    <textarea placeholder="Type here" class="form-control" rows="4"></textarea>
+                                    <textarea placeholder="Type here" class="form-control" rows="4" name="product_description" ></textarea>
+                                </div>
+                                <div class="row">
+                                    <label for="product_name" class="form-label">Specifications</label>
+                                    <div class="col-lg-6">
+                                        <div class="mb-4">                                            
+                                            <input type="text" placeholder="Spec-Title" class="form-control" id="product_name">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-4">
+                                            <!-- <label for="product_name" class="form-label">Height</label> -->
+                                            <input type="text" placeholder="Spec-Detail" class="form-control" id="product_name">
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-4">
                                         <div class="mb-4">
                                             <label class="form-label">Regular price</label>
                                             <div class="row gx-2">
-                                                <input placeholder="$" type="text" class="form-control">
+                                                <input placeholder="$" type="text" class="form-control" name="product_price">
                                             </div>
                                         </div>
                                     </div>
@@ -59,7 +82,7 @@
                                     <input class="form-check-input" type="checkbox" value="">
                                     <span class="form-check-label"> Make a template </span>
                                 </label>
-                            </form>
+                            <!-- </form> -->
                         </div>
                     </div> <!-- card end// -->
                     <div class="card mb-4">
@@ -67,7 +90,7 @@
                             <h4>Shipping</h4>
                         </div>
                         <div class="card-body">
-                            <form>
+                            
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="mb-4">
@@ -90,7 +113,7 @@
                                     <label for="product_name" class="form-label">Shipping fees</label>
                                     <input type="text" placeholder="$" class="form-control" id="product_name">
                                 </div>
-                            </form>
+                            
                         </div>
                     </div> <!-- card end// -->
                 </div>
@@ -101,8 +124,8 @@
                         </div>
                         <div class="card-body">
                             <div class="input-upload">
-                                <img src="{% static 'assets/imgs/theme/upload.svg' %}" alt="">
-                                <input class="form-control" type="file">
+                                <!-- <img src="{% static 'assets/imgs/theme/upload.svg' %}" alt=""> -->
+                                <input class="form-control" type="file" id="product_image" name="product_image" > <!--multiple-->
                             </div>
                         </div>
                     </div> <!-- card end// -->
@@ -112,18 +135,15 @@
                         </div>
                         <div class="card-body">
                             <div class="row gx-2">
-                                <div class="col-sm-6 mb-3">
+                                <div class=" mb-4">
                                     <label class="form-label">Category</label>
-                                    <select class="form-select">
-                                        <option> Automobiles </option>
-                                        <option> Home items </option>
-                                        <option> Electronics </option>
-                                        <option> Smartphones </option>
-                                        <option> Sport items </option>
-                                        <option> Baby and Tous </option>
+                                    <select name="product_category" class="form-select" >
+                                        {% for obj in category_list %}
+                                        <option value="{{ obj.category_name }}" > {{ obj.category_name }}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
-                                <div class="col-sm-6 mb-3">
+                                <!-- <div class="col-sm-6 mb-3">
                                     <label class="form-label">Sub-category</label>
                                     <select class="form-select">
                                         <option> Nissan </option>
@@ -131,15 +151,16 @@
                                         <option> Mercedes </option>
                                         <option> Chevrolet </option>
                                     </select>
-                                </div>
+                                </div> -->
                                 <div class="mb-4">
-                                    <label for="product_name" class="form-label">Tags</label>
-                                    <input type="text" class="form-control">
+                                    <label for="product_name" class="form-label">Stock</label>
+                                    <input type="text" class="form-control" name="product_stock">
                                 </div>
                             </div> <!-- row.// -->
                         </div>
                     </div> <!-- card end// -->
                 </div>
+            </form>
             </div>
         </section> <!-- content-main end// -->
 
