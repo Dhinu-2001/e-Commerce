@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login as auth_login
 #Import Models
 from accounts.models import Account
 from category.models import Category
-from store.models import Product, ProductImage, SizeVariant, ProductVariantStock
+from store.models import Product, ProductImage, ProductVariation
 
 
 from django.http import HttpResponse
@@ -41,7 +41,12 @@ def login(request):
     return render(request,'evara-backend/page-account-login.html')
 
 def home(request):
-    return render(request,'home.html')
+    products = Product.objects.all().filter(is_available=True)
+
+    context = {
+        'products': products,
+    }
+    return render(request, 'home.html', context)
 
 def adminDashboard(request):
     return render(request,'evara-backend/index.html')
@@ -95,16 +100,23 @@ def add_product(request):
         
 
         if len(prod_images) == 3 and all(prod_images):
-            fd = Product(product_name=prod_name, description = prod_description, price= prod_price, category=category_inst, stock=prod_stock) 
+            fd = Product(product_name=prod_name, description = prod_description, price= prod_price, category=category_inst) 
             fd.save()
 
             #getting Instance
             product_inst = Product.objects.get(product_name=prod_name)
-            size_inst    = SizeVariant.objects.get(size=prod_size)
+            # size_inst    = SizeVariant.objects.get(size=prod_size)
 
-            pv = ProductVariantStock(product= product_inst, size=size_inst, stock=prod_stock ) 
-            pv.save()
-
+            variation = ProductVariation.objects.filter(product=product_inst, size=prod_size)
+            
+            if variation:
+            # If the variation exists, update the stock_quantity
+                variation.stock += prod_stock
+                variation.save()
+            else:
+            # If the variation doesn't exist, create a new entry
+                ProductVariation.objects.create(product=product_inst, size=prod_size, stock=prod_stock)
+                # variation.save()
             for img in prod_images:
                 ProductImage.objects.create(product=product_inst, image=img)    
             return redirect('product_list')

@@ -16,7 +16,7 @@ class Product(models.Model):
     slug         = models.SlugField(max_length=200, unique=True)
     description  = models.TextField(max_length=500, blank=True)
     price        = models.IntegerField()
-    stock        = models.IntegerField()
+    
     is_available = models.BooleanField(default=True)
     category     = models.ForeignKey(Category, on_delete=models.CASCADE)
     created_date = models.DateTimeField(auto_now_add=True)
@@ -38,13 +38,19 @@ class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='photos/products')
 
-class SizeVariant(models.Model):
-    size = models.CharField(max_length=50)
 
-class ProductVariantStock(models.Model):
+class ProductVariation(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    size = models.ForeignKey(SizeVariant, on_delete=models.CASCADE)
+    size = models.CharField(max_length=50)
     stock = models.IntegerField(default=0)
 
-    class Meta:
-        unique_together = ('product', 'size')
+# class SizeVariant(models.Model):
+#     size = models.CharField(max_length=50)
+
+# class ProductVariantStock(models.Model):
+#     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+#     size = models.ForeignKey(SizeVariant, on_delete=models.CASCADE)
+#     stock = models.IntegerField(default=0)
+
+#     class Meta:
+#         unique_together = ('product', 'size')
