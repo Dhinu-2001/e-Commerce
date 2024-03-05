@@ -124,8 +124,14 @@
                         </div>
                         <div class="card-body">
                             <div class="input-upload">
+                                <label class="form-label" for="image1">Image 1:</label>
+                                <input class="form-control" type="file" name="image1" id="image1" "><br><br>
+                                <label class="form-label" for="image2">Image 2:</label>
+                                <input class="form-control" type="file" name="image2" id="image2" ><br><br>
+                                <label class="form-label" for="image3">Image 3:</label>
+                                <input class="form-control" type="file" name="image3" id="image3" ><br><br>
                                 <!-- <img src="{% static 'assets/imgs/theme/upload.svg' %}" alt=""> -->
-                                <input class="form-control" type="file" id="product_image" name="product_image" > <!--multiple-->
+                                <!--<input class="form-control" type="file" id="product_image" name="product_image" > multiple-->
                             </div>
                         </div>
                     </div> <!-- card end// -->
@@ -135,23 +141,22 @@
                         </div>
                         <div class="card-body">
                             <div class="row gx-2">
-                                <div class=" mb-4">
+                                <div class="col-sm-6 mb-3">
                                     <label class="form-label">Category</label>
                                     <select name="product_category" class="form-select" >
                                         {% for obj in category_list %}
-                                        <option value="{{ obj.category_name }}" > {{ obj.category_name }}</option>
+                                        <option value="{{ obj.slug}}" > {{ obj.category_name }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <!-- <div class="col-sm-6 mb-3">
-                                    <label class="form-label">Sub-category</label>
-                                    <select class="form-select">
-                                        <option> Nissan </option>
-                                        <option> Honda </option>
-                                        <option> Mercedes </option>
-                                        <option> Chevrolet </option>
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label">Size</label>                                    
+                                    <select class="form-select" name="product_size" id="size">
+                                        <option value="small">Small</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="large">Large</option>
                                     </select>
-                                </div> -->
+                                </div>
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Stock</label>
                                     <input type="text" class="form-control" name="product_stock">

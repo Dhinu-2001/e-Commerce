@@ -1,8 +1,11 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login as auth_login
+#Import Models
 from accounts.models import Account
 from category.models import Category
-from store.models import Product
+from store.models import Product, ProductImage, SizeVariant, ProductVariantStock
+
+
 from django.http import HttpResponse
 from django.contrib import messages
 # Create your views here.
@@ -62,37 +65,65 @@ def categoryView(request):
         }
     return render(request,'evara-backend/page-categories.html', context)
 
+def product_list(request):
+    productlist = Product.objects.all()
+  
+    context={
+        'productlist': productlist
+        
+    }
+    return render(request,'evara-backend/page-products-list.html', context)
 
 def add_product(request):
     if request.method == 'POST':
         prod_name        = request.POST['product_name']
         prod_description = request.POST['product_description']
         prod_price       = request.POST['product_price']
-        prod_image       = request.FILES.get('product_image')
-        prod_category    = request.POST.get('product_category')
+        prod_cat_slug    = request.POST.get('product_category')
+        prod_size        = request.POST.get('product_size')
         prod_stock       = request.POST.get('product_stock')
+        prod_images      = [request.FILES.get('image1'), request.FILES.get('image2'), request.FILES.get('image3')]
   
-        # print(prod_name,prod_description,prod_price,prod_category,prod_stock)
         
-        if not prod_name or not prod_description or not prod_price or not prod_image or not prod_stock or not prod_category:
+        #checking.....
+        if not prod_name or not prod_description or not prod_price or not prod_stock or not prod_cat_slug or not prod_size:
             messages.error(request,'Enter the required fields')
             return redirect('add_product')
         
-        #getting category using primary key
-        cat_key= Category.objects.get_primary_key_by_name(prod_category)
-        exact_category = Category.objects.get(pk=cat_key)
-        print(prod_name,prod_description,prod_price,prod_stock ,prod_category, cat_key, exact_category)
+        #getting category-Instanse using primary key
+        category_inst=Category.objects.get(slug=prod_cat_slug)
         
-        fd = Product(product_name=prod_name, description=prod_description, price=prod_price, stock= prod_stock, category = exact_category, images=prod_image )
-        fd.save()
-        return redirect('add_product')
-    
+
+        if len(prod_images) == 3 and all(prod_images):
+            fd = Product(product_name=prod_name, description = prod_description, price= prod_price, category=category_inst, stock=prod_stock) 
+            fd.save()
+
+            #getting Instance
+            product_inst = Product.objects.get(product_name=prod_name)
+            size_inst    = SizeVariant.objects.get(size=prod_size)
+
+            pv = ProductVariantStock(product= product_inst, size=size_inst, stock=prod_stock ) 
+            pv.save()
+
+            for img in prod_images:
+                ProductImage.objects.create(product=product_inst, image=img)    
+            return redirect('product_list')
+        else:
+            messages.error(request,'Please upload 3 images.')
+            return redirect('add_product')
+                    
+        # return redirect('product_detail', product_id=product_id)
+            
     category_list = Category.objects.all()
+    
     context = {
         'category_list': category_list
+        
     }
     return render(request,'evara-backend/page-form-product-1.html', context)
 
+def product_detail(request):
+    return render(request,'evara-backend/product-detail.html')
 
 def customers_list(request):
     user_set = Account.objects.all()
