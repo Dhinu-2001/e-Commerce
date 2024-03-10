@@ -49,7 +49,7 @@ h2{
 </head>
 <body>
     {% block includes %}
-    <form action="{% url 'otp' uid=profile.uid %}" method="post">
+    <form action="/accounts/otp/{{id}}/" method="post">
         <h2>OTP VERIFICATION:</h2>
         {% csrf_token %}
         <label for="otp">OTP:         </label>

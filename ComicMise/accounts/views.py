@@ -33,16 +33,16 @@ def register(request):
             if request.POST['methodOtp']=="methodOtpSms":
                 messagehandler=MessageHandler( phone_number, otp).send_otp_via_message()
             # profile.uid = uuid4()
-            # red=redirect(f'otp/{profile.uid}/')
-            # red.set_cookie("can_otp_enter", True, max_age=600)
-            # return red  
-            otp_url = reverse('otp', kwargs={'uid': profile.uid})
-            otp_full_url = request.build_absolute_uri(otp_url)
+            red=redirect(f'/accounts/otp/{profile.uid}/')
+            red.set_cookie("can_otp_enter",True,max_age=600)
+            return red  
+            # otp_url = reverse('otp', kwargs={'uid': profile.uid})
+            # otp_full_url = request.build_absolute_uri(otp_url)
 
             # Redirect to the OTP verification URL
-            red = redirect(otp_full_url)
-            red.set_cookie("can_otp_enter", True, max_age=600)
-            return red
+            # red = redirect(otp_full_url)
+            # red.set_cookie("can_otp_enter", True, max_age=600)
+            # return red
 
             # messages.success(request, 'Registration successful.')
             # return redirect('register')
