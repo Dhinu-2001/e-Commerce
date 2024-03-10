@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from django.urls import reverse
 
 class YourModelManager(models.Manager):
     def get_primary_key_by_name(self, name):
@@ -21,6 +22,9 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'category'
         verbose_name_plural = 'categories'
+    
+    def get_url(self):
+        return reverse('products_by_category', args=[self.slug])
 
     def save(self):
         # Generate slug if it's not provided

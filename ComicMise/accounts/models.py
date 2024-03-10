@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth import get_user_model
+import uuid
+
 # Create your models here.
 
 # superuser email=dhinu123@gmail.com
@@ -66,3 +69,12 @@ class Account(AbstractBaseUser):
     
     def has_module_perms(self, add_label):
         return True
+
+User = get_user_model()
+
+# Create your models here.
+class Profile(models.Model):
+    user=models.OneToOneField(Account,   on_delete=models.CASCADE,related_name="profile")
+    phone_number=models.CharField(max_length=15, default='')
+    otp = models.CharField(max_length=100, null=True, blank=True)
+    uid = models.CharField(default=uuid.uuid4, max_length=200)

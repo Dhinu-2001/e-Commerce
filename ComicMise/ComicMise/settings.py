@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'category',
     'accounts',
     'store',
+   
 ]
 
 MIDDLEWARE = [
@@ -66,6 +67,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'category.context_processors.menu_links',
+
             ],
         },
     },
@@ -145,3 +148,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #media files configuration
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR /'media'
+
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.ERROR: "danger",
+}
+
+ACCOUNT_SID='AC38e237931389c83c8622cf7221ab5332'
+AUTH_TOKEN='92c1dd3bf8bce9c712896c80783dfa3f'
+COUNTRY_CODE='+91'
+# TWILIO_WHATSAPP_NUMBER='whatsapp:+14155238886'
+TWILIO_PHONE_NUMBER='+19786088113'

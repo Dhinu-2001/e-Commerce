@@ -132,7 +132,7 @@ a {
 }
 
 a:hover {
-  color: #046963;
+  color: #154cd4;
 }
 
 /*--- Common Classes---------------------*/
@@ -882,17 +882,17 @@ button.submit, button[type='submit'] {
   padding: 12px 40px;
   color: #ffffff;
   border: none;
-  background-color: #088178;
-  border: 1px solid #046963;
+  background-color: #3167eb;
+  border: 1px solid #154cd4;
   border-radius: 5px;
 }
 
 button.submit:hover, button[type='submit']:hover {
-  background-color: #046963 !important;
+  background-color: #154cd4 !important;
 }
 
 .btn-brand:hover {
-  background-color: #046963 !important;
+  background-color: #154cd4 !important;
 }
 
 .btn-login {
@@ -927,8 +927,8 @@ button.submit:hover, button[type='submit']:hover {
   padding: 12px 30px;
   border-radius: 4px;
   color: #fff;
-  border: 1px solid #046963;
-  background-color: #088178;
+  border: 1px solid #154cd4;
+  background-color: #3167eb;
   cursor: pointer;
   -webkit-transition: all 300ms linear 0s;
   transition: all 300ms linear 0s;
@@ -936,7 +936,7 @@ button.submit:hover, button[type='submit']:hover {
 }
 
 .btn:hover, .button:hover {
-  background-color: #046963;
+  background-color: #1344bf;
 }
 
 .btn.btn-sm, .button.btn-sm {
@@ -1225,12 +1225,12 @@ textarea:focus {
   color: #ffffff;
   border: none;
   background-color: #088178;
-  border: 1px solid #046963;
+  border: 1px solid #154cd4;
   border-radius: 5px;
 }
 
 .contact-from-area .contact-form-style button:hover {
-  background-color: #046963 !important;
+  background-color: #154cd4 !important;
 }
 
 .form-group {
@@ -1513,7 +1513,7 @@ label {
   color: #ffffff;
   border: none;
   background-color: #088178;
-  border: 1px solid #046963;
+  border: 1px solid #154cd4;
   border-radius: 4px;
 }
 
@@ -3034,7 +3034,7 @@ table .product-thumbnail img {
 }
 
 .banner-big .btn:hover {
-  background: #046963 !important;
+  background: #154cd4 !important;
 }
 
 /*Deal banners*/
@@ -5778,7 +5778,7 @@ h6.post-title {
 }
 
 .cart-dropdown-wrap .shopping-cart-footer .shopping-cart-button a:hover {
-  background-color: #046963;
+  background-color: #154cd4;
 }
 
 .sticky-bar.stick {
@@ -5793,7 +5793,7 @@ h6.post-title {
   left: 0;
   -webkit-transition: all .3s ease 0s;
   transition: all .3s ease 0s;
-  border-bottom: 2px solid #046963;
+  border-bottom: 2px solid #154cd4;
   background: #fff;
 }
 

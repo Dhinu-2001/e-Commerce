@@ -40,13 +40,7 @@ def login(request):
             messages.error(request, 'Invalid login details supplied.')
     return render(request,'evara-backend/page-account-login.html')
 
-def home(request):
-    products = Product.objects.all().filter(is_available=True)
 
-    context = {
-        'products': products,
-    }
-    return render(request, 'home.html', context)
 
 def adminDashboard(request):
     return render(request,'evara-backend/index.html')
@@ -140,3 +134,4 @@ def product_detail(request):
 def customers_list(request):
     user_set = Account.objects.all()
     return render(request,'evara-backend/page-customers-list.html',{'userlist':user_set})
+
