@@ -6774,6 +6774,7 @@ button.bg-gray-light:focus {
 
 .justify-content-end {
   justify-content: flex-end !important;
+  /* width:962px; */
 }
 
 .justify-content-center {

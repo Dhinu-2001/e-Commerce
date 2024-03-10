@@ -1,62 +1,84 @@
-{% load static %}
-<!DOCTYPE html>
 
-<html>
-
-<head>
-    <title>Register</title>
-    <style>
-        body{
-            background-color: rgb(193, 156, 228);
-        }
-       form {
-  position: fixed; /* Stay in place */
-  left: 30%;
-  top: 10%;
-  width: 300px; /* Full width */
-  height: 200px; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(55, 56, 95); /* Fallback color */
-  padding: 60px;
-  color: aliceblue;
-}
-input[type=text], input[type=password] {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-}
-input[type=submit]{
-    margin-top:50px;
-    width:100px;
-    height:50px;
-    font-size: 20px;
-    border-radius: 20px;
-    background-color: rgb(33, 70, 70);
-    color: wheat;
-}
-.radio-box{
-    margin-top:-30px;
-}
-h2{
-    margin-top: -30px;
-    margin-left: 30px;
-    color: rgb(213, 217, 221);
-}
+{%load static%}
+{% include 'includes/logout_nav.html' %}
     </style>
+    <script>
+        // Set the OTP expiry time from the server
+        var otpExpiryTime = new Date('{{ profile.otp_expiry|date:"Y-m-d H:i:s" }}');
+    
+        function updateTimer() {
+            var now = new Date();
+            var timeRemaining = otpExpiryTime - now;
+    
+            if (timeRemaining <= 0) {
+                document.getElementById('timer').style.display = 'none';
+                document.getElementById('timermg').style.display = 'none';
+                document.getElementById('expired-message').style.display = 'block';
+    
+                var resendLink = document.getElementById('resend-link');
+                resendLink.href = '{% url "resend-otp" pk=profile.pk %}';  
+            } else {
+                // Update the timer on the page
+                var minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+                document.getElementById('timer').innerText = minutes + 'm ' + seconds + 's';
+                setTimeout(updateTimer, 1000);
+            }
+        }
+    
+        // Start the timer when the page loads
+        window.onload = function () {
+            updateTimer();
+        };
+    </script>
+    
 </head>
 <body>
-    {% block includes %}
-    <form action="/accounts/otp/{{id}}/" method="post">
-        <h2>OTP VERIFICATION:</h2>
+    <section class="section-content padding-y">
+
+        <!-- ============================ COMPONENT REGISTER   ================================= -->
+            <div class="card mx-auto" style="max-width:520px; margin-top:40px;">
+              <article class="card-body">
+                <header class="mb-4"><h4 class="card-title">OTP Verification</h4></header>
+    <form action="{% url 'otp' id %}" method="post">
         {% csrf_token %}
-        <label for="otp">OTP:         </label>
-        <input id="otp" type="text" name="otp">
-        <input type="submit" value="login">
+        <fieldset>
+            <div class="form-row">
+                <p>Please enter the OTP sent to your phone number.<br> The OTP will expire in: <span id="timer"></span></p>
+                <input type="text" name="otp" placeholder="OTP" id="otp" class="form-control " required>
+                <input type="submit" value="Submit" class="btn btn-primary">
+                
+                {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    {% if message.tags == 'error' %} 
+                        <div class="text-danger">
+                            {{ message }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            {% endif %}
+            
+            </div>
+           
+    
+    <div>
+        <p id = 'timermg'>Time remaining: <span id="timer"></span></p>
+        <p id="expired-message" style="display: none;">OTP has expired. <a id="resend-link" href="#">Resend OTP</a></p>
+        {% for message in messages %}
+                {% if message.tags %}
+                    <p class="{% if 'info' in message.tags %}text-danger{% elif 'success' in message.tags %}text-success{% endif %}">
+                        {{ message }}
+                    </p>
+                {% endif %}
+          {% endfor %}
+    </div>
+
+</fieldset>  
+        <!-- <button id="resend" style="display: none;" onclick="resendOTP()">Resend OTP</button> -->
         </form>
-        {% endblock includes %}
+        
 
 </body>
 </html>

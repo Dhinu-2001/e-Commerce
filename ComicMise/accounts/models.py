@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth import get_user_model
 import uuid
+from django.utils import timezone
 
 # Create your models here.
 
@@ -34,10 +35,9 @@ class MyAccountManager(BaseUserManager):
             first_name = first_name,
             last_name = last_name,
         )
-        user.is_admin = True
         user.is_active = True
-        user.is_staff = True
-        user.is_superadmin = True
+        user.is_user = True
+        user.is_admin = True
         user.save(using=self._db)
         return user
 
@@ -51,10 +51,9 @@ class Account(AbstractBaseUser):
     # required
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now_add=True)
-    is_admin = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
+    is_user = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
-    is_superadmin = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
@@ -78,3 +77,4 @@ class Profile(models.Model):
     phone_number=models.CharField(max_length=15, default='')
     otp = models.CharField(max_length=100, null=True, blank=True)
     uid=models.CharField(default=f'{uuid.uuid4}',max_length=200)
+    otp_expiry = models.DateTimeField(default=timezone.now)

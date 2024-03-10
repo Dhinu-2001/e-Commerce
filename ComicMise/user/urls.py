@@ -17,10 +17,11 @@ Including another URLconf
 
 from django.urls import path
 from . import views
+from accounts.views import home
 
 urlpatterns = [
     path('',views.login, name='login'),
-    
+    path('home/',home, name='home'),
     path('adminDashboard/',views.adminDashboard, name='adminDashboard'),
     path('categoryView/',views.categoryView, name='categoryView'),
     path('product_list/',views.product_list, name='product_list'),

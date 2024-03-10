@@ -1,7 +1,5 @@
-{% extends 'base.html' %}
 {%load static%}
-{% block content %}
-
+{% include 'includes/logout_nav.html' %}
 <!-- ========================= SECTION CONTENT ========================= -->
 <section class="section-conten padding-y" style="min-height:84vh">
 
@@ -23,11 +21,26 @@
           	<a href="#" class="float-right">Forgot password?</a> 
            
           </div> <!-- form-group form-check .// -->
+          <div class="d-flex justify-content-center text-danger">
+            {% for message in messages %}
+               
+                    {{message}}
+                
+            {% endfor %}
+        </div>
           <div class="form-group">
             <button type="submit" class="btn btn-primary btn-block"> Login  </button>
-          </div> <!-- form-group// -->    
+          </div> <!-- form-group// -->  
+           
       </form>
-      </div> <!-- card-body.// -->
+      <p class="text-center small text-muted mb-15">or sign up with</p>
+      <div class="form-group">
+        <button href="#" class="btn btn-primary btn-block"> Sign in using Google  </button>
+      </div>
+      <div class="form-group">
+        <button href="#" class="btn btn-primary btn-block"> Sign in using Facebook </button>
+      </div> 
+    </div> <!-- card-body.// -->
     </div> <!-- card .// -->
 
      <p class="text-center mt-4">Don't have account? <a href="{% url 'register' %}">Sign up</a></p>
@@ -38,4 +51,6 @@
 </section>
 <!-- ========================= SECTION CONTENT END// ========================= -->
 
-{% endblock %}
+
+</body>
+</html>

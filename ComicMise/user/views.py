@@ -16,29 +16,27 @@ def login(request):
         password = request.POST.get('password')
         if not email or not password:
             messages.error(request,'Enter email and password')
-            return render(request,'evara-backend/page-account-login.html')
+            return render(request,'greatkart/signin.html')
         user = authenticate(request, email=email, password=password)
         if user is not None:
             if user.is_active:
+                print(user.is_active,user.is_admin, user.is_user)
                 # Check user permissions
-                if user.is_superadmin:
-                    # User is a superadmin
+                if user.is_admin:
+                    # User is a admin
                     request.session['user_id']=user.id
-                    auth_login (request, user)
+                    auth_login(request, user)
                     return redirect('adminDashboard')
-                elif user.is_staff:
-                    # User is a staff member
-                    login(request, user)
-                    return HttpResponse('You are logged in as staff.')
-                elif user.is_admin:
-                    # User is an admin
-                    login(request, user)
-                    return HttpResponse('You are logged in as admin.')
+                elif user.is_user:
+                    # User is a user member
+                    request.session['user_id']=user.id
+                    auth_login(request, user)
+                    return redirect('home')
             else:
                 messages.error(request, 'Your account is inactive.')
         else:
             messages.error(request, 'Invalid login details supplied.')
-    return render(request,'evara-backend/page-account-login.html')
+    return render(request,'greatkart/signin.html')
 
 
 

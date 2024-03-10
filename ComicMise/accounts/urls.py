@@ -20,11 +20,12 @@ from . import views
 
 urlpatterns = [
     path('register/',views.register, name='register'),
-    path('login/',views.login, name='login'),
+    # path('login/',views.login, name='login'),
     path('logout/',views.logout, name='logout'),
     path('home/',views.home, name='home'),
     path('store/',views.store, name='store'),
     path('store/<slug:category_slug>/',views.store, name='products_by_category'),
     path('store/<slug:category_slug>/<slug:product_slug>/',views.product_detail, name='product_detail'),
-    path('otp/<str:uid>/', views.otpVerify, name='otp'),
+    path('otp/<int:pk>/', views.otpVerify, name='otp'),
+    path('resend-otp/<int:pk>/', views.resend_otp, name='resend-otp'),
 ]

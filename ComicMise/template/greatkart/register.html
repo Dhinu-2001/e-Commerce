@@ -1,7 +1,5 @@
-{% extends 'base.html' %}
 {%load static%}
-{% block content %}
-
+{% include 'includes/logout_nav.html' %}
 <!-- ========================= SECTION CONTENT ========================= -->
 <section class="section-content padding-y">
 
@@ -51,20 +49,18 @@
 					</div> <!-- form-group end.// -->  
 				</div>
 				<br>
-        <h3>OTP verification method:</h3>
+        <p>An OTP will be sent to your registered phone number for the verification:</p>
         <br>
-        <div class="radio-box">
-        <label for="methodOtpSms">SMS:</label>
-        <input type="radio" name="methodOtp" id="methodOtpSms" value="methodOtpSms">
+        
+        <div class="form-group">
+			<button type="submit" class="btn btn-primary btn-block"> Register  </button>
+		</div> <!-- form-group// -->      
+			{{form.email.errors}}
+			{{form.non_field_errors}}
 
-        <!-- <label for="methodOtpWhatsapp">WhatsApp:</label>
-        <input type="radio" name="methodOtp" id="methodOtpWhatsapp" value="methodOtpWhatsapp"> -->
+        
     </div>
-			    <div class="form-group">
-			        <button type="submit" class="btn btn-primary btn-block"> Register  </button>
-			    </div> <!-- form-group// -->      
-			        {{form.email.errors}}
-					{{form.non_field_errors}}
+			    
 			</form>
 		</article><!-- card-body.// -->
     </div> <!-- card .// -->
@@ -76,5 +72,6 @@
 </section>
 <!-- ========================= SECTION CONTENT END// ========================= -->
 
+</body>
+</html>
 
-{% endblock %}

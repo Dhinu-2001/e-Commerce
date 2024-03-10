@@ -17,13 +17,18 @@
                 </a>
             </li>
             <li class="menu-item has-submenu">
-                <a class="menu-link" href="page-products-list.html"> <i class="icon material-icons md-shopping_bag"></i>
+                <a class="menu-link" href="{% url 'product_list' %}"> <i class="icon material-icons md-shopping_bag"></i>
                     <span class="text">Products</span>
                 </a>
                 <div class="submenu">
                     <a href="{% url 'product_list' %}">Product List</a>
-                    <a href="page-products-grid.html">Product grid</a>
-                    <a href="page-products-grid-2.html">Product grid 2</a>
+                </div>
+            </li>
+            <li class="menu-item has-submenu">
+                <a class="menu-link" href="{% url 'categoryView' %}"> <i class="icon material-icons md-shopping_bag"></i>
+                    <span class="text">Categories</span>
+                </a>
+                <div class="submenu">  
                     <a href="{% url 'categoryView' %}">Categories</a>
                 </div>
             </li>
@@ -48,24 +53,21 @@
                 </div>
             </li>
             <li class="menu-item has-submenu">
-                <a class="menu-link" href="page-sellers-cards.html"> <i class="icon material-icons md-store"></i>
+                <a class="menu-link" href="{% url 'customers_list' %}"> <i class="icon material-icons md-store"></i>
                     <span class="text">Customers</span>
                 </a>
                 <div class="submenu">
-                    <a href="page-sellers-cards.html">Customers cards</a>
+                    <!-- <a href="page-sellers-cards.html">Customers cards</a> -->
                     <a href="{% url 'customers_list' %}">Customers list</a>
-                    <a href="page-seller-detail.html">Customers profile</a>
+                    <!-- <a href="page-seller-detail.html">Customers profile</a> -->
                 </div>
             </li>
             <li class="menu-item has-submenu">
-                <a class="menu-link" href="page-form-product-1.html"> <i class="icon material-icons md-add_box"></i>
+                <a class="menu-link" href="{% url 'add_product' %}"> <i class="icon material-icons md-add_box"></i>
                     <span class="text">Add product</span>
                 </a>
                 <div class="submenu">
                     <a href="{% url 'add_product' %}">Add product 1</a>
-                    <a href="page-form-product-2.html">Add product 2</a>
-                    <a href="page-form-product-3.html">Add product 3</a>
-                    <a href="page-form-product-4.html">Add product 4</a>
                 </div>
             </li>
             <li class="menu-item has-submenu">
