@@ -117,12 +117,12 @@ def product_detail(request, category_slug, product_slug):
     try:
         single_product = Product.objects.get(category__slug=category_slug, slug=product_slug)
         images = ProductImage.objects.filter(product=single_product)
-        
+       
     except Exception as e:
         raise e
     context = {
         'single_product': single_product,
         'images':images,
-        'stock':stock,
+        
     }
     return render(request,'greatkart/product_detail.html',context)
