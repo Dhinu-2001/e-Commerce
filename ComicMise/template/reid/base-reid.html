@@ -1,0 +1,36 @@
+{% load static %}
+<!doctype html>
+<html class="no-js" lang="en">
+
+
+<!-- Mirrored from htmldemo.net/reid/reid/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Feb 2024 13:43:53 GMT -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Reid – Fashion eCommerce HTML Template </title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="assets-reid/img/favicon.ico">
+    
+    <!-- CSS 
+    ========================= -->
+
+    <!-- Plugins CSS -->
+    <link rel="stylesheet" href="{% static 'assets-reid/css/plugins.css' %}">
+    
+    <!-- Main Style CSS -->
+    <link rel="stylesheet" href="{% static 'assets-reid/css/style.css' %}">
+
+</head>
+
+<body>
+
+{% include 'reid/includes/nav.html' %}
+
+
+{% block content %}
+ <!-- content -->
+{% endblock %}
+
+{% include 'reid/includes/footer.html' %}

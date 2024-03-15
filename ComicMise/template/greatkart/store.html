@@ -6,8 +6,11 @@
 <!-- ========================= SECTION PAGETOP ========================= -->
 <section class="section-pagetop bg">
 <div class="container">
+	{% if 'search' in request.path %}
+	<h2 class="title-page">Search Result</h2>
+	{% else %}
 	<h2 class="title-page">Our Store</h2>
-	
+	{% endif %}
 </div> <!-- container //  -->
 </section>
 <!-- ========================= SECTION INTRO END// ========================= -->
@@ -27,7 +30,7 @@
 				<h6 class="title">Categories</h6>
 			</a>
 		</header>
-		<div class="filter-content collapse show" id="collapse_1" style="">
+		<div class="filter-content collapse show" id="collapse_1" style>
 			<div class="card-body">
 				
 				<ul class="list-menu">
@@ -122,11 +125,26 @@
 <header class="border-bottom mb-4 pb-3">
 		<div class="form-inline">
 			<span class="mr-md-auto">{{prod_count}} Items found </span>
-			
 		</div>
+		
+		<div class="category-wrap dropdown d-inline-block float-right">
+			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> 
+				<i class="fa fa-bars"></i> All category 
+			</button>
+			<div class="dropdown-menu">
+				<a class="dropdown-item" href="{% url 'sort' value='new' %}" >What's new</a>
+				<a class="dropdown-item" href="{% url 'sort' value='popularity' %}" >Popularity</a>
+				<a class="dropdown-item" href="{% url 'sort' value='LowtoHigh' %}" >Price: Low to High</a>
+				<a class="dropdown-item" href="{% url 'sort' value='HightoLow' %}" >Price: High to Low</a>
+				<a class="dropdown-item" href="{% url 'sort' value='rating' %}" >Average Rating</a>
+				<a class="dropdown-item" href="{% url 'sort' value='a-z' %}" >aA-zZ</a>
+				<a class="dropdown-item" href="{% url 'sort' value='z-a' %}" >zZ-aA</a>
+			</div>
+		</div>  <!-- category-wrap.// -->
 </header><!-- sect-heading -->
 
 <div class="row">
+	{% if products %}
 	{% for product in products %}
 	<div class="col-md-4">
 		<figure class="card card-product-grid">
@@ -150,6 +168,11 @@
 		</figure>
 	</div> <!-- col.// -->
 	{% endfor %}
+	{% else %}
+	<div class="col-md-4">
+		<h2>No result found.</h2>
+	</div>
+	{% endif %}
 </div> <!-- row end.// -->
 
 

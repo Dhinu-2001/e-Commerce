@@ -8,6 +8,17 @@ from django.utils import timezone
 
 # superuser email=dhinu123@gmail.com
 # password= dhinu123
+class Address(models.Model):
+    address_title = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
+    ph_number = models.IntegerField()
+    pincode = models.CharField(max_length=50)
+    locality = models.CharField(max_length=50)
+    address = models.TextField(max_length=500)
+    city = models.CharField(max_length=50)
+    state = models.CharField(max_length=50)
+    landmark = models.CharField(max_length=50)
+    alt_phone_number = models.IntegerField()
 
 class MyAccountManager(BaseUserManager):
     def create_user(self,username, first_name, last_name, email, password=None):
@@ -47,7 +58,7 @@ class Account(AbstractBaseUser):
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=100, unique=True)
     phone_number = models.CharField(max_length=50)
-
+    addresses = models.ManyToManyField(Address, related_name='account_addresses')
     # required
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now_add=True)
@@ -78,3 +89,4 @@ class Profile(models.Model):
     otp = models.CharField(max_length=100, null=True, blank=True)
     uid=models.CharField(default=f'{uuid.uuid4}',max_length=200)
     otp_expiry = models.DateTimeField(default=timezone.now)
+

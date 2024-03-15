@@ -2,6 +2,7 @@ from django.db import models
 from category.models import Category
 from django.utils.text import slugify
 from django.urls import reverse
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 class YourModelManager(models.Manager):
@@ -22,6 +23,8 @@ class Product(models.Model):
     category     = models.ForeignKey(Category, on_delete=models.CASCADE)
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date= models.DateTimeField(auto_now=True)
+    popularity   = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    average_rating = models.DecimalField(max_digits=3, decimal_places=1, default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
 
     objects = YourModelManager()
 
