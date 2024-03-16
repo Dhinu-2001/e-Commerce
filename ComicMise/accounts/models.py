@@ -11,14 +11,14 @@ from django.utils import timezone
 class Address(models.Model):
     address_title = models.CharField(max_length=50)
     name = models.CharField(max_length=50)
-    ph_number = models.IntegerField()
+    ph_number = models.CharField(max_length=50)
     pincode = models.CharField(max_length=50)
     locality = models.CharField(max_length=50)
     address = models.TextField(max_length=500)
     city = models.CharField(max_length=50)
     state = models.CharField(max_length=50)
     landmark = models.CharField(max_length=50)
-    alt_phone_number = models.IntegerField()
+    alt_phone_number = models.CharField(max_length=50)
 
 class MyAccountManager(BaseUserManager):
     def create_user(self,username, first_name, last_name, email, password=None):

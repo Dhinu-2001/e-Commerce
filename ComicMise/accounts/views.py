@@ -17,7 +17,7 @@ from django.views.decorators.cache import never_cache
 #Model importing
 from store.models import Product, ProductImage, ProductVariation
 from category.models import Category
-from .models import Account, Profile
+from .models import Account, Profile, Address
 
 # Create your views here.
 #================================no cache decorator===============================================
@@ -140,6 +140,9 @@ class store(View):
     def get(self,request, category_slug=None):
         category = None
         products = None
+        user_id = request.session['user_id']
+        user = Account.objects.get(pk=user_id)
+        username = user.username
 
         if category_slug != None:
             categories = get_object_or_404(Category, slug=category_slug)
@@ -153,11 +156,15 @@ class store(View):
             'products': products,
             'prod_count': prod_count,
             'category': category,
+            'user_name': username,
         }
         return render(request, 'greatkart/store.html', context)
 
 class product_detail(View):   
     def get(self,request, category_slug, product_slug):
+        user_id = request.session['user_id']
+        user = Account.objects.get(pk=user_id)
+        username = user.username
         try:
             single_product = Product.objects.get(category__slug=category_slug, slug=product_slug)
             images = ProductImage.objects.filter(product=single_product)
@@ -167,14 +174,51 @@ class product_detail(View):
         context = {
             'single_product': single_product,
             'images':images,
+            'user_name': username,
             
         }
-        return render(request,'greatkart/product_detail.html',context)
+        return render(request,'evara-frontend\shop-product-left.html',context)
 class userProfile(View):
-    def get(self, request, user_name):#, user_id
+    def get(self, request, user_name):
         user_id = request.session['user_id']
         user = Account.objects.get(pk=user_id)
+        username = user.username
+        addresses = user.addresses.all()
         context={
-            'user':user
+            'user':user,
+            'user_name': username,
+            'addresses': addresses
         }
         return render(request, 'evara-frontend/page-account.html', context)
+
+    def post(self,request, user_name):
+        form_id = request.POST.get('form_identifier')
+        print(form_id)
+
+        #checking form......
+        if form_id == 'add address':
+            address_title    = request.POST['address_title']
+            name             = request.POST['name']
+            ph_number        = request.POST['ph_number']
+            pincode          = request.POST['pincode']
+            locality         = request.POST['locality']
+            address          = request.POST['address']
+            city             = request.POST['city']
+            state            = request.POST['state']
+            landmark         = request.POST['landmark']
+            alt_phone_number = request.POST['alt_phone_number']
+
+             #checking.....
+            if not address_title or not ph_number or not pincode or not address or not locality or not city or not state or not name:
+                messages.error(request,'Enter the required fields')
+                return redirect('userProfile', user_name=user_name )
+
+            fd = Address(address_title=address_title, name=name, ph_number=ph_number, pincode=pincode, locality=locality, address=address, city=city, state=state, landmark=landmark, alt_phone_number=alt_phone_number)
+            fd.save()
+            
+            user_name=user_name
+            user_id = request.session['user_id']
+            user = Account.objects.get(pk=user_id)
+            user.addresses.add(fd)
+            return redirect('userProfile', user_name=user_name)
+    
