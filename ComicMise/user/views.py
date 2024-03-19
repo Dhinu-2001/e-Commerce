@@ -35,8 +35,9 @@ class Login(View):
                 elif user.is_user:
                     # User is a regular user
                     request.session['user_id'] = user.id
+                    red=redirect('home')#, pk=user.pk
                     auth_login(request, user)
-                    return redirect('home' )
+                    return red
             else:
                 messages.error(request, 'Your account is inactive.')
         else:
@@ -148,6 +149,8 @@ class add_product(View):
             
         }
         return render(request,'evara-backend/page-form-product-1.html', context)
+    
+    
 class product_detail(View):
     def get(self,request):
         return render(request,'evara-backend/product-detail.html')

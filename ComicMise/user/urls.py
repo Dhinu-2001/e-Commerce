@@ -21,8 +21,8 @@ from accounts.views import home
 
 urlpatterns = [
     # path('',views.login, name='login'),
-    path('login/', views.Login.as_view(), name='login'),
-    path('',home.as_view(), name='home'),
+    path('', views.Login.as_view(), name='login'),
+    path('home/',home.as_view(), name='home'),
     path('adminDashboard/',views.adminDashboard.as_view(), name='adminDashboard'),
     path('categoryView/',views.categoryView.as_view(), name='categoryView'),
     path('product_list/',views.product_list.as_view(), name='product_list'),

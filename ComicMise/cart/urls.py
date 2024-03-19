@@ -16,14 +16,8 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('register/',register.as_view(), name='register'),
-    path('logout/',logout.as_view(), name='logout'),
-    path('home/',home.as_view(), name='home'),
-    path('store/',store.as_view(), name='store'),
-    path('store/category/<slug:category_slug>/',store.as_view(), name='products_by_category'),
-    path('store/category/<slug:category_slug>/<slug:product_slug>/<str:size>/',product_detail.as_view(), name='product_detail'),
-    path('otp/<int:pk>/', otpVerify.as_view(), name='otp'),
-    path('resend-otp/<int:pk>/', resend_otp.as_view(), name='resend-otp'),
-    path('userprofile/<str:user_name>/', userProfile.as_view(), name = 'userProfile' ),
-
+    path('',cart.as_view(),name='cart'),
+    path('add_cart/<int:product>/<int:variant>/',add_cart.as_view(), name='add_cart'),
+    path('remove_cart/<int:product>/<int:variant>/',remove_cart.as_view(), name= 'remove_cart'),
+    path('remove_cart_item/<int:product>/<int:variant>/',remove_cart_item.as_view(), name= 'remove_cart_item'),
 ]

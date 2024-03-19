@@ -84,7 +84,8 @@ class otpVerify(View):
                 user.is_user=True
                 user.save()
                 print(user.is_active,user.is_admin, user.is_user,user.username,profile.id)
-                red=redirect('home', pk=user.pk)
+                request.session['user_id'] = user.id
+                red=redirect('home')
                 red.set_cookie('verified',True)
                 auth_login(request, user)
                 return red
@@ -161,23 +162,36 @@ class store(View):
         return render(request, 'greatkart/store.html', context)
 
 class product_detail(View):   
-    def get(self,request, category_slug, product_slug):
+    def get(self,request, category_slug, product_slug, size):
+        print(size)
         user_id = request.session['user_id']
         user = Account.objects.get(pk=user_id)
+
+        print(user_id)
+        print(user)
+        print(user.id)
         username = user.username
         try:
             single_product = Product.objects.get(category__slug=category_slug, slug=product_slug)
             images = ProductImage.objects.filter(product=single_product)
-        
+            variant = ProductVariation.objects.get(product=single_product, size=size)
+            print(variant)
+            print(variant.id)
         except Exception as e:
             raise e
         context = {
             'single_product': single_product,
             'images':images,
-            'user_name': username,
-            
+            'user_id':user_id,
+            'user_name': username, 
+            'variant':variant.id, 
+            'stock':variant.stock,
+            'category_slug':category_slug,
+            'product_slug':product_slug
         }
-        return render(request,'evara-frontend\shop-product-left.html',context)
+        return render(request,'greatkart\product_detail.html',context)
+    
+
 class userProfile(View):
     def get(self, request, user_name):
         user_id = request.session['user_id']

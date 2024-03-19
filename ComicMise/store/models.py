@@ -39,7 +39,8 @@ class Product(models.Model):
         return self.product_name
     
     def get_url(self):
-        return reverse('product_detail', args=[self.category.slug, self.slug])
+        # prod=ProductVariation.objects.get(product=self.id, )  
+        return reverse('product_detail', args=[self.category.slug, self.slug, 'small'])
     
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
