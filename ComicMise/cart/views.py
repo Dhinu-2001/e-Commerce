@@ -173,7 +173,7 @@ class order_success(View):
             print(variations)
             quantity = cart_item.quantity
             price = cart_item.sub_total()
-            
+    #----------------------------------------- adding each cart item to order item
             order_item = OrderItem(
                 order = order_submit,
                 product = product,
@@ -181,7 +181,7 @@ class order_success(View):
                 price = price,
             )
             
-            #  order_item.variations.add(variation)
+ # --------------------------------------------------- order_item.variations.add(variation)
             order_item.save()
             order_item.variations.set(cart_item.variations.all())
 
