@@ -1,8 +1,70 @@
-﻿{% extends 'evara-frontend\base-frontend.html' %}
+{% extends 'evara-frontend\base-frontend.html' %}
 {% load static %}
    
 {% block content %} 
 
+<div style="color: rgb(31, 176, 31); justify-content: center; align-items: center;" class="col-12">
+     <h3 class="title-detail" style="text-align: center;">Thank You!!<br></h3>
+      <h2 class="title-detail" style="text-align: center;">YOUR ORDER IS CONFIRMED.</h2>
+      <div class="d-flex justify-content: center; align-items: center;" style=" align-items: center;">
+       <img src="{% static 'images/images.png' %}" alt="Girl in a jacket" width="100" height="100"> 
+       </div>
+</div> 
+<div class="container">
+<div class="row mb-50">
+    
+    <div style="display: flex; justify-content: center; align-items: center;" class="heading_s1 mb-3">
+        <h4>Order Summary</h4>
+    </div>
+    <div class="col-lg-6 col-md-12">
+        
+        <div class="border p-md-4 p-30 border-radius cart-totals">
+            
+            <div class="table-responsive">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td class="cart_total_label">Order No</td>
+                            <td class="cart_total_amount"># {{order_no}} </td>
+                        </tr>
+                        <tr>
+                            <td class="cart_total_label">Order date</td>
+                            <td class="cart_total_amount">{{ order_date }}</td>
+                        </tr>
+                        <tr>
+                            <td class="cart_total_label">Order method</td>
+                            <td class="cart_total_amount">{{order_method}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-12">
+        <div class="border p-md-4 p-30 border-radius cart-totals">
+            <div class="table-responsive">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td class="cart_total_label">Shipping Address:</td>
+                        </tr>
+                        <tr>
+                            <td class="cart_total_label">
+                                <p>{{shipping_address.name}}</p>
+                                <p>{{shipping_address.ph_number}}</p>
+                                <p>{{shipping_address.locality}},</p>
+                                <p>{{shipping_address.city}},</p>
+                                <p>{{shipping_address.state}}</p>
+                                <p>Pin Code:{{shipping_address.pincode}}</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
         <section class="mt-50 mb-50">
             <div class="container">
                 <div class="row">
@@ -16,14 +78,14 @@
                                         <th scope="col">Price</th>
                                         <th scope="col">Quantity</th>
                                         <th scope="col">Subtotal</th>
-                                        <th scope="col">Remove</th>
+                                        
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for cart_item, variation in cart_items_variations  %}
                                    
                                     <tr>
-                                        <td src="{{ cart_item.product.images.first.image.url }} "class="image product-thumbnail"><img  alt="#"></td>
+                                        <td src="{% static '{{ cart_item.product.images.first.image.url }} ' %}"class="image product-thumbnail"><img  alt="#"></td>
                                         <!--  -->
                                         <td class="product-des product-name">
                                             <h5 class="product-name"><a href="shop-product-right.html">{{ cart_item.product }}</a></h5>
@@ -41,47 +103,15 @@
                                         <td class="text-right" data-title="Cart">
                                             <span>${{ cart_item.sub_total }}</span>
                                         </td>
-                                        <td class="action" data-title="Remove"><a href="{% url 'remove_cart_item' product=cart_item.product.id variant=variation.id %}" class="text-muted"><i class="fi-rs-trash"></i></a></td>
-                                    </tr>
+                                       </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
                         </div>
-                        <div class="cart-action text-end">
-                            <!-- <a class="btn  mr-10 mb-sm-15"><i class="fi-rs-shuffle mr-10"></i>Update Cart</a> -->
-                            <a href="{% url 'home' %}" class="btn "><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
-                        </div>
+                       
                         <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
-                        <div class="row mb-50">
-                            <div class="col-lg-6 col-md-12">
-                                <div class="heading_s1 mb-3">
-                                    <h4>Calculate Shipping</h4>
-                                </div>
-                                <p class="mt-15 mb-30">Flat rate: <span class="font-xl text-brand fw-900">5%</span></p>
-                             
-                                <div class="mb-30 mt-50">
-                                    <div class="heading_s1 mb-3">
-                                        <h4>Apply Coupon</h4>
-                                    </div>
-                                    <div class="total-amount">
-                                        <div class="left">
-                                            <div class="coupon">
-                                                <form action="#" target="_blank">
-                                                    <div class="form-row row justify-content-center">
-                                                        <div class="form-group col-lg-6">
-                                                            <input class="font-medium" name="Coupon" placeholder="Enter Your Coupon">
-                                                        </div>
-                                                        <div class="form-group col-lg-6">
-                                                            <button class="btn  btn-sm"><i class="fi-rs-label mr-10"></i>Apply</button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-md-12">
+                        <div class="col-lg-6 col-md-12">
+                        
                                 <div class="border p-md-4 p-30 border-radius cart-totals">
                                     <div class="heading_s1 mb-3">
                                         <h4>Cart Totals</h4>
@@ -104,8 +134,13 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <a href="{% url 'place_order' %}" class="btn "> <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
+                                    <a href="{% url 'place_order' %}" class="btn "> <i class="fi-rs-box-alt mr-10"></i> Check order list</a>
                                 </div>
+                            </div>  
+                            </div>
+                            <div >
+                                <!-- <a class="btn  mr-10 mb-sm-15"><i class="fi-rs-shuffle mr-10"></i>Update Cart</a> -->
+                                <a  href="{% url 'home' %}" class="btn "><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
                             </div>
                         </div>
                     </div>

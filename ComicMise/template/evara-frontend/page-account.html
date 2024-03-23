@@ -29,7 +29,7 @@
                                             <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab" href="#account-detail" role="tab" aria-controls="account-detail" aria-selected="true"><i class="fi-rs-user mr-10"></i>Account details</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="page-login-register.html"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
+                                            <a class="nav-link" href="{% url 'login' %}"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -83,31 +83,21 @@
                                                                 <th>Date</th>
                                                                 <th>Status</th>
                                                                 <th>Total</th>
+                                                                <!-- <th>Payment method</th> -->
                                                                 <th>Actions</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
+                                                            {% for order in orders %}
                                                             <tr>
-                                                                <td>#1357</td>
-                                                                <td>March 45, 2020</td>
-                                                                <td>Processing</td>
-                                                                <td>$125.00 for 2 item</td>
+                                                                <td>#{{ order.id }}</td>
+                                                                <td>{{ order.order_date }}</td>
+                                                                <td>{{ order.order_status }}</td>
+                                                                <td>{{ total_price }}</td>
+                                                                <!-- <td>{{ order.payment_method }}</td> -->
                                                                 <td><a href="#" class="btn-small d-block">View</a></td>
                                                             </tr>
-                                                            <tr>
-                                                                <td>#2468</td>
-                                                                <td>June 29, 2020</td>
-                                                                <td>Completed</td>
-                                                                <td>$364.00 for 5 item</td>
-                                                                <td><a href="#" class="btn-small d-block">View</a></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>#2366</td>
-                                                                <td>August 02, 2020</td>
-                                                                <td>Completed</td>
-                                                                <td>$280.00 for 3 item</td>
-                                                                <td><a href="#" class="btn-small d-block">View</a></td>
-                                                            </tr>
+                                                            {% endfor %}
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -215,6 +205,13 @@
                                                         </div>
                                                         <div class="col-md-12">
                                                             <button type="submit" class="btn btn-fill-out submit" name="submit" value="Submit">Save</button>
+                                                            <div class="d-flex justify-content-center text-danger">
+                                                                {% for message in messages %}
+                                                                   
+                                                                        {{message}}
+                                                                    
+                                                                {% endfor %}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </form>

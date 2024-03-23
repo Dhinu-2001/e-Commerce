@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Product
+from accounts.models import Account
 from django.db.models import Q
 # # Create your views here.
 
@@ -18,11 +19,17 @@ from django.views import View
 
 class search(View):
     def get(self,request):
+        user_id = request.session['user_id']
+        user = Account.objects.get(pk=user_id)
+        username = user.username
+        
+        
         if 'keyword' in request.GET:
             keyword = request.GET.get('keyword')
             products = Product.objects.order_by('modified_date').filter(Q(description__icontains=keyword) | Q(product_name__icontains = keyword))
             product_count = products.count(  )
         context={
+            'user_name': username,
             'products': products,
             'prod_count':product_count
         }
@@ -30,6 +37,10 @@ class search(View):
     
 class sort(View):
     def get(self,request,*args, **kwargs):
+        user_id = request.session['user_id']
+        user = Account.objects.get(pk=user_id)
+        username = user.username
+
         sort_value = kwargs.get('value')
         if sort_value == 'new':
             products = Product.objects.all().order_by('-modified_date')
@@ -46,6 +57,7 @@ class sort(View):
         elif sort_value == 'z-a':
             products = Product.objects.all().order_by('-product_name')
         context = {
+            'user_name': username,
             'products': products,
             'prod_count': products.count()
         }

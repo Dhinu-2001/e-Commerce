@@ -64,10 +64,19 @@
                                     <td>{{ obj.email }}</td>
                                     <td>{{ obj.date_joined }}</td>
                                     <td>{{ obj.last_login }}</td>
-                                    <td><span class="badge rounded-pill alert-success">{{ obj.is_active }}</span></td>
+                                    <td>
+                                        {% if obj.is_active is True %}
+                                        <span class="badge rounded-pill alert-success">{{ obj.is_active }}</span>
+                                        {% else %}
+                                        <span class="badge rounded-pill alert-danger">{{ obj.is_active }}</span>
+                                        {% endif %}
+                                    </td>
                                     <td class="text-end">
-                                        <a href="#" class="btn btn-sm btn-brand rounded font-sm mt-15">Block</a>
-                                        <a href="#" class="btn btn-sm btn-brand rounded font-sm mt-15">Unblock</a>
+                                        {% if obj.is_active is True %}
+                                        <a href="{% url 'user_block' user_id=obj.id %}" class="btn btn-sm btn-brand rounded font-sm mt-15">Block</a>
+                                        {% else %}
+                                        <a href="{% url 'user_unblock' user_id=obj.id %}" class="btn btn-sm btn-brand rounded font-sm mt-15">Unblock</a>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}

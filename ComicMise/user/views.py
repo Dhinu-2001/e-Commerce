@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login as auth_login
 from django.views import View
+from django.utils.decorators import method_decorator
 #Import Models
 from accounts.models import Account
 from category.models import Category
@@ -34,6 +35,7 @@ class Login(View):
                     return redirect('adminDashboard')
                 elif user.is_user:
                     # User is a regular user
+                    print(request.session.keys())
                     request.session['user_id'] = user.id
                     red=redirect('home')#, pk=user.pk
                     auth_login(request, user)
@@ -44,6 +46,12 @@ class Login(View):
             messages.error(request, 'Invalid login details supplied.')
         return render(request, 'greatkart/signin.html')
 
+
+# class logout(View):
+#     @login_required(login_url='login')
+#     def post(self,request):
+#         logout(request)
+#         return redirect('login')
 
 class adminDashboard(View):
     def get(self,request):
@@ -157,6 +165,21 @@ class product_detail(View):
 
 class customers_list(View):
     def get(self,request):
-        user_set = Account.objects.all()
+        user_set = Account.objects.all().order_by('-date_joined')
         return render(request,'evara-backend/page-customers-list.html',{'userlist':user_set})
 
+class user_block(View):
+    def get(self, request, user_id):
+        user = Account.objects.get(pk=user_id)
+        user.is_active=False
+        user.save()
+        print(user.is_active)
+        return redirect('customers_list')
+    
+class user_unblock(View):
+    def get(self, request, user_id):
+        user = Account.objects.get(pk=user_id)
+        user.is_active=True
+        user.save()
+        print(user.is_active)
+        return redirect('customers_list')

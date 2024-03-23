@@ -18,6 +18,7 @@ from django.views.decorators.cache import never_cache
 from store.models import Product, ProductImage, ProductVariation
 from category.models import Category
 from .models import Account, Profile, Address
+from cart.models import Order, OrderItem
 
 # Create your views here.
 #================================no cache decorator===============================================
@@ -198,10 +199,24 @@ class userProfile(View):
         user = Account.objects.get(pk=user_id)
         username = user.username
         addresses = user.addresses.all()
+
+#---------------------------------------------------------------- Order details
+        
+        total_price=[]
+        orders = Order.objects.filter(user = user)
+        for order in orders:
+            total_price = order.calculate_total_price()
+            
+
+        
+
+    
         context={
             'user':user,
             'user_name': username,
-            'addresses': addresses
+            'addresses': addresses,
+            'orders':orders,
+            'total_price':total_price,
         }
         return render(request, 'evara-frontend/page-account.html', context)
 

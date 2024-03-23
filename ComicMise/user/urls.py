@@ -17,11 +17,12 @@ Including another URLconf
 
 from django.urls import path
 from . import views
-from accounts.views import home
+from accounts.views import home,logout
 
 urlpatterns = [
     # path('',views.login, name='login'),
     path('', views.Login.as_view(), name='login'),
+    path('logout/',logout.as_view(), name='logout'),
     path('home/',home.as_view(), name='home'),
     path('adminDashboard/',views.adminDashboard.as_view(), name='adminDashboard'),
     path('categoryView/',views.categoryView.as_view(), name='categoryView'),
@@ -29,5 +30,6 @@ urlpatterns = [
     path('add_product/',views.add_product.as_view(), name='add_product'),
     path('product_detail/',views.product_detail.as_view(), name='product_detail'),
     path('customers_list/',views.customers_list.as_view(), name='customers_list'),
-    
+    path('userblock/<int:user_id>/', views.user_block.as_view(), name = 'user_block'),
+    path('userunblock/<int:user_id>/', views.user_unblock.as_view(), name = 'user_unblock'),
 ]
