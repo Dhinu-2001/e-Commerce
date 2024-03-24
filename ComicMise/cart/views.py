@@ -181,18 +181,35 @@ class order_success(View):
                 price = price,
             )
             
- # --------------------------------------------------- order_item.variations.add(variation)
             order_item.save()
             order_item.variations.set(cart_item.variations.all())
+            print(order_item, order_item.variations.all())
+            for i in order_item.variations.all():
+                i.stock -= order_item.quantity
+                print(i.stock, order_item.quantity)
+                i.save()
+            cart_item.delete()
 
-        order_items = Order.objects.
+
+        total_price=0
+        total = 0
+        total_price = order_submit.calculate_total_price()
+        order_items = OrderItem.objects.filter(order = order_submit)
+        order_items_variations=[]
+        for order_item in order_items:
+            total += (order_item.product.price * order_item.quantity)
+            variations = order_item.variations.all()
+            for variation in variations:
+                order_items_variations.append((order_item, variation))
 
         context={
             'order_no': order_submit.id,
             'order_date': order_submit.order_date,
             'order_method': order_submit.payment_method,
             'shipping_address': order_submit.shipping_address,
-            'item_name':order
+            'order_items_variations':order_items_variations,
+            'total':total_price,
+            'user_name':user.username
         }
 
         return render(request, 'evara-frontend/order_success.html',context)

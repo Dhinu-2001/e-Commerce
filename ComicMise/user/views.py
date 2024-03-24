@@ -14,7 +14,8 @@ from django.contrib import messages
 
 class Login(View):
     def get(self,request):
-         return render(request,'greatkart/signin.html')
+        
+        return render(request,'greatkart/signin.html')
     
     def post(self, request):
         email = request.POST.get('email')
@@ -35,7 +36,7 @@ class Login(View):
                     return redirect('adminDashboard')
                 elif user.is_user:
                     # User is a regular user
-                    print(request.session.keys())
+                    print(request.session.keys())   
                     request.session['user_id'] = user.id
                     red=redirect('home')#, pk=user.pk
                     auth_login(request, user)

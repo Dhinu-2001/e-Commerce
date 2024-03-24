@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .forms import RegistrationForm
 from django.contrib import messages
-from django.contrib.auth import authenticate, login as auth_login, logout
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from .helper import MessageHandler
 from django.utils.decorators import method_decorator
@@ -116,16 +116,16 @@ class resend_otp(View):
         return red
 
 
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class logout(View):
-    @login_required(login_url='login')
-    def post(self,request):
-        logout(request)
+    def get(self,request):
+        if request.user.is_authenticated:
+            auth_logout(request)
+            messages.success(request, 'You are logged out.')
         return redirect('login')
 
 class home(View):
     def get(self,request):
-        
         #user_id = Account.objects.get(pk=pk)
         products = Product.objects.all().filter(is_available=True)
         user_id = request.session['user_id'] 
@@ -206,11 +206,7 @@ class userProfile(View):
         orders = Order.objects.filter(user = user)
         for order in orders:
             total_price = order.calculate_total_price()
-            
-
-        
-
-    
+          
         context={
             'user':user,
             'user_name': username,
@@ -251,3 +247,10 @@ class userProfile(View):
             user.addresses.add(fd)
             return redirect('userProfile', user_name=user_name)
     
+class cancel_order(View):
+    def get(self, request, order_id):
+        user_id = request.session['user_id']
+        user = Account.objects.get(pk=user_id)
+        order = Order.objects.get(id = order_id)
+        order.canceled = True
+        return redirect('userProfile', user_name=user.username)

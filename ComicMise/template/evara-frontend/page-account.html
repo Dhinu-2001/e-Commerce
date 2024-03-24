@@ -83,7 +83,7 @@
                                                                 <th>Date</th>
                                                                 <th>Status</th>
                                                                 <th>Total</th>
-                                                                <!-- <th>Payment method</th> -->
+                                                                <th>Payment method</th>
                                                                 <th>Actions</th>
                                                             </tr>
                                                         </thead>
@@ -94,8 +94,8 @@
                                                                 <td>{{ order.order_date }}</td>
                                                                 <td>{{ order.order_status }}</td>
                                                                 <td>{{ total_price }}</td>
-                                                                <!-- <td>{{ order.payment_method }}</td> -->
-                                                                <td><a href="#" class="btn-small d-block">View</a></td>
+                                                                <td>{{ order.payment_method }}</td>
+                                                                <td><a href="{% url 'cancel_order' order_id=order.id %}" class="btn-small d-block">Cancel</a></td>
                                                             </tr>
                                                             {% endfor %}
                                                         </tbody>

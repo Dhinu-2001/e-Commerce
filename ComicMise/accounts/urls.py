@@ -25,5 +25,6 @@ urlpatterns = [
     path('otp/<int:pk>/', otpVerify.as_view(), name='otp'),
     path('resend-otp/<int:pk>/', resend_otp.as_view(), name='resend-otp'),
     path('userprofile/<str:user_name>/', userProfile.as_view(), name = 'userProfile' ),
+    path('cancel_order/<int:order_id>/', cancel_order.as_view(), name = 'cancel_order'),
 
 ]
