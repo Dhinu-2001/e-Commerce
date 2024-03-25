@@ -26,6 +26,7 @@ urlpatterns = [
     path('home/',home.as_view(), name='home'),
     path('adminDashboard/',views.adminDashboard.as_view(), name='adminDashboard'),
     path('categoryView/',views.categoryView.as_view(), name='categoryView'),
+    path('order_list/', views.order_list.as_view(), name = 'order_list'),
     path('product_list/',views.product_list.as_view(), name='product_list'),
     path('add_product/',views.add_product.as_view(), name='add_product'),
     path('product_detail/',views.product_detail.as_view(), name='product_detail'),

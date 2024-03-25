@@ -6,6 +6,7 @@ from django.utils.decorators import method_decorator
 from accounts.models import Account
 from category.models import Category
 from store.models import Product, ProductImage, ProductVariation
+from cart.models import Order, OrderItem
 
 
 from django.http import HttpResponse
@@ -84,6 +85,22 @@ class categoryView(View):
                 'category_set': category_set,
             }
         return render(request,'evara-backend/page-categories.html', context)
+
+class order_list(View):
+    def get(self, request):
+        order_list = Order.objects.all().order_by('-order_date')
+        orders=[]
+        for order in order_list:
+            total_pr = order.calculate_total_price()
+            orders.append((order, total_pr))
+            print(total_pr)
+        for i in orders:
+            print(i)
+        context = {
+            'order_list': order_list,
+            'orders':orders,
+        }
+        return render(request, 'evara-backend/page-orders-1.html', context)
 
 class product_list(View):
     def get(self,request):

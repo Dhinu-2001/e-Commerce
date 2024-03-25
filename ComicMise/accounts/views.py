@@ -203,16 +203,16 @@ class userProfile(View):
 #---------------------------------------------------------------- Order details
         
         total_price=[]
-        orders = Order.objects.filter(user = user)
-        for order in orders:
-            total_price = order.calculate_total_price()
+        orders = Order.objects.filter(user = user).order_by('-order_date')
+        # for order in orders:
+        #     total_price = order.calculate_total_price()
           
         context={
             'user':user,
             'user_name': username,
             'addresses': addresses,
             'orders':orders,
-            'total_price':total_price,
+            # 'total_price':total_price,
         }
         return render(request, 'evara-frontend/page-account.html', context)
 
@@ -253,4 +253,5 @@ class cancel_order(View):
         user = Account.objects.get(pk=user_id)
         order = Order.objects.get(id = order_id)
         order.canceled = True
+        order.save()
         return redirect('userProfile', user_name=user.username)

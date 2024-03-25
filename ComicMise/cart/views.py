@@ -166,8 +166,11 @@ class order_success(View):
         order_submit = Order(user=user, payment_method=payment_method, shipping_address=address )
         order_submit.save()
 
+        total_price=0
+        total = 0
         cart_items = CartItem.objects.filter(cart = cart, is_active=True)
         for cart_item in cart_items:
+            total += (cart_item.product.price * cart_item.quantity)
             product = cart_item.product
             variations = cart_item.variations.all()
             print(variations)
@@ -180,7 +183,7 @@ class order_success(View):
                 quantity = quantity,
                 price = price,
             )
-            
+
             order_item.save()
             order_item.variations.set(cart_item.variations.all())
             print(order_item, order_item.variations.all())
@@ -188,16 +191,17 @@ class order_success(View):
                 i.stock -= order_item.quantity
                 print(i.stock, order_item.quantity)
                 i.save()
-            cart_item.delete()
+            cart_item.delete()   
+        
+        order_i = Order.objects.get(id = order_submit.id)
+        order_i.total_price = total
+        order_i.save()
 
-
-        total_price=0
-        total = 0
-        total_price = order_submit.calculate_total_price()
+        
+       #total_price = order_submit.calculate_total_price()
         order_items = OrderItem.objects.filter(order = order_submit)
         order_items_variations=[]
         for order_item in order_items:
-            total += (order_item.product.price * order_item.quantity)
             variations = order_item.variations.all()
             for variation in variations:
                 order_items_variations.append((order_item, variation))
@@ -208,7 +212,7 @@ class order_success(View):
             'order_method': order_submit.payment_method,
             'shipping_address': order_submit.shipping_address,
             'order_items_variations':order_items_variations,
-            'total':total_price,
+            'total':total,
             'user_name':user.username
         }
 

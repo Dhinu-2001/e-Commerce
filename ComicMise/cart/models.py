@@ -54,6 +54,7 @@ class Order(models.Model):
     order_date = models.DateTimeField(auto_now_add=True)
     order_status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default=PENDING)
     shipping_address = models.ForeignKey(Address, on_delete=models.CASCADE)
+    total_price = models.IntegerField(default=0)
     canceled = models.BooleanField(default=False)
 
     def _str_(self):
@@ -63,7 +64,6 @@ class Order(models.Model):
         total_price = sum(item.price * item.quantity for item in self.orderitem_set.all())
         return total_price
     
-
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
