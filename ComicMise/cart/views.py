@@ -5,6 +5,9 @@ from store.models import Product, ProductVariation
 from accounts.models import Account, Address
 from django.contrib import messages
 from django.http import HttpResponse
+import razorpay 
+from django.views.decorators.csrf import csrf_exempt
+
 
 # Create your views here.
 def cart_id(request):
@@ -126,12 +129,20 @@ class place_order(View):
             'addresses': addresses,
         }
         return render(request, 'evara-frontend/shop-checkout.html',context)
-    
+
+
 class order_success(View):
+    @csrf_exempt
     def post(self, request, cart, user_name):
         
-        deli_address_id = request.POST.get('delivery_address')
+        payment_method = request.POST.get('payment_option')
+        print('payment_method')
+        # amount = 50000
+            # client = razorpay.Client(
+            #     auth=("rzp_test_oRlyX5LhXmmXeJ", "6zxeEQafauF3o4awwAkWYat1"))
+            # payment = client.order.create({'amount': amount, 'currency': 'INR', 'payment_capture': '1'})
 
+        deli_address_id = request.POST.get('delivery_address')
         if deli_address_id == 'new address':
             address_title    = request.POST['address_title']
             name             = request.POST['name']
@@ -143,30 +154,25 @@ class order_success(View):
             state            = request.POST['state']
             landmark         = request.POST['landmark']
             alt_phone_number = request.POST['alt_phone_number']
-
-
             if not address_title or not ph_number or not pincode or not address or not locality or not city or not state or not name:
                 messages.error(request,'Enter the required fields')
                 return redirect('place_order' )
-
             fd = Address(address_title=address_title, name=name, ph_number=ph_number, pincode=pincode, locality=locality, address=address, city=city, state=state, landmark=landmark, alt_phone_number=alt_phone_number)
             fd.save()
-
             user_id = request.session['user_id']
             user = Account.objects.get(pk=user_id)
             user.addresses.add(fd)
-
             address = fd
         else:
             address =Address.objects.get(id=deli_address_id) 
         user_id = request.session['user_id']
         user = Account.objects.get(pk=user_id)
-        payment_method = request.POST.get('payment_option')
 
+#-------------------------------------------------Order database insertion---------------------------------------------------
+        
         order_submit = Order(user=user, payment_method=payment_method, shipping_address=address )
         order_submit.save()
-
-        total_price=0
+        
         total = 0
         cart_items = CartItem.objects.filter(cart = cart, is_active=True)
         for cart_item in cart_items:
@@ -176,14 +182,14 @@ class order_success(View):
             print(variations)
             quantity = cart_item.quantity
             price = cart_item.sub_total()
-    #----------------------------------------- adding each cart item to order item
+    #---------------------------------------- adding each cart item to order item--------------------------------------------------
             order_item = OrderItem(
                 order = order_submit,
                 product = product,
                 quantity = quantity,
                 price = price,
             )
-
+    #----------------------------------------updating stock on the base of variations & deleting the cart item.---------------------
             order_item.save()
             order_item.variations.set(cart_item.variations.all())
             print(order_item, order_item.variations.all())
@@ -191,13 +197,10 @@ class order_success(View):
                 i.stock -= order_item.quantity
                 print(i.stock, order_item.quantity)
                 i.save()
-            cart_item.delete()   
-        
+            cart_item.delete( )   
         order_i = Order.objects.get(id = order_submit.id)
         order_i.total_price = total
         order_i.save()
-
-        
        #total_price = order_submit.calculate_total_price()
         order_items = OrderItem.objects.filter(order = order_submit)
         order_items_variations=[]
@@ -205,6 +208,10 @@ class order_success(View):
             variations = order_item.variations.all()
             for variation in variations:
                 order_items_variations.append((order_item, variation))
+        
+        if payment_method == 'RAZORPAY':
+            return redirect('razorpay_name',order_id = order_submit.id)
+            
 
         context={
             'order_no': order_submit.id,
@@ -213,8 +220,18 @@ class order_success(View):
             'shipping_address': order_submit.shipping_address,
             'order_items_variations':order_items_variations,
             'total':total,
-            'user_name':user.username
+            'user_name':user.username  
         }
-
         return render(request, 'evara-frontend/order_success.html',context)
+        
+        # elif payment_method == 'RAZORPAY':
+        #     amount = 500000
+        #     client = razorpay.Client(
+        #     auth=("rzp_test_oRlyX5LhXmmXeJ", "6zxeEQafauF3o4awwAkWYat1"))
+        #     payment = client.order.create({'amount': amount, 'currency': 'INR', 'payment_capture': '1'})
+        #     return redirect('razorpay_success')
+        #     #return render(request, 'evara-frontend/razorpay_name.html')
+            
 
+# class order_summary(View):
+#     def get(self, request):

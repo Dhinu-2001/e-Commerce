@@ -1,0 +1,37 @@
+{% extends 'evara-frontend\base-frontend.html' %}
+{% load static %}
+   
+{% block content %} 
+<head>
+    <style>
+        .center {
+            position: absolute;
+            text-align: center;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+
+<body>
+    <section class="mt-50 mb-50">
+        <div class="container">
+    
+        <h3>
+            Payment is successfully done! <i class="fas fa-check-circle"></i>
+        </h3>
+        <h5>
+            <a href="{% url 'razorpay_name' %}">
+                Again?
+            </a>
+        </h5>
+        
+        </div>
+        </section>
+</body>
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-frontend/shop-cart.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:26:06 GMT -->
+</html>
+{% endblock %}

@@ -16,11 +16,6 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('',cart.as_view(),name='cart'),
-    path('add_cart/<int:product>/<int:variant>/',add_cart.as_view(), name='add_cart'),
-    path('remove_cart/<int:product>/<int:variant>/',remove_cart.as_view(), name= 'remove_cart'),
-    path('remove_cart_item/<int:product>/<int:variant>/',remove_cart_item.as_view(), name= 'remove_cart_item'),
-    path('place_order/',place_order.as_view(),name='place_order'),
-    path('order_success/<int:cart>/<str:user_name>/',order_success.as_view(),name='order_success'),
-    
-]
+    path('razorpay_name/<int:order_id>/',razorpay_name,name='razorpay_name'),
+    path('razorpay_success/<int:user_id>/<int:order_id>/',csrf_exempt(razorpay_success),name='razorpay_success'),
+    ]

@@ -29,11 +29,11 @@ class Order(models.Model):
 
     # Payment Method Choices
     CASH_ON_DELIVERY = 'COD'
-    PAYPAL = 'PayPal'
+    RAZORPAY = 'Razorpay'
     
     PAYMENT_METHOD_CHOICES = [
         (CASH_ON_DELIVERY, 'Cash on Delivery'),
-        (PAYPAL, 'PayPal'),
+        (RAZORPAY, 'Razorpay'),
     ]
 
      # Order Status Choices
