@@ -62,7 +62,7 @@ class Order(models.Model):
 
     def calculate_total_price(self):
         total_price = sum(item.price * item.quantity for item in self.orderitem_set.all())
-        return total_price
+        return total_price  
     
 
 class OrderItem(models.Model):

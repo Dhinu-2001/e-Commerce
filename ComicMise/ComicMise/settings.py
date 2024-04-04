@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'store',
     'cart',
     'razorpay',
+    'coupon',
    
 ]
 

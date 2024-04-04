@@ -1,4 +1,6 @@
 {% load static %}
+
+
     <!-- Main Wrapper Start -->
     
     <!--Offcanvas menu area start-->
@@ -33,10 +35,10 @@
                                         <li><a href="compare.html">Compare Products  </a></li>
                                     </ul>
                                 </li> 
-                                <li class="language"><a href="#"><img src="{% static 'assets/img/logo/language.png' %}" alt=""> English <i class="ion-chevron-down"></i></a>
+                                <li class="language"><a href="#"><img src="{% static 'reid_assets/img/logo/language.png' %}" alt=""> English <i class="ion-chevron-down"></i></a>
                                     <ul class="dropdown_language">
-                                        <li><a href="#"><img src="{% static 'assets/img/logo/cigar.jpg' %}" alt=""> French</a></li>
-                                        <li><a href="#"><img src="{% static 'assets/img/logo/language2.png' %}" alt="">German</a></li>
+                                        <li><a href="#"><img src="{% static 'reid_assets/img/logo/cigar.jpg' %}" alt=""> French</a></li>
+                                        <li><a href="#"><img src="{% static 'reid_assets/img/logo/language2.png' %}" alt="">German</a></li>
                                     </ul>
                                 </li>
                                 <li class="currency"><a href="#">USD <i class="ion-chevron-down"></i></a>
@@ -81,7 +83,7 @@
                                  <div class="mini_cart">
                                     <div class="cart_item top">
                                        <div class="cart_img">
-                                           <a href="#"><img src="{% static 'assets/img/s-product/product.jpg' %}" alt=""></a>
+                                           <a href="#"><img src="{% static 'reid_assets/img/s-product/product.jpg' %}" alt=""></a>
                                        </div>
                                         <div class="cart_info">
                                             <a href="#">Apple iPhone SE 16GB</a>
@@ -95,7 +97,7 @@
                                     </div>
                                     <div class="cart_item bottom">
                                        <div class="cart_img">
-                                           <a href="#"><img src="{% static 'assets/img/s-product/product2.jpg' %}" alt=""></a>
+                                           <a href="#"><img src="{% static 'reid_assets/img/s-product/product2.jpg' %}" alt=""></a>
                                        </div>
                                         <div class="cart_info">
                                             <a href="#">Marshall Portable  Bluetooth</a>
@@ -263,10 +265,10 @@
                                         <li><a href="compare.html">Compare Products  </a></li>
                                     </ul>
                                 </li> 
-                                <li class="language"><a href="#"><img src="{% static 'assets/img/logo/language.png' %}" alt=""> English <i class="ion-chevron-down"></i></a>
-                                    <ul class="dropdown_language">
-                                        <li><a href="#"><img src="{% static 'assets/img/logo/cigar.jpg' %}" alt=""> French</a></li>
-                                        <li><a href="#"><img src="{% static 'assets/img/logo/language2.png' %}" alt="">German</a></li>
+                                <li class="language"><a href="#"><img src="{% static 'reid_assets/img/logo/language.png' %}" alt=""> English <i class="ion-chevron-down"></i></a>
+                                    <ul  class="dropdown_language">
+                                        <li><a href="#"><img src="{% static 'reid_assets/img/logo/cigar.jpg' %}" alt=""> French</a></li>
+                                        <li><a href="#"><img src="{% static 'reid_assets/img/logo/language2.png' %}" alt="">German</a></li>
                                     </ul>
                                 </li>
                                 <li class="currency"><a href="#">USD <i class="ion-chevron-down"></i></a>
@@ -289,12 +291,12 @@
                 <div class="row align-items-center">
                     <div class="col-lg-3 col-md-5">
                         <div class="logo">
-                            <a href="index.html"><img src="{% static 'assets/img/logo/logo.png' %}" alt=""></a>
+                            <a href="{% url 'home' %}"><img src="{% static 'reid_assets/img/logo/logo.png' %}" alt=""></a>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-12">
                         <div class="search_bar">
-                            <form action="#">
+                            <form action="{% url 'search' %}" method = 'get'>
                                 <select class="select_option" name="select">
                                     <option selected value="1">All Categories</option>
                                     <option  value="2">Accessories</option>
@@ -308,28 +310,40 @@
                                     <option  value="10">Xbox 360</option>
                                     <option  value="11">Xbox One</option>
                                 </select>
-                                <input placeholder="Search entire store here..." type="text">
+                                <input placeholder="Search entire store here..." type="text" name="keyword">
                                 <button type="submit"><i class="ion-ios-search-strong"></i></button>
                             </form>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6 offset-md-6 offset-lg-0">
                         <div class="cart_area">
+                            {% if user.id is None %}
                             <div class="middel_links">
                                <ul>
-                                   <li><a href="login.html">Login</a></li>
+                                   <li><a  href="{% url 'login' %}">Login</a></li>
                                    <li>/</li>
-                                   <li><a href="login.html">Register</a></li>
+                                   <li><a href="{% url 'register' %}">Register</a></li>
                                </ul>
-
                             </div>
+                            {% else %}
+                            <div class="middel_links">
+                                <ul>
+                                    <li><small class="title text-muted">Welcome {{user.first_name}}</small></li>
+                                    <li>/</li>
+                                    <li><div> 
+                                        <a href="{% url 'userProfile' user_name=user_name %}">Dashboard</a> <span class="dark-transp"> | </span>
+                                        <a href="{% url 'logout' %}"> Logout</a>
+                                    </div></a></li>
+                                </ul>
+                             </div>
+                             {% endif %}
                             <div class="cart_link">
-                                <a href="#"><i class="fa fa-shopping-basket"></i>2 item(s)</a>
+                                <a href="{% url 'cart' %}"><i class="fa fa-shopping-basket"></i>2 item(s)</a>
                                 <!--mini cart-->
                                  <div class="mini_cart">
                                     <div class="cart_item top">
                                        <div class="cart_img">
-                                           <a href="#"><img src="{% static 'assets/img/s-product/product.jpg' %}" alt=""></a>
+                                           <a href="#"><img src="{% static 'reid_assets/img/s-product/product.jpg' %}" alt=""></a>
                                        </div>
                                         <div class="cart_info">
                                             <a href="#">Apple iPhone SE 16GB</a>
@@ -343,7 +357,7 @@
                                     </div>
                                     <div class="cart_item bottom">
                                        <div class="cart_img">
-                                           <a href="#"><img src="{% static 'assets/img/s-product/product2.jpg' %}" alt=""></a>
+                                           <a href="#"><img src="{% static 'reid_assets/img/s-product/product2.jpg' %}" alt=""></a>
                                        </div>
                                         <div class="cart_info">
                                             <a href="#">Marshall Portable  Bluetooth</a>
@@ -408,7 +422,7 @@
                                                      <li><a href="index-9.html">Home 9</a></li>
                                                 </ul>
                                             </li>
-                                            <li class="mega_items"><a href="shop.html">shop <i class="fa fa-angle-down"></i></a>
+                                            <li class="mega_items"><a href="{% url 'store' %}">shop <i class="fa fa-angle-down"></i></a>
                                                 <ul class="mega_menu">
                                                     <li><a href="#">Shop Layouts</a>
                                                         <ul>
@@ -450,7 +464,7 @@
 
                                                         </ul>
                                                     </li>
-                                                    <li class="banner_menu"><a href="#"><img src="{% static 'assets/img/bg/banner1.jpg' %}" alt=""></a></li>
+                                                    <li class="banner_menu"><a href="#"><img src="{% static 'reid_assets/img/bg/banner1.jpg' %}" alt=""></a></li>
                                                 </ul>
                                             </li>
                                             <li><a href="blog.html">blog <i class="fa fa-angle-down"></i></a>

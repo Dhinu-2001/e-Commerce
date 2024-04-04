@@ -21,5 +21,5 @@ from accounts.views import home
 
 urlpatterns = [
     path('store/search/',search.as_view(), name='search'),
-    path('store/sort/<str:value>/',sort.as_view(), name='sort'),
+    path('store/sort/',sort.as_view(), name='sort'),
 ]

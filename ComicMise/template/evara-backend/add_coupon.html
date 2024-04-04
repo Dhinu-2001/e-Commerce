@@ -1,0 +1,70 @@
+{% extends 'evara-backend\base-backend.html' %}
+{% load static %}
+{% block content %}
+        <section class="content-main">
+            <div class="row">
+                <form method="post" action="{% url 'add_coupon' %}" >
+                {% csrf_token %}
+                <div class="col-9">
+                    <div class="content-header">
+                        <h2 class="content-title">Add Coupon</h2>
+                        <div>
+                            <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center text-danger">
+                        {% for message in messages %}
+                           
+                                {{message}}
+                            
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        
+                        <div class="card-body">
+                            
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Coupon Code</label>
+                                    <input type="text" placeholder="Type here" class="form-control" id="code" name="code" maxlength="15" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Valid From</label>
+                                    <input class="form-control" type="datetime-local" id="valid_from" name="valid_from" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Valid To</label>
+                                    <input class="form-control" type="datetime-local" id="valid_to" name="valid_to" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Discount (%)</label>
+                                    <input class="form-control" type="number" id="discount" name="discount" min="1" max="70" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Active</label>
+                                    <input  type="checkbox" id="is_active" name="is_active" value=True>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </form>
+            </div>
+        </section> <!-- content-main end// -->
+
+    </main>
+    <script src="{% static 'assets/js/vendors/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/select2.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/perfect-scrollbar.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/jquery.fullscreen.min.js' %}"></script>
+    <!-- Main Script -->
+    <script src="{% static 'assets/js/main.js' %}" type="text/javascript"></script>
+</body>
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-form-product-1.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:32 GMT -->
+</html>
+{% endblock %}

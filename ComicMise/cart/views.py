@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.shortcuts import redirect, render
 from django.views import View
 from . models import Cart, CartItem, Order, OrderItem
@@ -7,7 +8,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 import razorpay 
 from django.views.decorators.csrf import csrf_exempt
-
+from coupon.models import Coupon
 
 # Create your views here.
 def cart_id(request):
@@ -17,10 +18,12 @@ def cart_id(request):
     return cart_id
 
 class add_cart(View):
-    def get(self,request,product, variant):
-        print(product,variant)
-        product = Product.objects.get(pk = product)
-        variant = ProductVariation.objects.get(pk = variant)
+    def get(self,request,product_id):
+        print(product_id)
+        product = Product.objects.get(pk = product_id)
+        size = request.GET.get('size')
+        print(size)
+        variant = ProductVariation.objects.get(product=product, size=size)
         print(variant)
         try:
             cart = Cart.objects.get(cart_id = cart_id(request))
@@ -72,26 +75,88 @@ class remove_cart_item(View):
 
 
 class cart(View):
-    def get(self,request, total=0, quantity=0, cart_items=None):
+    def get(self,request, total_price=0, quantity=0, cart_items=None):
         try:
             
             cart = Cart.objects.get(cart_id=cart_id(request))
+            print(cart_id(request))
             cart_items = CartItem.objects.filter(cart = cart, is_active=True)
             cart_items_variations = []
+            coupon_list = Coupon.objects.all()
             for cart_item in cart_items:
-                total += (cart_item.product.price * cart_item.quantity)
+                total_price += (cart_item.product.price * cart_item.quantity)
                 quantity += cart_item.quantity
                 variations = cart_item.variations.all()
                 for variation in variations:
                     print(variation.size)
                     cart_items_variations.append((cart_item, variation))
-                        
+            coupon_code = request.POST.get('coupon_code')
+            if coupon_code is not None:
+                current_time = timezone.now()
+                coupon = Coupon.objects.get(code = coupon_code)
+                if coupon.valid_to >= current_time and coupon.active is True:
+                    discount_rate = (coupon.discount / 100)*total_price
+                    total_afer_discount = total_price - discount_rate
+                    request.session['discount_total'] = total_afer_discount
+                    request.session['coupon_code'] = coupon_code
+            coupon_code = request.session.get('coupon_code')
+            if coupon_code is not None:
+                total_grand = request.session.get('discount_total')
+            else:
+                total_grand = total_price
                
         except Cart.DoesNotExist:
             pass
         
         context = {
-            'total': total,
+            'cart_total':total_price,
+            'total': total_grand,
+            'coupon_list':coupon_list,
+            'coupon_code':coupon_code,
+            'quantity':quantity,
+            'cart_items_variations': cart_items_variations,
+        }
+        
+        return render(request, 'evara-frontend/shop-cart.html',context)
+    
+    def post(self,request, total_price=0, quantity=0, cart_items=None):
+        try:
+            
+            cart = Cart.objects.get(cart_id=cart_id(request))
+            print(cart_id(request))
+            cart_items = CartItem.objects.filter(cart = cart, is_active=True)
+            cart_items_variations = []
+            coupon_list = Coupon.objects.all()
+            for cart_item in cart_items:
+                total_price += (cart_item.product.price * cart_item.quantity)
+                quantity += cart_item.quantity
+                variations = cart_item.variations.all()
+                for variation in variations:
+                    print(variation.size)
+                    cart_items_variations.append((cart_item, variation))
+            coupon_code = request.POST.get('coupon_code')
+            if coupon_code is not None:
+                current_time = timezone.now()
+                coupon = Coupon.objects.get(code = coupon_code)
+                if coupon.valid_to >= current_time and coupon.active is True:
+                    discount_rate = (coupon.discount / 100)*total_price
+                    total_afer_discount = total_price - discount_rate
+                    request.session['discount_total'] = total_afer_discount
+                    request.session['coupon_code'] = coupon_code
+            coupon_code = request.session.get('coupon_code')
+            if coupon_code is not None:
+                total_grand = request.session.get('discount_total')
+            else:
+                total_grand = total_price
+               
+        except Cart.DoesNotExist:
+            pass
+        
+        context = {
+            'cart_total':total_price,
+            'total': total_grand,
+            'coupon_list':coupon_list,
+            'coupon_code':coupon_code,
             'quantity':quantity,
             'cart_items_variations': cart_items_variations,
         }
@@ -99,7 +164,7 @@ class cart(View):
         return render(request, 'evara-frontend/shop-cart.html',context)
     
 class place_order(View):
-    def get(self, request, total=0, quantity=0, cart_items=None):
+    def get(self, request, total_price=0, quantity=0, cart_items=None):
         user_id = request.session['user_id']
         user = Account.objects.get(pk=user_id)
         username = user.username
@@ -109,24 +174,31 @@ class place_order(View):
             cart_items = CartItem.objects.filter(cart = cart, is_active=True)
             cart_items_variations = []
             for cart_item in cart_items:
-                total += (cart_item.product.price * cart_item.quantity)
+                total_price += (cart_item.product.price * cart_item.quantity)
                 quantity += cart_item.quantity
                 variations = cart_item.variations.all()
                 for variation in variations:
                     print(variation.size)
                     cart_items_variations.append((cart_item, variation))
-                        
+            
+            coupon_code = request.session.get('coupon_code')
+            if coupon_code is not None:
+                total_grand = request.session.get('discount_total')
+            else:
+                total_grand = total_price
                
         except Cart.DoesNotExist:
             pass
         
         context = {
-            'total': total,
+            'cart_total':total_price,
+            'total': total_grand,
             'quantity':quantity,
             'cart':cart.id,
             'cart_items_variations': cart_items_variations,
             'user_name': username,
             'addresses': addresses,
+            'coupon_code':coupon_code,
         }
         return render(request, 'evara-frontend/shop-checkout.html',context)
 
@@ -199,7 +271,14 @@ class order_success(View):
                 i.save()
             cart_item.delete( )   
         order_i = Order.objects.get(id = order_submit.id)
-        order_i.total_price = total
+#------------------------------------------------------------Total amount saving in database--------------------------------  
+        coupon_code = request.session.get('coupon_code')
+        delete_coupon = request.session.pop('coupon_code', None)
+        if coupon_code is not None:
+            order_i.total_price = request.session.get('discount_total')
+        else:
+            order_i.total_price = total
+        
         order_i.save()
        #total_price = order_submit.calculate_total_price()
         order_items = OrderItem.objects.filter(order = order_submit)
@@ -211,9 +290,10 @@ class order_success(View):
         
         if payment_method == 'RAZORPAY':
             return redirect('razorpay_name',order_id = order_submit.id)
-            
+        
 
         context={
+            'coupon_code':coupon_code,
             'order_no': order_submit.id,
             'order_date': order_submit.order_date,
             'order_method': order_submit.payment_method,

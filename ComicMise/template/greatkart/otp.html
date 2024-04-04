@@ -44,7 +44,13 @@
         {% csrf_token %}
         <fieldset>
             <div class="form-row">
-                <p>Please enter the OTP sent to your phone number.<br> The OTP will expire in: <span id="timer"></span></p>
+                <div>
+                    <p>Please enter the OTP sent to your phone number.</p>
+                </div>
+                <br>
+                <div style="margin-top: 8%;">
+                    <p >The OTP will expire in: <span id="timer"></span></p>
+                </div>
                 <input type="text" name="otp" placeholder="OTP" id="otp" class="form-control " required>
                 <input type="submit" value="Submit" class="btn btn-primary">
                 

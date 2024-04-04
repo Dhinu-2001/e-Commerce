@@ -42,7 +42,7 @@ class register(View):
         context = {
             'form':form
         }
-        return render(request,'greatkart/register.html',context)
+        return render(request,'reid/registration.html',context)
 
     @method_decorator(no_cache)
     def post(self,request):
@@ -73,7 +73,7 @@ class otpVerify(View):
     @method_decorator(no_cache)
     def get(self,request,pk):
         profile=Profile.objects.get(pk=pk)
-        return render(request,'greatkart/otp.html',{'id':pk,'profile':profile})
+        return render(request,'reid/otp.html',{'id':pk,'profile':profile})
     
     @method_decorator(no_cache)
     def post(self,request,pk):
@@ -95,7 +95,7 @@ class otpVerify(View):
         
 class resend_otp(View):
     @method_decorator(no_cache)
-    def post(self,request,pk):
+    def get(self,request,pk):
         profile = Profile.objects.get(pk=pk)  # Adjust this to fetch the phone number from your profile model
         
         # Generate a new OTP
@@ -136,7 +136,7 @@ class home(View):
             'products': products,
             'user_name': user.username,
         }
-        return render(request, 'home.html', context)
+        return render(request, 'reid/index.html', context)
 
 class store(View):
     def get(self,request, category_slug=None):
@@ -160,7 +160,7 @@ class store(View):
             'category': category,
             'user_name': username,
         }
-        return render(request, 'greatkart/store.html', context)
+        return render(request, 'reid/shop.html', context)
 
 class product_detail(View):   
     def get(self,request, category_slug, product_slug, size):
@@ -190,7 +190,7 @@ class product_detail(View):
             'category_slug':category_slug,
             'product_slug':product_slug
         }
-        return render(request,'greatkart\product_detail.html',context)
+        return render(request,'reid/product-details.html',context)
     
 
 class userProfile(View):
@@ -255,3 +255,16 @@ class cancel_order(View):
         order.canceled = True
         order.save()
         return redirect('userProfile', user_name=user.username)
+    
+class lo(View):
+    def get(self, request):
+        return render(request, 'reid/login.html')
+    
+class re(View):
+    @method_decorator(no_cache)
+    def get(self,request):
+        form = RegistrationForm()
+        context = {
+            'form':form
+        }
+        return render(request, 'reid/registration.html',context)

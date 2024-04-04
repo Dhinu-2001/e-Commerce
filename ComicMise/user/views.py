@@ -16,14 +16,14 @@ from django.contrib import messages
 class Login(View):
     def get(self,request):
         
-        return render(request,'greatkart/signin.html')
+        return render(request,'reid/login.html')
     
     def post(self, request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         if not email or not password:
             messages.error(request, 'Enter email and password')
-            return render(request, 'greatkart/signin.html')
+            return render(request, 'reid/login.html')
 
         user = authenticate(request, email=email, password=password)
         if user is not None:
@@ -46,7 +46,7 @@ class Login(View):
                 messages.error(request, 'Your account is inactive.')
         else:
             messages.error(request, 'Invalid login details supplied.')
-        return render(request, 'greatkart/signin.html')
+        return render(request, 'reid/login.html')
 
 
 # class logout(View):
@@ -201,3 +201,4 @@ class user_unblock(View):
         user.save()
         print(user.is_active)
         return redirect('customers_list')
+    

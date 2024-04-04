@@ -27,4 +27,6 @@ urlpatterns = [
     path('userprofile/<str:user_name>/', userProfile.as_view(), name = 'userProfile' ),
     path('cancel_order/<int:order_id>/', cancel_order.as_view(), name = 'cancel_order'),
 
+    path('lo/', lo.as_view(), name = 'lo'),
+    path('re/', re.as_view(), name = 're'),
 ]

@@ -140,8 +140,12 @@
                                         </tr>
                                         {%endfor %}
                                         <tr>
-                                            <th>SubTotal</th>
-                                            <td class="product-subtotal" colspan="2">${{total}}</td>
+                                            <th>CartTotal</th>
+                                            <td class="product-subtotal" colspan="2">${{cart_total}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Coupon</th>
+                                            <td colspan="2"><em>{{coupon_code}}-{{coupon_code.discount}}% discount</em></td>
                                         </tr>
                                         <tr>
                                             <th>Shipping</th>

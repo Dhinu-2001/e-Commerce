@@ -41,7 +41,8 @@ class sort(View):
         user = Account.objects.get(pk=user_id)
         username = user.username
 
-        sort_value = kwargs.get('value')
+        sort_value = request.GET.get('orderby')
+        # sort_value = kwargs.get('value')
         if sort_value == 'new':
             products = Product.objects.all().order_by('-modified_date')
         elif sort_value == 'popularity':
@@ -61,4 +62,4 @@ class sort(View):
             'products': products,
             'prod_count': products.count()
         }
-        return render(request,'greatkart/store.html',context)
+        return render(request,'reid/shop.html',context)

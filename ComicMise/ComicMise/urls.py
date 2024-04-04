@@ -27,4 +27,5 @@ urlpatterns = [
     path('store/',include('store.urls')),
     path('cart/',include('cart.urls')),
     path('razorpay/',include('razorpay.urls')),
+    path('coupon/',include('coupon.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

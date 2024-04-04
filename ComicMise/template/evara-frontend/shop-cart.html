@@ -54,26 +54,46 @@
                         <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
                         <div class="row mb-50">
                             <div class="col-lg-6 col-md-12">
-                                <div class="heading_s1 mb-3">
+                                <!-- <div class="heading_s1 mb-3">
                                     <h4>Calculate Shipping</h4>
                                 </div>
                                 <p class="mt-15 mb-30">Flat rate: <span class="font-xl text-brand fw-900">5%</span></p>
-                             
+                              -->
                                 <div class="mb-30 mt-50">
                                     <div class="heading_s1 mb-3">
+                                        {% if coupon_code == None %}
                                         <h4>Apply Coupon</h4>
+                                        {% else %}
+                                        <h4>Coupon applied</h4>
+                                        {% endif %}
                                     </div>
                                     <div class="total-amount">
                                         <div class="left">
                                             <div class="coupon">
-                                                <form action="#" target="_blank">
+                                                <form action="{% url 'cart' %}" method="POST">
+                                                    {% csrf_token %}
                                                     <div class="form-row row justify-content-center">
+                                                        {% if coupon_code == None %}
                                                         <div class="form-group col-lg-6">
-                                                            <input class="font-medium" name="Coupon" placeholder="Enter Your Coupon">
+                                                            <select class="font-medium" id="dropdown-field" name="coupon_code">
+                                                              <option value="">-- Select an option --</option>
+                                                              {% for coupon in coupon_list %}
+                                                              <option value={{coupon.code}}>{{coupon.code}}</option>
+                                                              {% endfor %}
+                                                            </select>
+                                                            <!-- <input class="font-medium" name="coupon_code" placeholder="Enter Your Coupon"> -->
                                                         </div>
                                                         <div class="form-group col-lg-6">
-                                                            <button class="btn  btn-sm"><i class="fi-rs-label mr-10"></i>Apply</button>
+                                                            <button type="submit" class="btn  btn-sm"><i class="fi-rs-label mr-10"></i>Apply</button>
                                                         </div>
+                                                        {% else %}
+                                                        <div class="form-group col-lg-6">
+                                                            <input class="font-medium" name="coupon_code" placeholder={{coupon_code}} disabled>
+                                                        </div>
+                                                        <div class="form-group col-lg-6">
+                                                            <a href="{% url 'remove_coupon' %}" type="button" class="btn  btn-sm"><i class="fi-rs-label mr-10"></i>Remove</a>
+                                                        </div>
+                                                        {% endif %}
                                                     </div>
                                                 </form>
                                             </div>
@@ -91,7 +111,11 @@
                                             <tbody>
                                                 <tr>
                                                     <td class="cart_total_label">Cart Subtotal</td>
-                                                    <td class="cart_total_amount"><span class="font-lg fw-900 text-brand">${{total}} </span></td>
+                                                    <td class="cart_total_amount"><span class="font-lg fw-900 text-brand">${{cart_total}} </span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="cart_total_label">Coupon</td>
+                                                    <td class="cart_total_amount"> <i class="ti-gift mr-5"></i> {{ coupon_code }}-{{coupon_code.discount}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="cart_total_label">Shipping</td>
