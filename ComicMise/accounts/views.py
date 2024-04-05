@@ -44,7 +44,7 @@ class register(View):
         }
         return render(request,'reid/registration.html',context)
 
-    @method_decorator(no_cache)
+    
     def post(self,request):
         form =RegistrationForm(request.POST)
         if form.is_valid():

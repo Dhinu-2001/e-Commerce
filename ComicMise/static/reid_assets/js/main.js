@@ -12,6 +12,9 @@
 		});
     }
     
+    
+
+
     $(window).on('load', function () {
         dataBackgroundImage();
     });

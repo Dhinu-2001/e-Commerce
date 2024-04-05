@@ -76,7 +76,10 @@ class remove_cart_item(View):
 
 class cart(View):
     def get(self,request, total_price=0, quantity=0, cart_items=None):
+
         try:
+            user_id = request.session['user_id']
+            user = Account.objects.get(pk=user_id)
             
             cart = Cart.objects.get(cart_id=cart_id(request))
             print(cart_id(request))
@@ -107,7 +110,7 @@ class cart(View):
                
         except Cart.DoesNotExist:
             pass
-        
+        print(cart.id)
         context = {
             'cart_total':total_price,
             'total': total_grand,
@@ -115,18 +118,22 @@ class cart(View):
             'coupon_code':coupon_code,
             'quantity':quantity,
             'cart_items_variations': cart_items_variations,
+            'user_name': user.username,
         }
         
-        return render(request, 'evara-frontend/shop-cart.html',context)
+        return render(request, 'reid/cart.html',context)
     
     def post(self,request, total_price=0, quantity=0, cart_items=None):
         try:
+            user_id = request.session['user_id']
+            user = Account.objects.get(pk=user_id)
             
             cart = Cart.objects.get(cart_id=cart_id(request))
-            print(cart_id(request))
+            print('1'+cart_id(request))
             cart_items = CartItem.objects.filter(cart = cart, is_active=True)
             cart_items_variations = []
             coupon_list = Coupon.objects.all()
+
             for cart_item in cart_items:
                 total_price += (cart_item.product.price * cart_item.quantity)
                 quantity += cart_item.quantity
@@ -135,6 +142,7 @@ class cart(View):
                     print(variation.size)
                     cart_items_variations.append((cart_item, variation))
             coupon_code = request.POST.get('coupon_code')
+            print(coupon_code)
             if coupon_code is not None:
                 current_time = timezone.now()
                 coupon = Coupon.objects.get(code = coupon_code)
@@ -159,9 +167,10 @@ class cart(View):
             'coupon_code':coupon_code,
             'quantity':quantity,
             'cart_items_variations': cart_items_variations,
+            'user_name': user.username,
         }
         
-        return render(request, 'evara-frontend/shop-cart.html',context)
+        return render(request, 'reid/cart.html',context)
     
 class place_order(View):
     def get(self, request, total_price=0, quantity=0, cart_items=None):
@@ -315,3 +324,29 @@ class order_success(View):
 
 # class order_summary(View):
 #     def get(self, request):
+
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from .models import CartItem
+
+@require_POST
+def update_cart_item(request, cart_item_id):
+    try:
+        print("Request received")
+        print(f"Request method: {request.method}")
+        print(f"Request data: {request.body}")
+        print(f"Request headers: {request.headers}")
+
+        cart_item = CartItem.objects.get(id=cart_item_id)
+
+        new_quantity = int(request.POST.get('quantity'))
+        print(f"New quantity: {new_quantity}")
+        cart_item.quantity = new_quantity
+        print(cart_item_id,new_quantity)
+        cart_item.save()
+        return JsonResponse({'success': True})
+    except CartItem.DoesNotExist:
+        return JsonResponse({'error': 'Cart item not found'}, status=404)
+    except ValueError:
+        return JsonResponse({'error': 'Invalid quantity'}, status=400)
