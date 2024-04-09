@@ -1,0 +1,197 @@
+{% extends 'evara-backend\base-backend.html' %}
+{% load static %}
+{% block content %}
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Sale Report </h2>
+                    <!-- <p>Lorem ipsum dolor sit amet.</p> -->
+                </div>
+                <div>
+                    <div>
+                        <a id="xlsheet" onclick="ExportToExcel()" class="btn btn-light rounded font-md">Download XLSheet</a>
+                        <a href="#" id="pdf" data-value="" class="btn btn-light rounded  font-md">Download PDF</a>
+                    </div>
+            
+                 </div>
+            </div>
+            <div class="card mb-4">
+                <header class="card-header">
+                    <div class="row gx-3">
+                        <div class="col-lg-4 col-md-6 me-auto">
+                            Overall Sale count:   {{overall_sale_count}}<br>
+                            Overall sale amount: {{overall_order_amount}}<br>
+                            Overall sale discount: {{overall_order_discount}}
+                        </div>
+                        <form method="get" action="{% url 'sales_report' %}" >
+                            {% csrf_token %}
+                        <div class="col-lg-2 col-6 col-md-3">
+                            <label class="form-label">Sales from:</label>
+                            <input class="form-control" type="datetime-local" id="valid_from" name="sales_from" required>
+                        
+                        </div>
+                        <div class="col-lg-2 col-6 col-md-3">
+                            <label class="form-label">Sales to:</label>
+                            <input class="form-control" type="datetime-local" id="valid_to" name="sales_to" required>
+                        
+                        </div>
+                        <button type="submit" class="btn btn-primary">Show</button>
+                        
+                        </form>
+                    </div>
+                </header> <!-- card-header end// -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    
+                                    <th scope="col">Order id</th>
+                                    <th scope="col">Customer</th>
+                                    <th scope="col">Order date</th>
+                                    <th scope="col">Total Price</th>
+                                    <th scope="col">Coupon</th>
+                                    <th scope="col">Discount</th>
+                                    <th scope="col">Sale price</th>
+                                    <!-- <th scope="col" class="text-end"> Action </th> -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                <tr>
+                                    <td>{{order.id}}</td>
+                                    <td><b>{{order.user.username}}</b></td>
+                                    <td>{{order.order_date}}</td>
+                                    <td>
+                                        Rs.{{ order.price_without_discount }}
+                                       </td>
+                                    <td>
+                                    {% if order.coupon_used %}
+                                        {{ order.coupon_used }}
+                                    {% else %}
+                                        {{ None }}
+                                    {% endif %}
+                                    </td>
+                                    <td>{{ order.price_discounted }}  ({{order.coupon_used.discount}}%)</td>
+                                    <td>
+                                        
+                                        Rs.{{ order.total_price }}
+                                    </td>
+                                    <!-- <td class="text-end">
+                                        <a href="{% url 'order_detail' order_id=order.id %}" class="btn btn-md rounded font-sm">Detail</a>
+                                        <div class="dropdown">
+                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="#">View detail</a>
+                                                <a class="dropdown-item" href="#">Edit info</a>
+                                                <a class="dropdown-item text-danger" href="#">Delete</a>
+                                            </div>
+                                        </div> 
+                                    </td> -->
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div> <!-- table-responsive //end -->
+                </div> <!-- card-body end// -->
+            </div> <!-- card end// -->
+            <!-- <div class="pagination-area mt-15 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                        <li class="page-item"><a class="page-link" href="#">02</a></li>
+                        <li class="page-item"><a class="page-link" href="#">03</a></li>
+                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                        <li class="page-item"><a class="page-link" href="#">16</a></li>
+                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                    </ul>
+                </nav>
+            </div> -->
+        </section> <!-- content-main end// -->
+       
+    </main>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+    integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  
+  <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+    <script>
+        $('#pdf').on('click', function (e) {
+            console.log('pdf');
+         e.preventDefault();
+         Swal.fire("Do you want to download this pdf", {
+             buttons: ["No", "Yes"]
+         })
+             .then((res) => {
+                 if (res.value) {
+                     
+                     console.log("pdf");
+                     let element = document.getElementById('sales-report');
+                     const randomNumber = Math.floor(Math.random() * 10000);
+                     console.log(randomNumber);
+   
+                     var opt = {
+                         margin: 0,
+                         filename: 'myfile' + randomNumber + '.pdf',
+                         html2canvas: { scale: 10 },
+                         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                     };
+   
+                     html2pdf().set(opt).from(element).save();
+   
+   
+                 }
+             })
+     })
+   
+     
+     function ExportToExcel(event) {
+    console.log('excel');
+         Swal.fire("Do you want to download this Excel Sheet", {
+             buttons: ["No", "Yes"]
+         }).then((res)=>{
+             if (res.value) {
+                 var elt = document.getElementById('sales-table');
+                 var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+         
+                 // Adjust column widths
+                 var ws = wb.Sheets['sheet1'];
+                 var columnWidths = [
+                     { wch: 5 },   // Width for column "No"
+                     { wch: 15 },  // Width for column "Order Id"
+                     { wch: 20 },  // Width for column "Customer"
+                     { wch: 15 },  // Width for column "Order Date"
+                     { wch: 20 },  // Width for column "Payment Method"
+                     { wch: 15 },  // Width for column "Order Status"
+                     { wch: 15 }   // Width for column "Total Amount"
+                 ];
+         
+                 // Set column widths
+                 columnWidths.forEach(function (width, index) {
+                     var col = XLSX.utils.encode_col(index);
+                     ws['!cols'] = ws['!cols'] || [];
+                     ws['!cols'][index] = width;
+                 });
+         
+                 XLSX.writeFile(wb, 'sales-table.xlsx');
+   
+             }
+         })
+     }
+    </script>
+    <script src="{% static 'assets/js/vendors/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/select2.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/perfect-scrollbar.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/jquery.fullscreen.min.js' %}"></script>
+    <!-- Main Script -->
+    <script src="{% static 'assets/js/main.js' %}" type="text/javascript"></script>
+</body>
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-orders-1.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:22 GMT -->
+</html>
+{% endblock %}

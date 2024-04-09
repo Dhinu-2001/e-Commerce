@@ -1,18 +1,14 @@
 from django.db import models
 from accounts.models import Account
-from store.models import Product, ProductVariation
+from store.models import Product
 
 # Create your models here.
-class wishlist(models.Model):
-    user = models.ForeignKey(Account,on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add = True)
-
-class wishlist_item(models.Model):
-    wishlist = models.ForeignKey(wishlist, on_delete=models.CASCADE, related_name='wishlist_items')
-    product     = models.ForeignKey(Product, on_delete=models.CASCADE)
-    variations  = models.ManyToManyField(ProductVariation, blank=True)
+class Wishlist(models.Model):
+    user        = models.ForeignKey(Account,on_delete=models.CASCADE,  related_name='wishlists')
+    products = models.ManyToManyField(Product, related_name='wishlists')
     is_active   = models.BooleanField(default=True)
-    added_at = models.DateTimeField(auto_now_add=True)
+    created_at  = models.DateTimeField(auto_now_add=True)
+    updated_at  = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.product
+        return f"{self.user.username}'s Wish List"

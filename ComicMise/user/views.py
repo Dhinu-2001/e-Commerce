@@ -7,6 +7,8 @@ from accounts.models import Account
 from category.models import Category
 from store.models import Product, ProductImage, ProductVariation
 from cart.models import Order, OrderItem
+from wallet.models import Wallet
+from django.utils import timezone
 
 
 from django.http import HttpResponse
@@ -57,6 +59,14 @@ class Login(View):
 
 class adminDashboard(View):
     def get(self,request):
+        user_id = request.session.get('user_id')
+        print(user_id)
+        user = Account.objects.get(id = user_id)
+        try:
+            if not user.is_admin:
+                return redirect("login")
+        except :
+            return redirect("login")
         return render(request, 'evara-backend/index.html')
     
 class categoryView(View):
@@ -101,6 +111,69 @@ class order_list(View):
             'orders':orders,
         }
         return render(request, 'evara-backend/page-orders-1.html', context)
+    
+class order_detail(View):
+    def get(self, request, order_id):
+        order = Order.objects.get(id = order_id)
+        order_items = OrderItem.objects.filter(order = order)
+
+        order_status_choices = Order.ORDER_STATUS_CHOICES
+        
+        context = {
+            'order':order,
+            'order_items':order_items,
+            'order_status_choices':order_status_choices,
+            'order_cancel_status':order.canceled,
+        }
+
+        return render(request, 'evara-backend/page-orders-detail.html', context)
+    
+class order_status_change(View):
+    def post(self, request, order_id):
+        order = Order.objects.get(id = order_id)
+        order_status = request.POST.get('order_status')
+        order.order_status=order_status
+        print(order_status)
+        order.save()
+        return redirect('order_detail', order_id=order_id)
+    
+class admin_cancel_order(View):
+    def get(self, request, order_id):
+        order = Order.objects.get(id = order_id)
+        if order.canceled is False:
+            order.canceled = True
+        else:
+            order.canceled = False            
+        order.save()
+        return redirect('order_detail', order_id=order_id)
+    
+class admin_return_decision(View):
+    def get(self, request, order_id, dec):
+        order =Order.objects.get(id = order_id)
+        return_choices = Order.RETURN_STATUS_CHOICES
+        if dec == 'accepted':
+            order.is_returned=return_choices[2][0]
+            user_id = request.session.get('user_id')
+            user = Account.objects.get(id = user_id)
+            try:
+                wallet = Wallet.objects.get(user = user)
+                print(wallet)
+            except Wallet.DoesNotExist:
+                wallet = Wallet.objects.create(user = user)
+                print(wallet)
+                wallet.save()
+            total_price = order.total_price
+            wallet.amount += total_price
+            wallet.save()
+
+
+        elif dec == 'declined':
+            order.is_returned=return_choices[0][0]
+        
+        order.save()
+        print(dec, return_choices[2][0], return_choices[0][0])
+        return redirect('order_detail', order_id=order_id)
+
 
 class product_list(View):
     def get(self,request):
@@ -202,3 +275,45 @@ class user_unblock(View):
         print(user.is_active)
         return redirect('customers_list')
     
+class sales_report(View):
+    def get(self, request):
+        sales_from = request.GET.get('sales_from')
+        sales_to = request.GET.get('sales_to')
+        if sales_from and sales_to:
+            
+            start_date = sales_from
+            end_date = sales_to
+            orders = Order.objects.filter(order_date__range=(start_date, end_date)).filter(order_status = 'Delivered').order_by('-order_date')
+            overall_sale_count = Order.objects.filter(order_date__range=(start_date, end_date)).filter(order_status = 'Delivered').count()
+            overall_order_amount = 0
+            overall_order_discount = 0
+            for order in orders:
+                overall_order_amount += order.total_price 
+                overall_order_discount += order.price_discounted
+        else:
+            orders = Order.objects.filter(order_status = 'Delivered').order_by('-order_date')
+            overall_sale_count = Order.objects.filter(order_status = 'Delivered').count()
+            overall_order_amount = 0
+            overall_order_discount = 0
+            for order in orders:
+                overall_order_amount += order.total_price 
+                overall_order_discount += order.price_discounted
+        
+
+        # trans=[]
+        # total_price_for_each_order=[]
+        # for order in orders:
+        #     order_items = OrderItem.objects.filter(order = order)
+        #     total_price=0
+        #     for order_item in order_items:
+        #         total_price += order_item.price
+        #     total_price_for_each_order.append(total_price)
+
+        
+        context={
+            'orders':orders,
+            'overall_sale_count':overall_sale_count,
+            'overall_order_amount':overall_order_amount,
+            'overall_order_discount':overall_order_discount,
+        }
+        return render(request,'evara-backend/sales_report.html', context)

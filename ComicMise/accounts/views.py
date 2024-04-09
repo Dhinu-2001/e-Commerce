@@ -19,6 +19,7 @@ from store.models import Product, ProductImage, ProductVariation
 from category.models import Category
 from .models import Account, Profile, Address
 from cart.models import Order, OrderItem
+from wallet.models import Wallet
 
 # Create your views here.
 #================================no cache decorator===============================================
@@ -199,6 +200,13 @@ class userProfile(View):
         user = Account.objects.get(pk=user_id)
         username = user.username
         addresses = user.addresses.all()
+        try:
+            wallet = Wallet.objects.get(user = user)
+        except Wallet.DoesNotExist:
+            wallet = Wallet.objects.create(user = user)
+            
+        print(wallet)
+        wallet.save()
 
 #---------------------------------------------------------------- Order details
         
@@ -212,9 +220,10 @@ class userProfile(View):
             'user_name': username,
             'addresses': addresses,
             'orders':orders,
+            'wallet':wallet
             # 'total_price':total_price,
         }
-        return render(request, 'evara-frontend/page-account.html', context)
+        return render(request, 'reid/my-account.html', context)
 
     def post(self,request, user_name):
         form_id = request.POST.get('form_identifier')
@@ -246,15 +255,31 @@ class userProfile(View):
             user = Account.objects.get(pk=user_id)
             user.addresses.add(fd)
             return redirect('userProfile', user_name=user_name)
+        
+class userside_order_detail(View):
+    def get(self, request, order_id):
+        user_id = request.session.get('user_id')
+        user = Account.objects.get(id = user_id)
+
+        order = Order.objects.get(id = order_id)
+        order_items = OrderItem.objects.filter(order=order)
+        context ={
+            'user_name':user.username,
+            'order':order,
+            'order_items':order_items,
+
+        }
+        return render(request, 'reid/order_detail.html',context)
     
 class cancel_order(View):
     def get(self, request, order_id):
         user_id = request.session['user_id']
         user = Account.objects.get(pk=user_id)
+
         order = Order.objects.get(id = order_id)
         order.canceled = True
         order.save()
-        return redirect('userProfile', user_name=user.username)
+        return redirect('userside_order_detail', order_id=order_id)
     
 class lo(View):
     def get(self, request):

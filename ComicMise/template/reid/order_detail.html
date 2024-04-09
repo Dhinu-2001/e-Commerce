@@ -1,0 +1,276 @@
+{% extends 'reid/base-reid.html' %}
+{%load static%}
+{% block content %}
+
+ 
+<div class="container">
+<div class="row mb-50">
+    
+    <div style="display: flex; justify-content: center; align-items: center;" class="heading_s1 mb-3">
+        <h2>Order Summary</h2>
+    </div>
+    <div>
+        <p  style="font-weight: 500;font-size: medium;">Order Status: 
+        {% if order.canceled %}
+            Cancelled
+        {% elif order.is_returned == 'PROCESSING' %}
+            Return in processing
+        {% elif order.is_returned == 'RETURNED' %}
+            Order returned
+        {% else %}
+            {{order.order_status}}
+        {% endif %}
+        </p>
+    </div>
+    <div class="col-lg-6 col-md-12">
+        
+        <div class="order_review">
+            
+            <div class="table-responsive order_table text-center">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td class="cart_total_label">Order No</td>
+                            <td class="cart_total_amount"># {{order.id}} </td>
+                        </tr>
+                        <tr>
+                            <td class="cart_total_label">Order date</td>
+                            <td class="cart_total_amount">{{ order.order_date }}</td>
+                        </tr>
+                        <tr>
+                            <td class="cart_total_label">Payment method</td>
+                            <td class="cart_total_amount">{{order.payment_method}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-12">
+            <div class="table-responsive order_table text-center">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td class="cart_total_label">Shipping Address:</td>
+                        </tr>
+                        <tr>
+                            <td class="cart_total_label">
+                                <p>{{order.shipping_address.address}}</p>
+                                <!-- <p>{{order.shipping_address.name}}</p>
+                                <p>{{order.shipping_address.ph_number}}</p>
+                                <p>{{order.shipping_address.locality}},</p>
+                                <p>{{order.shipping_address.city}},</p>
+                                <p>{{order.shipping_address.state}}</p>
+                                <p>Pin Code:{{shipping_address.pincode}}</p> -->
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="shopping_cart_area">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table_desc">
+                            <div class="cart_page table-responsive">
+                            <table >
+                                <thead>
+                                    <tr class="main-heading">
+                                        <th scope="col">Image</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Subtotal</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in order_items  %}
+                                   
+                                    <tr>
+                                        <td class="product_thumb"><img src="{{ item.product.images.first.image.url }}" style="max-width: 23%;height: auto;" alt="#"></td>
+                                        <!--  -->
+                                        <td class="product_name">
+                                            <a href="">{{ item.product }}</a>
+                                            <p style="font-size: smaller;">
+                                            </p>
+                                        </td>
+                                        <td class="product-price" data-title="Price"><span>Rs.{{ item.product.price }}</span></td>
+                                        <td class="product-price" data-title="Stock">
+                                           <span class="qty-val">{{item.quantity}}</span>      
+                                        </td>
+                                        <td class="product_total" data-title="Cart">
+                                            <span>Rs.{{ item.price }}</span>
+                                        </td>
+                                       </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        </div>
+                    </div>
+                </div>  
+                        <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
+                        <div class="container">
+                        <div class="row mb-50">
+                               
+                        <div class="col-lg-6 col-md-12">
+                        
+                                <div class="border p-md-4 p-30 border-radius cart-totals">
+                                    <div class="heading_s1 mb-3">
+                                        <h4>Order Totals</h4>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="cart_total_label"> Coupon</td>
+                                                    <td class="cart_total_amount">{{coupon_code}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="cart_total_label">Shipping</td>
+                                                    <td class="cart_total_amount"> <i class="ti-gift mr-5"></i> Free Shipping</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="cart_total_label">Total</td>
+                                                    <td class="cart_total_amount"><strong><span class="font-xl fw-900 text-brand">${{order.total_price}}</span></strong></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    
+                                    
+                                </div>
+                                 
+                            </div> 
+                            <div class="col-lg-6 col-md-12">
+                                <div class="border p-md-4 p-30 border-radius cart-totals">
+                                    <div class="heading_s1 mb-3">
+                                        <h4>Payment Info</h4>
+                                    </div>
+                                    <p>
+                                        Pay method: {{order.payment_method}}
+                                        <br>
+                                        Payment Status:
+                                        {% if order.payment is 'CASH_ON_DELIVERY' %}
+                                        Pending
+                                        {% else %}
+                                        Payment done
+                                        {% endif %}
+                                    </p>
+                                
+                            </div>
+                            
+                        </div>
+                        </div> 
+                    </div>
+
+                    <div class="container">
+                        <div class="col-lg-12 col-md-12">
+                            
+                        </div>
+                    </div>
+                    <div>
+                        <div class="cart_submit">
+                            {% if order.is_returned == 'PROCESSING' %}
+                            <a class="Returning" href="{% url 'return_order' order_id=order.id %}"
+                                        style="background: #242424;
+                                        border: 0;   
+                                        color: #ffffff;
+                                        display: inline-block;
+                                        font-size: 12px;
+                                        font-weight: 600;
+                                        height: 38px;
+                                        line-height: 18px;
+                                        padding: 10px 15px;
+                                        text-transform: uppercase;
+                                        cursor: pointer;
+                                        -webkit-transition: 0.3s;
+                                        transition: 0.3s;" >Cancel return</a>     
+                                            
+
+                            {% elif order.order_status == 'Delivered' %}
+                                
+
+                                <div class="user-actions">
+                                    <h3> 
+                                        
+                                        <a class="Returning" href="#" data-bs-toggle="collapse" data-bs-target="#checkout_coupon" aria-expanded="true" 
+                                        style="background: #242424;
+                                        border: 0;   
+                                        color: #ffffff;
+                                        display: inline-block;
+                                        font-size: 12px;
+                                        font-weight: 600;
+                                        height: 38px;
+                                        line-height: 18px;
+                                        padding: 10px 15px;
+                                        text-transform: uppercase;
+                                        cursor: pointer;
+                                        -webkit-transition: 0.3s;
+                                        transition: 0.3s;" >Return order</a>     
+            
+                                    </h3>
+                                     <div id="checkout_coupon" class="collapse" data-bs-parent="#accordion">
+                                        <div class="checkout_info">
+                                            <form action="{% url 'return_order' order_id=order.id %}" method="post">
+                                                {% csrf_token   %}
+                                                <textarea style="width: 60%;" placeholder="Coupon code" type="text" name="return_reason"></textarea><br>
+                                                <button type="submit">Submit</button>
+                                            </form>
+                                        </div>
+                                    </div>    
+                                </div> 
+
+
+                            {% elif not order.canceled %}
+                                <a href="{% url 'cancel_order' order_id=order.id %}" type="button" style="background: #242424;
+                                border: 0;   
+                                color: #ffffff;
+                                display: inline-block;
+                                font-size: 12px;
+                                font-weight: 600;
+                                height: 38px;
+                                line-height: 18px;
+                                padding: 10px 15px;
+                                text-transform: uppercase;
+                                cursor: pointer;
+                                -webkit-transition: 0.3s;
+                                transition: 0.3s;" >
+                                Cancel order</a>
+                            {% endif %} 
+
+                        </div>  
+                        <div  class="checkout_btn">
+                            <a href="{% url 'userProfile' user_name=user_name %}">Back to dashboard</a>
+                        </div>
+                    </div>
+                
+            </div>
+            
+            </div>
+        </section>
+    </main>
+  
+<!-- JS
+============================================ -->
+
+<!-- Plugins JS -->
+<script src="{% static 'reid_assets/js/plugins.js' %}"></script>
+
+<!-- Main JS -->
+<script src="{% static 'reid_assets/js/main.js' %}"></script>
+
+
+
+</body>
+
+
+<!-- Mirrored from htmldemo.net/reid/reid/checkout.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Feb 2024 13:44:34 GMT -->
+</html>
+{% endblock %}

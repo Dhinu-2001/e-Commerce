@@ -9,6 +9,7 @@ from django.http import HttpResponse
 import razorpay 
 from django.views.decorators.csrf import csrf_exempt
 from coupon.models import Coupon
+from wallet.models import Wallet
 
 # Create your views here.
 def cart_id(request):
@@ -151,6 +152,7 @@ class cart(View):
                     total_afer_discount = total_price - discount_rate
                     request.session['discount_total'] = total_afer_discount
                     request.session['coupon_code'] = coupon_code
+              
             coupon_code = request.session.get('coupon_code')
             if coupon_code is not None:
                 total_grand = request.session.get('discount_total')
@@ -195,9 +197,15 @@ class place_order(View):
                 total_grand = request.session.get('discount_total')
             else:
                 total_grand = total_price
-               
         except Cart.DoesNotExist:
             pass
+
+        try:
+            wallet = Wallet.objects.get(user = user)
+        except Wallet.DoesNotExist:
+            wallet = Wallet.objects.create(user = user)
+            wallet.save()
+        wallet_balance = wallet.amount
         
         context = {
             'cart_total':total_price,
@@ -208,8 +216,9 @@ class place_order(View):
             'user_name': username,
             'addresses': addresses,
             'coupon_code':coupon_code,
+            'wallet_balance':wallet_balance,
         }
-        return render(request, 'evara-frontend/shop-checkout.html',context)
+        return render(request, 'reid/checkout.html',context)
 
 
 class order_success(View):
@@ -224,17 +233,19 @@ class order_success(View):
             # payment = client.order.create({'amount': amount, 'currency': 'INR', 'payment_capture': '1'})
 
         deli_address_id = request.POST.get('delivery_address')
+        
         if deli_address_id == 'new address':
             address_title    = request.POST['address_title']
             name             = request.POST['name']
             ph_number        = request.POST['ph_number']
+
             pincode          = request.POST['pincode']
             locality         = request.POST['locality']
             address          = request.POST['address']
             city             = request.POST['city']
             state            = request.POST['state']
             landmark         = request.POST['landmark']
-            alt_phone_number = request.POST['alt_phone_number']
+            alt_phone_number = request.POST['alternate_phone_numbel']
             if not address_title or not ph_number or not pincode or not address or not locality or not city or not state or not name:
                 messages.error(request,'Enter the required fields')
                 return redirect('place_order' )
@@ -282,11 +293,18 @@ class order_success(View):
         order_i = Order.objects.get(id = order_submit.id)
 #------------------------------------------------------------Total amount saving in database--------------------------------  
         coupon_code = request.session.get('coupon_code')
-        delete_coupon = request.session.pop('coupon_code', None)
+        coupon = Coupon.objects.get(code = coupon_code)
         if coupon_code is not None:
+            order_i.coupon_used = coupon
+            order_i.price_without_discount = total
+            discount_total=request.session.get('discount_total')
+            price_discounted = total - discount_total
+            order_i.price_discounted = price_discounted
             order_i.total_price = request.session.get('discount_total')
         else:
             order_i.total_price = total
+            order_i.price_without_discount = total
+        delete_coupon = request.session.pop('coupon_code', None)
         
         order_i.save()
        #total_price = order_submit.calculate_total_price()
@@ -296,7 +314,12 @@ class order_success(View):
             variations = order_item.variations.all()
             for variation in variations:
                 order_items_variations.append((order_item, variation))
-        
+
+        if payment_method == 'WALLET':
+            wallet = Wallet.objects.get( user = user)
+            wallet.amount -= order_i.total_price
+            wallet.save()
+        wallet = Wallet.objects.get( user = user)
         if payment_method == 'RAZORPAY':
             return redirect('razorpay_name',order_id = order_submit.id)
         
@@ -306,12 +329,14 @@ class order_success(View):
             'order_no': order_submit.id,
             'order_date': order_submit.order_date,
             'order_method': order_submit.payment_method,
+            'order':order_i,
             'shipping_address': order_submit.shipping_address,
             'order_items_variations':order_items_variations,
             'total':total,
-            'user_name':user.username  
+            'user_name':user.username ,
+            'wallet':wallet, 
         }
-        return render(request, 'evara-frontend/order_success.html',context)
+        return render(request, 'reid/order_success.html',context)
         
         # elif payment_method == 'RAZORPAY':
         #     amount = 500000
@@ -332,21 +357,22 @@ from .models import CartItem
 
 @require_POST
 def update_cart_item(request, cart_item_id):
-    try:
-        print("Request received")
-        print(f"Request method: {request.method}")
-        print(f"Request data: {request.body}")
-        print(f"Request headers: {request.headers}")
+    if request.method == 'POST':
+        try:
+            print("Request received")
+            print(f"Request method: {request.method}")
+            print(f"Request data: {request.body}")
+            print(f"Request headers: {request.headers}")
 
-        cart_item = CartItem.objects.get(id=cart_item_id)
+            cart_item = CartItem.objects.get(id=cart_item_id)
 
-        new_quantity = int(request.POST.get('quantity'))
-        print(f"New quantity: {new_quantity}")
-        cart_item.quantity = new_quantity
-        print(cart_item_id,new_quantity)
-        cart_item.save()
-        return JsonResponse({'success': True})
-    except CartItem.DoesNotExist:
-        return JsonResponse({'error': 'Cart item not found'}, status=404)
-    except ValueError:
-        return JsonResponse({'error': 'Invalid quantity'}, status=400)
+            new_quantity = int(request.POST.get('quantity'))
+            print(f"New quantity: {new_quantity}")
+            cart_item.quantity = new_quantity
+            print(cart_item_id,new_quantity)
+            cart_item.save()
+            return JsonResponse({'success': True})
+        except CartItem.DoesNotExist:
+            return JsonResponse({'error': 'Cart item not found'}, status=404)
+        except ValueError:
+            return JsonResponse({'error': 'Invalid quantity'}, status=400)

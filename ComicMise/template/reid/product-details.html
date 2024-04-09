@@ -31,7 +31,7 @@
                         <div id="img-1" class="zoomWrapper single-zoom">
                             
                             <a href="#">
-                                <img id="zoom1" src="{% static 'reid_assets/img/product/product5.jpg' %}" data-zoom-image="reid_assets/img/product/product5.jpg" alt="big-1">
+                                <img id="zoom1" src="{{ single_product.images.first.image.url }}" data-zoom-image="{{ single_product.images.first.image.url }}" style="max-width: 73%;height: auto;margin-left: 15%;" >
                             </a>
                             
                         </div>
@@ -90,8 +90,7 @@
                             <div class="product_variant size">
                                 <h3>size</h3>
                                 <select class="niceselect_option" id="color1" name="size">
-                                    <option selected value="">size</option>  
-                                    <option value="small"> s</option>
+                                    <option value="small" selected> s</option>
                                     <option value="medium">m</option>
                                     <option value="large"> l</option>
                                 </select> 
@@ -109,8 +108,9 @@
                                 {% endif %}
                             </div>
                             <div class=" product_d_action">
+                                <!-- product_id=single_product.id  -->
                                <ul>
-                                   <li><a href="#" title="Add to wishlist"><i class="fa fa-heart-o" aria-hidden="true"></i> Add to Wish List</a></li>
+                                   <li><a href="{% url 'add_wishlist' product_id=single_product.id %}" title="Add to wishlist"><i class="fa fa-heart-o" aria-hidden="true"></i> Add to Wish List</a></li>
                                    <li><a href="#" title="Add to Compare"><i class="fa fa-sliders" aria-hidden="true"></i> Compare this Product</a></li>
                                </ul>
                             </div>

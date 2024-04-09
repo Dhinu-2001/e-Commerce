@@ -1,0 +1,197 @@
+{% extends 'reid/base-reid.html' %}
+{%load static%}
+{% block content %}
+
+<div style=" justify-content: center; align-items: center;" class="col-12"  >
+     <h3 class="title-detail" style="text-align: center;">Thank You!!<br></h3>
+      <h2 class="title-detail" style="text-align: center;">YOUR ORDER IS CONFIRMED.</h2>
+      <div  class="col-12"
+       style="flex: 0 0 auto;
+       width: 100%;
+       display: flex;
+       align-content: center;
+       flex-wrap: wrap;
+       flex-direction: column;
+       justify-content: space-around;" >
+       <img src="{% static 'images/images.png' %}" alt="Girl in a jacket" width="100" height="100"> 
+       </div>
+</div> 
+<div class="container">
+<div class="row mb-50">
+    
+    <div style="display: flex; justify-content: center; align-items: center;" class="heading_s1 mb-3">
+        <h4>Order Summary</h4>
+    </div>
+    <div class="col-lg-6 col-md-12">
+        
+        <div class="order_review">
+            
+            <div class="table-responsive order_table text-center">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td class="cart_total_label">Order No</td>
+                            <td class="cart_total_amount"># {{order_no}} </td>
+                        </tr>
+                        <tr>
+                            <td class="cart_total_label">Order date</td>
+                            <td class="cart_total_amount">{{ order_date }}</td>
+                        </tr>
+                        <tr>
+                            <td class="cart_total_label">Order method</td>
+                            <td class="cart_total_amount">{{order_method}}<br>
+                                {% if order_method == 'WALLET' %}
+                                  Wallet balance:  {{wallet.amount}}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-12">
+            <div class="table-responsive order_table text-center">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td class="cart_total_label">Shipping Address:</td>
+                        </tr>
+                        <tr>
+                            <td class="cart_total_label">
+                                <p>{{shipping_address.name}}</p>
+                                <p>{{shipping_address.ph_number}}</p>
+                                <p>{{shipping_address.locality}},</p>
+                                <p>{{shipping_address.city}},</p>
+                                <p>{{shipping_address.state}}</p>
+                                <p>Pin Code:{{shipping_address.pincode}}</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="shopping_cart_area">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table_desc">
+                            <div class="cart_page table-responsive">
+                            <table >
+                                <thead>
+                                    <tr class="main-heading">
+                                        <th scope="col">Image</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Subtotal</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order_item, variation in order_items_variations  %}
+                                   
+                                    <tr>
+                                        <td class="product_thumb"><img src="{{ order_item.product.images.first.image.url }}" style="max-width: 23%;height: auto;" alt="#"></td>
+                                        <!--  -->
+                                        <td class="product_name">
+                                            <a href="">{{ order_item.product }}</a>
+                                            <p style="font-size: smaller;">Maboriosam in a tonto nesciung eget<br> distingy magndapibus.
+                                            </p>
+                                        </td>
+                                        <td class="product-price" data-title="Price"><span>Rs.{{ order_item.product.price }}</span></td>
+                                        <td class="product-price" data-title="Stock">
+                                           <span class="qty-val">{{order_item.quantity}}</span>      
+                                        </td>
+                                        <td class="product_total" data-title="Cart">
+                                            <span>Rs.{{ order_item.price }}</span>
+                                        </td>
+                                       </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        </div>
+                       
+                        <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
+                        <div class="container">
+                        <div class="row mb-50">
+                               
+                        <div class="col-lg-6 col-md-12">
+                        
+                                <div class="border p-md-4 p-30 border-radius cart-totals">
+                                    <div class="heading_s1 mb-3">
+                                        <h4>Order Totals</h4>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="cart_total_label"> Coupon</td>
+                                                    <td class="cart_total_amount">{{coupon_code}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="cart_total_label">Shipping</td>
+                                                    <td class="cart_total_amount"> <i class="ti-gift mr-5"></i> Free Shipping</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="cart_total_label">Total</td>
+                                                    <td class="cart_total_amount"><strong><span class="font-xl fw-900 text-brand">${{order.total_price}}</span></strong></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <div class="cart_submit">
+                                        <a href="{% url 'userProfile' user_name=user_name %}" type="button" style="background: #242424;
+                                        border: 0;
+                                        color: #ffffff;
+                                        display: inline-block;
+                                        font-size: 12px;
+                                        font-weight: 600;
+                                        height: 38px;
+                                        line-height: 18px;
+                                        padding: 10px 15px;
+                                        text-transform: uppercase;
+                                        cursor: pointer;
+                                        -webkit-transition: 0.3s;
+                                        transition: 0.3s;" >
+                                        Order List</a>
+                                    </div>  
+                                    
+                                </div>
+                                 
+                            </div> 
+                            <div class="col-lg-6 col-md-12">
+                                <div  class="checkout_btn">
+                                    <a href="{% url 'home' %}">Continue Shopping</a>
+                                </div>
+                            </div>
+                        </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+  
+<!-- JS
+============================================ -->
+
+<!-- Plugins JS -->
+<script src="{% static 'reid_assets/js/plugins.js' %}"></script>
+
+<!-- Main JS -->
+<script src="{% static 'reid_assets/js/main.js' %}"></script>
+
+
+
+</body>
+
+
+<!-- Mirrored from htmldemo.net/reid/reid/checkout.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Feb 2024 13:44:34 GMT -->
+</html>
+{% endblock %}

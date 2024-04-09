@@ -43,7 +43,7 @@
                                         {% for cart_item, variation in cart_items_variations  %}
                                         <tr>
                                            <td class="product_remove"><a href="#"><i class="fa fa-trash-o"></i></a></td>
-                                            <td class="product_thumb"><a href="#"><img src="{% static 'reid_assets/img/s-product/product.jpg' %}" alt=""></a></td>
+                                            <td class="product_thumb"><a href="#"><img src="{{ cart_item.product.images.first.image.url }}" style="max-width: 23%;height: auto;" alt=""></a></td>
                                             <td class="product_name"><a href="#">{{ cart_item.product }}</a></td>
                                             <td class="product-price">Rs.{{ cart_item.product.price }}</td>
                                             <td class="product_quantity"><input id="quantity-input" min="1" max="100" value="{{ cart_item.quantity }}" type="number" data-cart-item-id="{{ cart_item.id }}"></td>

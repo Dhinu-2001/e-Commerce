@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'cart',
     'razorpay',
     'coupon',
+    'wallet',
+    'wishlist',
+    'user_wishlist',
    
 ]
 

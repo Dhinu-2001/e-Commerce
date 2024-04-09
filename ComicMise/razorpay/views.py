@@ -10,6 +10,7 @@ from accounts.models import Account
    
 def razorpay_name( request, order_id):
     user_id = request.session['user_id']
+    user = Account.objects.get( id = user_id)
     order = Order.objects.get(id = order_id )
     data_amount = order.total_price * 100
     if request.method == "POST":
@@ -19,12 +20,13 @@ def razorpay_name( request, order_id):
             auth=("rzp_test_oRlyX5LhXmmXeJ", "6zxeEQafauF3o4awwAkWYat1"))
         payment = client.order.create({'amount': amount, 'currency': 'INR', 'payment_capture': '1'})
     context ={
+        'user_name':user.username,
         'user_id':user_id,
         'order_id':order_id,
         'order' : order,
         'data_amount':data_amount,
     }
-    return render(request, 'evara-frontend/razorpay_name.html',context)
+    return render(request, 'reid/razorpay_name.html',context)
 
 @csrf_exempt
 def razorpay_success(request, user_id, order_id):
@@ -47,4 +49,4 @@ def razorpay_success(request, user_id, order_id):
             'total':order_id.total_price,
             'user_name':user.username  
         }
-    return render(request, 'evara-frontend/order_success.html',context)
+    return render(request, 'reid/order_success.html',context)
