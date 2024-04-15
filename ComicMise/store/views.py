@@ -48,9 +48,9 @@ class sort(View):
         elif sort_value == 'popularity':
             products = Product.objects.all().order_by('popularity')
         elif sort_value == 'LowtoHigh':
-            products = Product.objects.all().order_by('price')
+            products = Product.objects.all().order_by('promotion_price')
         elif sort_value == 'HightoLow':
-            products = Product.objects.all().order_by('-price')
+            products = Product.objects.all().order_by('-promotion_price')
         elif sort_value == 'rating':
             products = Product.objects.all().order_by('average_rating')
         elif sort_value == 'a-z':

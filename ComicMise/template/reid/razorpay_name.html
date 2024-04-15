@@ -19,8 +19,8 @@
     <form class="text-center border border-light p-5" action="{% url 'razorpay_success' user_id=user_id order_id=order_id %}" method="POST">
         {% csrf_token %}
 
-        <p class="h3 mb-3"><i class="fas fa-coffee"></i> BUY ME A COFFEE!!</p>
-        <p class="mb-3">Help us create more videos by donating 500 INR</p>
+        <p class="h3 mb-3"><i class="fas fa-coffee"></i>Pay with Razorpay</p>
+        <p class="mb-3">Enter the name of payor</p>
 
         <input type="name" name="name" id="name" required class="form-control mb-4" placeholder="Name">
 
@@ -32,8 +32,8 @@
             data-currency="INR" 
             data-order_id="{{payment.id}}" 
             data-buttontext="Pay with Razorpay"
-            data-name="Professional Cipher" 
-            data-description="Django and Data Science"
+            data-name={{user_name}} 
+            data-description="order id: {{order.id}} "
             data-image="https://example.com/your_logo.jpg" 
             data-prefill.name="PC" 
             data-prefill.email="pc@studygyaan.com"

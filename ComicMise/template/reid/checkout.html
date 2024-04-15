@@ -192,7 +192,7 @@
                                         {% for cart_item, variation in cart_items_variations  %}
                                         <tr>
                                             <td>{{cart_item.product}} <strong> × {{ cart_item.quantity }}</strong></td>
-                                            <td>Rs.{{ cart_item.product.price }}</td>
+                                            <td>Rs.{{ cart_item.product.promotion_price }}</td>
                                         </tr>
                                         {%endfor %}
                                         
@@ -218,10 +218,16 @@
                                 </table>     
                             </div>
                             <div class="payment_method">
+                                
                                <div class="panel-default">
+                                {% if total > 1000 %}
+                                    <input disabled required="" checked="" id="exampleRadios3" name="payment_option" type="radio" value = "CASH_ON_DELIVERY" data-bs-target="createp_account" />
+                                    <label for="payment" data-bs-toggle="collapse" data-bs-target="#method" aria-controls="method">Cash on delivery</label> (For order above Rs.1000, Cash on delivery is not available.)
+                                {% else %}
                                     <input required="" checked="" id="exampleRadios3" name="payment_option" type="radio" value = "CASH_ON_DELIVERY" data-bs-target="createp_account" />
                                     <label for="payment" data-bs-toggle="collapse" data-bs-target="#method" aria-controls="method">Cash on delivery</label>
-
+                            
+                                {% endif %}
                                     <div id="method" class="collapse one" data-bs-parent="#accordion">
                                         <div class="card-body1">
                                            <p>Please send a check to Store Name, Store Street, Store Town, Store State / County, Store Postcode.</p>
@@ -245,7 +251,7 @@
                                     <label for="payment_defult" data-bs-toggle="collapse" data-bs-target="#collapsedefult" aria-controls="collapsedefult">Razorpay </label>
                                     <img src="{% static 'reid_assets/img/icon/papyel.png' %}" alt="">
 
-                                    <div id="collapsedefult" class="collapse one" data-bs-parent="#accordion">
+                                    <div id="collapse defult" class="collapse one" data-bs-parent="#accordion">
                                         <div class="card-body1">
                                            <p>Pay via PayPal; you can pay with your credit card if you don’t have a PayPal account.</p> 
                                         </div>

@@ -76,7 +76,6 @@
                                         {% else %}
                                         <a href="{% url 'coupon_action' coupon_id=coupon.id %}" class="btn btn-sm btn-brand rounded font-sm mt-15">Activate</a>
                                         {% endif %}
-                                        <a href="{% url 'delete_coupon' coupon_id=coupon.id %}" class="btn btn-sm btn-brand rounded font-sm mt-15">Delete</a>
                                     </td>
                                 </tr>
                                 {% endfor %}

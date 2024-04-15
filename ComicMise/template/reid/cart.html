@@ -1,5 +1,6 @@
 {% extends 'reid/base-reid.html' %}
 {%load static%}
+
 {% block content %}
 
     <!--breadcrumbs area start-->
@@ -45,9 +46,9 @@
                                            <td class="product_remove"><a href="#"><i class="fa fa-trash-o"></i></a></td>
                                             <td class="product_thumb"><a href="#"><img src="{{ cart_item.product.images.first.image.url }}" style="max-width: 23%;height: auto;" alt=""></a></td>
                                             <td class="product_name"><a href="#">{{ cart_item.product }}</a></td>
-                                            <td class="product-price">Rs.{{ cart_item.product.price }}</td>
+                                            <td class="product-price">Rs.{{ cart_item.product.promotion_price }}</td>
                                             <td class="product_quantity"><input id="quantity-input" min="1" max="100" value="{{ cart_item.quantity }}" type="number" data-cart-item-id="{{ cart_item.id }}"></td>
-                                            <td class="product_total">Rs.{{ cart_item.sub_total }}</td>
+                                            <td class="product_total">Rs.<span id="subtotal-{{ cart_item.id }}">{{ cart_item.sub_total }}</span></td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
@@ -93,17 +94,17 @@
                                         <select class="nice-select niceselect_option" id="dropdown-field" name="coupon_code">
                                           <option value="">-- Select an option --</option>
                                           {% for coupon in coupon_list %}
-                                          <option value={{coupon.code}}>{{coupon.code}}</option>
+                                          <option value={{coupon.code}}>{{coupon.code}}-{{coupon.discount}}%</option>
                                           {% endfor %}
                                         </select>
                                       </div> 
                                     <button type="submit">Apply coupon</button>
-                                    
+                                     </form>
                                         <!-- <input class="font-medium" name="coupon_code" placeholder={{coupon_code}} disabled>
                                      -->
                                     {% else %}
                                     <div class="form-group col-lg-6">
-                                        <input class="font-medium" name="coupon_code" placeholder={{coupon_code}} disabled>
+                                        <input class="font-medium" name="coupon_code" placeholder='{{ coupon.code }}-  {{coupon.discount}}%' disabled>
                                     
                                     
                                         <a href="{% url 'remove_coupon' %}" type="button" class="btn  btn-sm" style="background: #242424;
@@ -121,7 +122,7 @@
                                         transition: 0.3s;" ><i class="fi-rs-label mr-10"></i>Remove</a>
                                     </div>
                                     {% endif %}
-                                    </form>
+                                   
                                 </div>
                                 
                             </div>
@@ -132,12 +133,16 @@
                                 <div class="coupon_inner">
                                    <div class="cart_subtotal">
                                        <p>Subtotal</p>
-                                       <p class="cart_amount">Rs.{{cart_total}}</p>
-                                   </div>
+                                       <p class="cart_amount">Rs.<span id="cart_total">{{cart_total}}</span></p>
+                                    </div>
                                    <div class="cart_subtotal">
-                                       <p>Coupon</p>
-                                       <p class="cart_amount"> {{ coupon_code }}-{{coupon_code.discount}}</p>
-                                   </div>
+                                        <p>Coupon</p>
+                                        {% if coupon_code != None %}
+                                        <p class="cart_amount"> {{ coupon.code }}-  {{coupon.discount}}%</p>
+                                        {% else %}
+                                        <p class="cart_amount">None</p>
+                                        {% endif %}
+                                    </div>
                                    <div class="cart_subtotal ">
                                        <p>Shipping</p>
                                        <p class="cart_amount"><span>Flat Rate:</span> Free shipping</p>
@@ -146,7 +151,7 @@
 
                                    <div class="cart_subtotal">
                                        <p>Total</p>
-                                       <p class="cart_amount">Rs.{{total}}</p>
+                                       <p class="cart_amount">Rs.<span id="grand_total">{{total}}</span></p>
                                    </div>
                                    <div class="checkout_btn">
                                        <a href="{% url 'place_order' %}">Proceed to Checkout</a>
@@ -162,18 +167,87 @@
         </div>     
     </div>
     <!--shopping cart area end -->
+    <script
+        src="https://code.jquery.com/jquery-3.5.0.min.js"
+        integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ="
+        crossorigin="anonymous"></script>
+<!-- {% url 'update_cart_item' cart_item_id=cartItemId as update_cart_item_url %}
+  -->
+<head>
+    <script>
+        var csrfToken = '{{ csrf_token }}';
+    </script>
+
+</head>
+
+<script>
+    // update_quantity.js
+    document.addEventListener('DOMContentLoaded', function() {
+        const quantityInputs = document.querySelectorAll('#quantity-input');
+        quantityInputs.forEach(function(input) {
+            input.addEventListener('change', updateQuantity);
+        });
+    });
+    
+    function updateQuantity() {
+        const newQuantity = this.value;
+        const cartItemId = this.getAttribute('data-cart-item-id');
+        console.log(newQuantity);
+        console.log(cartItemId);
+    
+        // Send AJAX request to update the quantity
+        fetch( 'cart/update-cart-item/', {
+            method: 'POST',
+            // `/update-cart-item/${cartItemId}/`
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken // Include the CSRF token
+            },
+            body: JSON.stringify({
+      quantity: newQuantity,
+      cart_item_id: cartItemId // Add the cart item ID to the request body
+    })
+        })
+        .then(response => response.json())
+        .then(data => {
+        if (data.success) {
+            // Update the subtotal display with the updated_subtotal value
+            const updatedSubtotal = data.updated_subtotal;
+            const subtotalElement = document.getElementById(`subtotal-${cartItemId}`);
+            subtotalElement.textContent = updatedSubtotal;
+            console.log(updatedSubtotal)
+
+            const updatedCartTotal = data.updated_cart_total
+            const cartTotalElement = document.getElementById(`cart_total`);
+            cartTotalElement.textContent = updatedCartTotal;
+            console.log(updatedCartTotal)
+
+            const updatedGrandTotal = data.updated_grand_total
+            const grandTotal = document.getElementById(`grand_total`);
+            grandTotal.textContent = updatedGrandTotal;
+            console.log(updatedGrandTotal)
+        } else {
+            // Handle any errors
+            console.error('Error:', data.error);
+        }
+    })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    </script>
+    
     
   
 <!-- JS
 ============================================ -->
-<script src="{% static 'reid_assets/js/update_quantity.js' %}"></script>
+
+
 <!-- Plugins JS -->
 <script src="{% static 'reid_assets/js/plugins.js' %}"></script>
 
 <!-- Main JS -->
 <script src="{% static 'reid_assets/js/main.js' %}"></script>
-
-
 
 </body>
 

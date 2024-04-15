@@ -28,6 +28,4 @@ urlpatterns = [
     path('userside_order_detail/<int:order_id>/',userside_order_detail.as_view(),name = 'userside_order_detail'),
     path('cancel_order/<int:order_id>/', cancel_order.as_view(), name = 'cancel_order'),
 
-    path('lo/', lo.as_view(), name = 'lo'),
-    path('re/', re.as_view(), name = 're'),
 ]

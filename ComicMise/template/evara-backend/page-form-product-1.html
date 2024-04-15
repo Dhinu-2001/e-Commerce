@@ -36,56 +36,39 @@
                                     <label class="form-label">Full description</label>
                                     <textarea placeholder="Type here" class="form-control" rows="4" name="product_description" ></textarea>
                                 </div>
-                                <div class="row">
-                                    <label for="product_name" class="form-label">Specifications</label>
-                                    <div class="col-lg-6">
-                                        <div class="mb-4">                                            
-                                            <input type="text" placeholder="Spec-Title" class="form-control" id="product_name">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="mb-4">
-                                            <!-- <label for="product_name" class="form-label">Height</label> -->
-                                            <input type="text" placeholder="Spec-Detail" class="form-control" id="product_name">
-                                        </div>
-                                    </div>
-                                </div>
+                                
                                 <div class="row">
                                     <div class="col-lg-4">
+                                        <label class="form-label">Category</label>
+                                        <select name="product_category" class="form-select" >
+                                            {% for obj in category_list %}
+                                            <option value="{{ obj.slug}}" > {{ obj.category_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-4">
                                         <div class="mb-4">
-                                            <label class="form-label">Regular price</label>
+                                            <label class="form-label">Promotion price</label>
                                             <div class="row gx-2">
-                                                <input placeholder="$" type="text" class="form-control" name="product_price">
+                                                <input placeholder="Rs." type="text" class="form-control" name="promotion_price">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="mb-4">
-                                            <label class="form-label">Promotional price</label>
-                                            <input placeholder="$" type="text" class="form-control">
+                                            <label class="form-label">Regular price</label>
+                                            <input placeholder="Rs." type="text" class="form-control" name="regular_price">
                                         </div>
                                     </div>
-                                    <div class="col-lg-4">
-                                        <label class="form-label">Currency</label>
-                                        <select class="form-select">
-                                            <option> USD </option>
-                                            <option> EUR </option>
-                                            <option> RUBL </option>
-                                        </select>
-                                    </div>
                                 </div>
-                                <div class="mb-4">
+                                <!-- <div class="mb-4">
                                     <label class="form-label">Tax rate</label>
                                     <input type="text" placeholder="%" class="form-control" id="product_name">
-                                </div>
-                                <label class="form-check mb-4">
-                                    <input class="form-check-input" type="checkbox" value="">
-                                    <span class="form-check-label"> Make a template </span>
-                                </label>
+                                </div> -->
                             <!-- </form> -->
                         </div>
                     </div> <!-- card end// -->
-                    <div class="card mb-4">
+                    <!-- <div class="card mb-4">
                         <div class="card-header">
                             <h4>Shipping</h4>
                         </div>
@@ -114,13 +97,13 @@
                                     <input type="text" placeholder="$" class="form-control" id="product_name">
                                 </div>
                             
-                        </div>
-                    </div> <!-- card end// -->
+                        </div> -->
+                  <!--  </div>  card end// -->
                 </div>
                 <div class="col-lg-3">
                     <div class="card mb-4">
                         <div class="card-header">
-                            <h4>Media</h4>
+                            <h4>Media</h4><p>Must upload 3 images</p>
                         </div>
                         <div class="card-body">
                             <div class="input-upload">
@@ -135,7 +118,7 @@
                             </div>
                         </div>
                     </div> <!-- card end// -->
-                    <div class="card mb-4">
+                    <!-- <div class="card mb-4">
                         <div class="card-header">
                             <h4>Organization</h4>
                         </div>
@@ -161,9 +144,10 @@
                                     <label for="product_name" class="form-label">Stock</label>
                                     <input type="text" class="form-control" name="product_stock">
                                 </div>
-                            </div> <!-- row.// -->
+                            </div> 
                         </div>
-                    </div> <!-- card end// -->
+                    </div>  -->
+                    <!-- card end// -->
                 </div>
             </form>
             </div>

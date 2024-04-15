@@ -48,13 +48,7 @@ class coupon_action(View):
             coupon.save()
         return redirect('coupon_list')
     
-class delete_coupon(View):
-    def get(self, request, coupon_id):
-        coupon = Coupon.objects.get(id = coupon_id)
-        coupon.delete()
-        return redirect('coupon_list')
-    
-class remove_coupon(View):
+class remove_coupon(View): #remove function of coupon in User cart..................
     def get(self, request):
         coupon_code = request.session.pop('coupon_code', None)
         return redirect('cart')

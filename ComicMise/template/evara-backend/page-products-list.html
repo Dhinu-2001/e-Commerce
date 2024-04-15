@@ -49,8 +49,8 @@
                                 <tr>
                                     <th><input class="form-check-input" type="checkbox"></th>
                                     <th>Product Title</th>
-                                    <th>Price</th>
                                     <th>Category</th>
+                                    <th>Price</th>
                                     <th>Stock</th>
                                     <th>Modified Date</th>
                                     <th>Status</th>
@@ -63,7 +63,7 @@
                                 <tr>
                                     <td> <input class="form-check-input" type="checkbox"> </td>
                                     <td width="40%">
-                                        <a href="{% url 'product_detail' %}" class="itemside">
+                                        <a  class="itemside">
                                             <div class="left">
                                                 <img src="{{ obj.images.first.image.url }}" class="img-sm img-avatar" alt="Userpic">
                                             <div class="info pl-3">
@@ -73,15 +73,21 @@
                                         </a>
                                     </td>
                                     <!-- <td><template class="__cf_email__" data-cfemail="2c4940494d42435e1e1c1e1c6c49544d415c4049024f4341">{{ obj.email }}</template></td> -->
-                                    <td>{{ obj.price }}</td>
                                     <td>{{ obj.category }}</td>
+                                    <td>{{ obj.promotion_price }}</td>
                                     <td>{{ obj.stock }}</td>
                                     <td>{{ obj.modified_date }}</td>
-                                    <td><span class="badge rounded-pill alert-success">{{ obj.is_available }}</span></td>
+                                    <td>
+                                        {% if obj.is_available %}
+                                            <span class="badge rounded-pill alert-success">Available</span>
+                                        {% else %}
+                                            <span class="badge rounded-pill alert-danger">Not available</span>
+                                        {% endif %}
+                                    </td>
                                     <td class="text-end">
                                         <div >
-                                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                                <i class="material-icons md-edit"></i> Edit
+                                            <a href="{% url 'product_detail' product_id=obj.id %}" class="btn btn-sm font-sm rounded btn-brand">
+                                                <i class="material-icons md-edit"></i> Details
                                             </a>
                                             <a href="#" class="btn btn-sm font-sm btn-light rounded">
                                                 <i class="material-icons md-delete_forever"></i> Delete

@@ -10,6 +10,8 @@ import razorpay
 from django.views.decorators.csrf import csrf_exempt
 from coupon.models import Coupon
 from wallet.models import Wallet
+from django.middleware.csrf import get_token
+
 
 # Create your views here.
 def cart_id(request):
@@ -81,14 +83,13 @@ class cart(View):
         try:
             user_id = request.session['user_id']
             user = Account.objects.get(pk=user_id)
-            
             cart = Cart.objects.get(cart_id=cart_id(request))
-            print(cart_id(request))
+            
             cart_items = CartItem.objects.filter(cart = cart, is_active=True)
             cart_items_variations = []
             coupon_list = Coupon.objects.all()
             for cart_item in cart_items:
-                total_price += (cart_item.product.price * cart_item.quantity)
+                total_price += (cart_item.product.promotion_price * cart_item.quantity)
                 quantity += cart_item.quantity
                 variations = cart_item.variations.all()
                 for variation in variations:
@@ -116,10 +117,12 @@ class cart(View):
             'cart_total':total_price,
             'total': total_grand,
             'coupon_list':coupon_list,
+            
             'coupon_code':coupon_code,
             'quantity':quantity,
             'cart_items_variations': cart_items_variations,
             'user_name': user.username,
+            'csrf_token': get_token(request)
         }
         
         return render(request, 'reid/cart.html',context)
@@ -136,7 +139,7 @@ class cart(View):
             coupon_list = Coupon.objects.all()
 
             for cart_item in cart_items:
-                total_price += (cart_item.product.price * cart_item.quantity)
+                total_price += (cart_item.product.promotion_price * cart_item.quantity)
                 quantity += cart_item.quantity
                 variations = cart_item.variations.all()
                 for variation in variations:
@@ -166,6 +169,7 @@ class cart(View):
             'cart_total':total_price,
             'total': total_grand,
             'coupon_list':coupon_list,
+            'coupon':coupon,
             'coupon_code':coupon_code,
             'quantity':quantity,
             'cart_items_variations': cart_items_variations,
@@ -185,7 +189,7 @@ class place_order(View):
             cart_items = CartItem.objects.filter(cart = cart, is_active=True)
             cart_items_variations = []
             for cart_item in cart_items:
-                total_price += (cart_item.product.price * cart_item.quantity)
+                total_price += (cart_item.product.promotion_price * cart_item.quantity)
                 quantity += cart_item.quantity
                 variations = cart_item.variations.all()
                 for variation in variations:
@@ -268,7 +272,7 @@ class order_success(View):
         total = 0
         cart_items = CartItem.objects.filter(cart = cart, is_active=True)
         for cart_item in cart_items:
-            total += (cart_item.product.price * cart_item.quantity)
+            total += (cart_item.product.promotion_price * cart_item.quantity)
             product = cart_item.product
             variations = cart_item.variations.all()
             print(variations)
@@ -352,26 +356,57 @@ class order_success(View):
 
 
 from django.http import JsonResponse
+import json
 from django.views.decorators.http import require_POST
 from .models import CartItem
 
-@require_POST
-def update_cart_item(request, cart_item_id):
+
+def update_cart_item(request):
     if request.method == 'POST':
         try:
-            print("Request received")
-            print(f"Request method: {request.method}")
-            print(f"Request data: {request.body}")
-            print(f"Request headers: {request.headers}")
+            data = json.loads(request.body)
+            new_quantity = data.get('quantity')
+            cart_item_id = data.get('cart_item_id')
 
             cart_item = CartItem.objects.get(id=cart_item_id)
-
-            new_quantity = int(request.POST.get('quantity'))
-            print(f"New quantity: {new_quantity}")
-            cart_item.quantity = new_quantity
+            
+            print(new_quantity)
+            print(type(new_quantity))
+            cart_item.quantity = int(new_quantity)
+            print(type(new_quantity))
             print(cart_item_id,new_quantity)
             cart_item.save()
-            return JsonResponse({'success': True})
+
+            updated_subtotal = (cart_item.product.promotion_price * cart_item.quantity)
+            # updated_subtotal = cart_item.sub_total()
+            print(updated_subtotal)
+
+# grand total =====================================================
+            cart = Cart.objects.get(cart_id = cart_id(request))
+            cart_items = CartItem.objects.filter(cart = cart,is_active=True)
+            cart_total=0
+            for item in cart_items:
+                cart_total += item.product.promotion_price * item.quantity
+            is_coupon = request.session.get('coupon_code')
+            if is_coupon is not None:
+                current_time = timezone.now()
+                coupon = Coupon.objects.get(code = is_coupon)
+                if coupon.valid_to >= current_time and coupon.active is True:
+                    discount_rate = (coupon.discount / 100) * cart_total
+                    total_afer_discount = cart_total - discount_rate
+                    request.session['discount_total'] = total_afer_discount
+                    # request.session['coupon_code'] = coupon_code
+                    grand_total = request.session.get('discount_total')
+                else:
+                    #!!!!!!!!!!!!!!!!!!!!!!
+                    #send message 'that coupon is expired'
+                    #!!!!!!!!!!!!!!!!!!!!!!
+                    grand_total = cart_total
+            else:
+                grand_total = cart_total
+
+
+            return JsonResponse({'success': True, 'updated_subtotal': updated_subtotal, 'updated_cart_total':cart_total, 'updated_grand_total':grand_total})
         except CartItem.DoesNotExist:
             return JsonResponse({'error': 'Cart item not found'}, status=404)
         except ValueError:

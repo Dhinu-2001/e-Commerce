@@ -1,3 +1,5 @@
+
+
 // update_quantity.js
 document.addEventListener('DOMContentLoaded', function() {
     const quantityInputs = document.querySelectorAll('#quantity-input');
@@ -11,8 +13,9 @@ function updateQuantity() {
     const cartItemId = this.getAttribute('data-cart-item-id');
 
     // Send AJAX request to update the quantity
-    fetch(`/update-cart-item/${cartItemId}/`, {
+    fetch('{% url 'update_cart_item' cart_item_id=${cartItemId}  %}', {
         method: 'POST',
+        // `/update-cart-item/${cartItemId}/`
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token

@@ -114,8 +114,8 @@
                                                     </div>
                                                     <div class="product_content">
                                                         <h3><a href="{{ product.get_url }}">{{ product.product_name}}</a></h3>
-                                                        <span class="current_price">Rs.{{product.price}}</span>
-                                                        <span class="old_price">Rs.{{product.price}}</span>
+                                                        <span class="current_price">Rs.{{product.promotion_price}}</span>
+                                                        <span class="old_price">Rs.{{product.regular_price}}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -211,8 +211,8 @@
                                                     </div>
                                                     <div class="product_content">
                                                         <h3><a href="{{ product.get_url }}">{{ product.product_name}}</a></h3>
-                                                        <span class="current_price">Rs.{{product.price}}</span>
-                                                        <span class="old_price">Rs.{{product.price}}</span>
+                                                        <span class="current_price">Rs.{{product.promotion_price}}</span>
+                                                        <span class="old_price">Rs.{{product.regular_price}}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -499,8 +499,8 @@
                                         <h2>{{ product.product_name }}</h2> 
                                     </div>
                                     <div class="modal_price mb-10">
-                                        <span class="new_price">Rs.{{ product.price }}</span>    
-                                        <!-- <span class="old_price" >$78.99</span>     -->
+                                        <span class="new_price">Rs.{{ product.promotion_price }}</span>    
+                                        <span class="old_price" >Rs.{{ product.regular_price }}</span>    
                                     </div>
                                     <div class="modal_description mb-15">
                                         <p>{{ product.description }}</p>    

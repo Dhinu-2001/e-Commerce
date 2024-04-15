@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'wallet',
     'wishlist',
     'user_wishlist',
+    'AdminProductManagement',
    
 ]
 

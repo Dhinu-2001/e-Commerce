@@ -68,14 +68,14 @@ class register(View):
             # red=redirect(f'/accounts/otp/{profile.uid}/')
             red.set_cookie("can_otp_enter", True, max_age=120)
             return red  
-                
+                     
         
 class otpVerify(View):
     @method_decorator(no_cache)
     def get(self,request,pk):
         profile=Profile.objects.get(pk=pk)
         return render(request,'reid/otp.html',{'id':pk,'profile':profile})
-    
+      
     @method_decorator(no_cache)
     def post(self,request,pk):
         profile=Profile.objects.get(pk=pk)  
@@ -279,17 +279,16 @@ class cancel_order(View):
         order = Order.objects.get(id = order_id)
         order.canceled = True
         order.save()
+
+        try:
+            wallet = Wallet.objects.get(user = user)
+            print(wallet)
+        except Wallet.DoesNotExist:
+            wallet = Wallet.objects.create(user = user)
+            print(wallet)
+            wallet.save()
+        total_price = order.total_price
+        wallet.amount += total_price
+        wallet.save()        
         return redirect('userside_order_detail', order_id=order_id)
     
-class lo(View):
-    def get(self, request):
-        return render(request, 'reid/login.html')
-    
-class re(View):
-    @method_decorator(no_cache)
-    def get(self,request):
-        form = RegistrationForm()
-        context = {
-            'form':form
-        }
-        return render(request, 'reid/registration.html',context)

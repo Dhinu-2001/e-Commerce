@@ -5,11 +5,11 @@ from django.utils.decorators import method_decorator
 #Import Models
 from accounts.models import Account
 from category.models import Category
-from store.models import Product, ProductImage, ProductVariation
+from store.models import Product, ProductImage, ProductVariation, Variants
 from cart.models import Order, OrderItem
 from wallet.models import Wallet
 from django.utils import timezone
-
+from django.middleware.csrf import get_token
 
 from django.http import HttpResponse
 from django.contrib import messages
@@ -198,15 +198,16 @@ class add_product(View):
         if request.method == 'POST':
             prod_name        = request.POST['product_name']
             prod_description = request.POST['product_description']
-            prod_price       = request.POST['product_price']
+            prom_price       = request.POST['promotion_price']
+            reg_price       = request.POST['regular_price']
             prod_cat_slug    = request.POST.get('product_category')
-            prod_size        = request.POST.get('product_size')
-            prod_stock       = request.POST.get('product_stock')
+            # prod_size        = request.POST.get('product_size')
+            # prod_stock       = request.POST.get('product_stock')
             prod_images      = [request.FILES.get('image1'), request.FILES.get('image2'), request.FILES.get('image3')]
   
         
             #checking.....
-            if not prod_name or not prod_description or not prod_price or not prod_stock or not prod_cat_slug or not prod_size:
+            if not prod_name or not prod_description or not prom_price  or not prod_cat_slug :
                 messages.error(request,'Enter the required fields')
                 return redirect('add_product')
         
@@ -215,22 +216,22 @@ class add_product(View):
         
 
             if len(prod_images) == 3 and all(prod_images):
-                fd = Product(product_name=prod_name, description = prod_description, price= prod_price, category=category_inst) 
+                fd = Product(product_name=prod_name, description = prod_description, promotion_price= prom_price,regular_price = reg_price, category=category_inst) 
                 fd.save()
 
                 #getting Instance
                 product_inst = Product.objects.get(product_name=prod_name)
                 # size_inst    = SizeVariant.objects.get(size=prod_size)
 
-                variation = ProductVariation.objects.filter(product=product_inst, size=prod_size)
+                # variation = ProductVariation.objects.filter(product=product_inst, size=prod_size)
                 
-                if variation:
+                # if variation:
                 # If the variation exists, update the stock_quantity
-                    variation.stock += prod_stock
-                    variation.save()
-                else:
+                #     variation.stock += prod_stock
+                #     variation.save()
+                # else:
                 # If the variation doesn't exist, create a new entry
-                    ProductVariation.objects.create(product=product_inst, size=prod_size, stock=prod_stock)
+                    # ProductVariation.objects.create(product=product_inst, size=prod_size, stock=prod_stock)
                     # variation.save()
                 for img in prod_images:
                     ProductImage.objects.create(product=product_inst, image=img)    
@@ -241,18 +242,70 @@ class add_product(View):
                         
             # return redirect('product_detail', product_id=product_id)
                 
-        category_list = Category.objects.all()
+        # category_list = Category.objects.all()
         
-        context = {
-            'category_list': category_list
+        # context = {
+        #     'category_list': category_list
             
-        }
-        return render(request,'evara-backend/page-form-product-1.html', context)
+        # }
+        # return render(request,'evara-backend/page-form-product-1.html', context)
     
     
 class product_detail(View):
-    def get(self,request):
-        return render(request,'evara-backend/product-detail.html')
+    def get(self,request, product_id):
+        product = Product.objects.get(id = product_id)
+        images = ProductImage.objects.filter(product=product)
+        try:
+            table_variations = ProductVariation.objects.filter(product = product_id)
+        except ProductVariation.DoesNotExist:
+            table_variations = None
+        context = {
+            'product':product,
+            'images':images,
+            'table_variations':table_variations,
+            'csrf_token': get_token(request)
+        }
+        return render(request,'evara-backend/product-detail.html', context)
+    
+class stock_update(View):
+    def get(self, request, product_id):
+        product = Product.objects.get(id = product_id)
+        try:
+            table_variations = ProductVariation.objects.filter(product = product_id)
+        except ProductVariation.DoesNotExist:
+            table_variations = None
+        drop_down_variations = Variants.objects.all()
+        context ={
+            'product': product,
+            'drop_down_variations':drop_down_variations,
+            'table_variations':table_variations,
+        }
+        return render(request, 'evara-backend/stock_update.html',context)
+    def post(self, request, product_id):
+        product = Product.objects.get(id = product_id)
+        product_variant = request.POST.get('product_size')
+        product_stock = int(request.POST.get('product_stock'))
+        try:
+            variant_checking = ProductVariation.objects.get(product = product, size = product_variant)
+            variant_checking.stock += product_stock
+            variant_checking.save()
+        except ProductVariation.DoesNotExist:
+            Prod_Vari_stock = ProductVariation(product = product, size = product_variant, stock = product_stock)
+            Prod_Vari_stock.save()
+        return redirect('stock_update', product_id=product_id)
+
+class add_new_variant(View):
+    def post(self, request, product_id):
+        new_variant = request.POST.get('new_variant')
+        try:
+            variant_checking = Variants.objects.get(variant=new_variant)
+            messages.error(request,'Variant exists')
+            return redirect('stock_update', product_id=product_id)
+        except Variants.DoesNotExist:
+            variant = Variants(variant = new_variant)
+            variant.save()
+            
+        return redirect('stock_update', product_id=product_id)
 
 class customers_list(View):
     def get(self,request):

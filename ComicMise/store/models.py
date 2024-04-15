@@ -14,17 +14,18 @@ class YourModelManager(models.Manager):
             return None
 
 class Product(models.Model):
-    product_name = models.CharField(max_length=200, unique=True)
-    slug         = models.SlugField(max_length=200, unique=True)
-    description  = models.TextField(max_length=500, blank=True)
-    price        = models.IntegerField()
+    product_name    = models.CharField(max_length=200, unique=True)
+    slug            = models.SlugField(max_length=200, unique=True)
+    description     = models.TextField(max_length=500, blank=True)
+    promotion_price = models.IntegerField()
     
-    is_available = models.BooleanField(default=True)
-    category     = models.ForeignKey(Category, on_delete=models.CASCADE)
-    created_date = models.DateTimeField(auto_now_add=True)
-    modified_date= models.DateTimeField(auto_now=True)
-    popularity   = models.DecimalField(max_digits=5, decimal_places=2, default=0)
-    average_rating = models.DecimalField(max_digits=3, decimal_places=1, default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
+    is_available    = models.BooleanField(default=True)
+    category        = models.ForeignKey(Category, on_delete=models.CASCADE)
+    created_date    = models.DateTimeField(auto_now_add=True)
+    modified_date   = models.DateTimeField(auto_now=True)
+    popularity      = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    average_rating  = models.DecimalField(max_digits=3, decimal_places=1, default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
+    regular_price = models.IntegerField(null=True, blank=True) 
 
     objects = YourModelManager()
 
@@ -46,11 +47,17 @@ class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='photos/products')
 
+class Variants(models.Model):
+    variant = models.CharField(max_length=50, unique=True)
 
+    def __str__(self):
+        return self.variant
+    
 class ProductVariation(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     size = models.CharField(max_length=50)
     stock = models.IntegerField(default=0)
+
 
 # class SizeVariant(models.Model):
 #     size = models.CharField(max_length=50)
