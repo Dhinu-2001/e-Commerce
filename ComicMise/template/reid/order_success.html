@@ -38,12 +38,20 @@
                             <td class="cart_total_amount">{{ order_date }}</td>
                         </tr>
                         <tr>
-                            <td class="cart_total_label">Order method</td>
-                            <td class="cart_total_amount">{{order_method}}<br>
-                                {% if order_method == 'WALLET' %}
+                            <td class="cart_total_label">Payment method</td>
+                            <td class="cart_total_amount">{{order.payment_method}}<br>
+                                {% if order.payment_method == 'WALLET' %}
                                   Wallet balance:  {{wallet.amount}}
                                 {% endif %}
                             </td>
+                        </tr>
+                        <tr>
+                            <td class="cart_total_label">Payment status</td>
+                            {% if order.payment_status == 'SUCCESS' %}
+                                <td class="cart_total_amount"> Paid</td>
+                            {% else %}
+                                <td class="cart_total_amount"> Pending</td>
+                            {% endif %}
                         </tr>
                     </tbody>
                 </table>
@@ -59,12 +67,14 @@
                         </tr>
                         <tr>
                             <td class="cart_total_label">
-                                <p>{{shipping_address.name}}</p>
-                                <p>{{shipping_address.ph_number}}</p>
-                                <p>{{shipping_address.locality}},</p>
-                                <p>{{shipping_address.city}},</p>
-                                <p>{{shipping_address.state}}</p>
-                                <p>Pin Code:{{shipping_address.pincode}}</p>
+                                <ul class="list-unstyled text-right">
+                                    <li>{{shipping_address.name}},</li>
+                                    <li>{{shipping_address.ph_number}},</li>
+                                    <li>{{shipping_address.locality}},</li>
+                                    <li>{{shipping_address.city}},</li>
+                                    <li>{{shipping_address.state}}</li>
+                                    <li>Pin Code:{{shipping_address.pincode}}</li>
+                                </ul>
                             </td>
                         </tr>
                     </tbody>
@@ -131,7 +141,11 @@
                                             <tbody>
                                                 <tr>
                                                     <td class="cart_total_label"> Coupon</td>
-                                                    <td class="cart_total_amount">{{coupon_code}}</td>
+                                                    {% if order.coupon_code %}
+                                                        <td class="cart_total_amount">{{order.coupon_code}}  -  {{order.coupon_code.discount}} %</td>
+                                                    {% else %}
+                                                    <td class="cart_total_amount">None</td>
+                                                    {% endif %}
                                                 </tr>
                                                 <tr>
                                                     <td class="cart_total_label">Shipping</td>
@@ -146,6 +160,22 @@
                                     </div>
                                     
                                     <div class="cart_submit">
+
+                                        <a href="{% url 'order_invoice' order_id=order.id %}" type="button" style="background: #242424;
+                                        border: 0;
+                                        color: #ffffff;
+                                        display: inline-block;
+                                        font-size: 12px;
+                                        font-weight: 600;
+                                        height: 38px;
+                                        line-height: 18px;
+                                        padding: 10px 15px;
+                                        text-transform: uppercase;
+                                        cursor: pointer;
+                                        -webkit-transition: 0.3s;
+                                        transition: 0.3s;" >
+                                        Order Invoice</a>
+
                                         <a href="{% url 'userProfile' user_name=user_name %}" type="button" style="background: #242424;
                                         border: 0;
                                         color: #ffffff;
@@ -165,6 +195,7 @@
                                 </div>
                                  
                             </div> 
+                            
                             <div class="col-lg-6 col-md-12">
                                 <div  class="checkout_btn">
                                     <a href="{% url 'home' %}">Continue Shopping</a>

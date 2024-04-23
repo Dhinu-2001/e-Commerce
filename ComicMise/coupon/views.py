@@ -1,5 +1,7 @@
+from django.utils import timezone
 from django.shortcuts import redirect, render
 from django.views import View
+from datetime import datetime
 from django.contrib import messages
 from coupon.models import Coupon
 # Create your views here.
@@ -11,18 +13,24 @@ class add_coupon(View):
     def post(self, request):
         code = request.POST.get('code')
         valid_from = request.POST.get('valid_from')
-        valid_to = request.POST.get('valid_to')
+        valid_to_str = request.POST.get('valid_to')
         discount = request.POST.get('discount')
         active = request.POST.get('is_active',False)
         print(active)
-        if not code or not valid_from or not valid_to or not discount:
-            messages.error(request, 'Enter the required fields')
+        if not code or not valid_from or not valid_to_str or not discount:
+            messages.error(request, 'Enter the required fields.')
             return render(request, 'evara-backend/add_coupon.html')
+        print(valid_to_str)
+        # valid_to = datetime.strptime(valid_to_str, '%Y-%m-%dT%H:%M')
+
+        # if timezone.now() > valid_to:
+        #     messages.error(request, 'Valid to date must start from tomorrow.')
+        #     return render(request, 'evara-backend/add_coupon.html')
 
         coupon_submit = Coupon(
             code       = code,
             valid_from = valid_from,
-            valid_to   = valid_to,
+            valid_to   = valid_to_str,
             discount   = discount,
             active     = active
         )

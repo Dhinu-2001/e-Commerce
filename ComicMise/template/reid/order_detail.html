@@ -41,6 +41,14 @@
                             <td class="cart_total_label">Payment method</td>
                             <td class="cart_total_amount">{{order.payment_method}}</td>
                         </tr>
+                        <tr>
+                            <td class="cart_total_label">Payment status</td>
+                            {% if order.payment_status == 'SUCCESS' %}
+                                <td class="cart_total_amount"> Paid</td>
+                            {% else %}
+                                <td class="cart_total_amount"> Pending</td>
+                            {% endif %}
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -56,12 +64,14 @@
                         <tr>
                             <td class="cart_total_label">
                                 <p>{{order.shipping_address.address}}</p>
-                                <!-- <p>{{order.shipping_address.name}}</p>
-                                <p>{{order.shipping_address.ph_number}}</p>
-                                <p>{{order.shipping_address.locality}},</p>
-                                <p>{{order.shipping_address.city}},</p>
-                                <p>{{order.shipping_address.state}}</p>
-                                <p>Pin Code:{{shipping_address.pincode}}</p> -->
+                                <ul class="list-unstyled text-right">
+                                    <li>{{order.shipping_address.name}},</li>
+                                    <li>{{order.shipping_address.ph_number}},</li>
+                                    <li>{{order.shipping_address.locality}},</li>
+                                    <li>{{order.shipping_address.city}},</li>
+                                    <li>{{order.shipping_address.state}}</li>
+                                    <li>Pin Code:{{order.shipping_address.pincode}}</li>
+                                </ul>
                             </td>
                         </tr>
                     </tbody>
@@ -129,7 +139,11 @@
                                             <tbody>
                                                 <tr>
                                                     <td class="cart_total_label"> Coupon</td>
-                                                    <td class="cart_total_amount">{{coupon_code}}</td>
+                                                    {% if order.coupon_used %}
+                                                    <td class="cart_total_amount">{{order.coupon_used}} -{{ order.coupon_used.discount }}%</td>
+                                                    {% else %}
+                                                    <td class="cart_total_amount">{{order.coupon_used}}</td>
+                                                    
                                                 </tr>
                                                 <tr>
                                                     <td class="cart_total_label">Shipping</td>

@@ -16,6 +16,7 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('razorpay_name/<int:order_id>/',razorpay_name,name='razorpay_name'),
-    path('razorpay_success/<int:user_id>/<int:order_id>/',csrf_exempt(razorpay_success),name='razorpay_success'),
+    # path('razorpay_name/<int:order_id>/',razorpay_name,name='razorpay_name'),
+    path('handlerequest/',handlerequest, name = 'handlerequest'),
+    path('razorpay_success/<int:order_id>/',razorpay_success,name='razorpay_success'),
     ]

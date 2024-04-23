@@ -29,9 +29,9 @@ class CartItem(models.Model):
 class Order(models.Model):
 
     # Payment Method Choices
-    CASH_ON_DELIVERY = 'COD'
-    WALLET = 'Wallet'
-    RAZORPAY = 'Razorpay'
+    CASH_ON_DELIVERY = 'CASH_ON_DELIVERY'
+    WALLET = 'WALLET'
+    RAZORPAY = 'RAZORPAY'
     
     PAYMENT_METHOD_CHOICES = [
         (CASH_ON_DELIVERY, 'Cash on Delivery'),
@@ -63,7 +63,18 @@ class Order(models.Model):
         (RETURNED, 'Returned'),
     ]
 
+    SUCCESS = 'SUCCESS'
+    FAILURE = 'FAILURE'
+    PENDING = 'PENDING'
+
+    PAYMENT_STATUS_CHOICES = [
+        (SUCCESS, 'Success'),
+        (FAILURE, 'Failure'),
+        (PENDING, 'Pending'),
+    ]
+
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default=PENDING)
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES, default=CASH_ON_DELIVERY) 
     order_date = models.DateTimeField(auto_now_add=True)
     order_status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default=PENDING)
@@ -76,6 +87,11 @@ class Order(models.Model):
     returned_at = models.DateTimeField(blank=True, null=True)
     return_reason = models.TextField(blank=True)
     coupon_used = models.ForeignKey(Coupon, on_delete=models.SET_NULL, null=True, blank=True)
+    
+    razorpay_order_id = models.CharField(max_length=200, null=True, blank=True)
+    razorpay_payment_id = models.CharField(max_length=200, null=True, blank=True)
+    razorpay_signature = models.CharField(max_length=200, null=True, blank=True)
+    
     def _str_(self):
         return f"Order #{self.id} - {self.user.username}"
     # def __str__(self):

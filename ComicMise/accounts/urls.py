@@ -19,9 +19,7 @@ urlpatterns = [
     path('register/',register.as_view(), name='register'),
     path('logout/',logout.as_view(), name='logout'),
     path('home/',home.as_view(), name='home'),
-    path('store/',store.as_view(), name='store'),
-    path('store/category/<slug:category_slug>/',store.as_view(), name='products_by_category'),
-    path('store/category/<slug:category_slug>/<slug:product_slug>/<str:size>/',product_detail.as_view(), name='product_detail'),
+    
     path('otp/<int:pk>/', otpVerify.as_view(), name='otp'),
     path('resend-otp/<int:pk>/', resend_otp.as_view(), name='resend-otp'),
     path('userprofile/<str:user_name>/', userProfile.as_view(), name = 'userProfile' ),

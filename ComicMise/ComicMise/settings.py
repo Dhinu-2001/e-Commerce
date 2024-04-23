@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'accounts',
     'store',
     'cart',
-    'razorpay',
+    'RazorpayManagement',
     'coupon',
     'wallet',
     'wishlist',
@@ -166,3 +166,7 @@ AUTH_TOKEN='c2acc9e8174a44a1ccf7ddce8b63720d'
 COUNTRY_CODE='+91'
 # TWILIO_WHATSAPP_NUMBER='whatsapp:+14155238886'
 TWILIO_PHONE_NUMBER='+19786088113'
+
+#PAYMENT GATEWAY SETTINGS
+RAZORPAY_KEY_ID = "rzp_test_z9Zk1Kzr1QlpyW"
+RAZORPAY_KEY_SECRET = "IPWEFlPjTeMxDGZ1DRlr3GFp"

@@ -133,66 +133,16 @@ class home(View):
         print(user_id)
         user = get_object_or_404(Account, pk=user_id)
         print(user.username)
+        category_filter = Category.objects.all()
+
         context = {
             'products': products,
             'user_name': user.username,
+            'category_filter':category_filter
         }
         return render(request, 'reid/index.html', context)
 
-class store(View):
-    def get(self,request, category_slug=None):
-        category = None
-        products = None
-        user_id = request.session['user_id']
-        user = Account.objects.get(pk=user_id)
-        username = user.username
 
-        if category_slug != None:
-            categories = get_object_or_404(Category, slug=category_slug)
-            products = Product.objects.filter(category=categories, is_available=True)
-            prod_count = products.count()
-        else:
-            products = Product.objects.all().filter(is_available=True)
-            prod_count = products.count()
-            category = Category.objects.all()
-        context = {
-            'products': products,
-            'prod_count': prod_count,
-            'category': category,
-            'user_name': username,
-        }
-        return render(request, 'reid/shop.html', context)
-
-class product_detail(View):   
-    def get(self,request, category_slug, product_slug, size):
-        print(size)
-        user_id = request.session['user_id']
-        user = Account.objects.get(pk=user_id)
-
-        print(user_id)
-        print(user)
-        print(user.id)
-        username = user.username
-        try:
-            single_product = Product.objects.get(category__slug=category_slug, slug=product_slug)
-            images = ProductImage.objects.filter(product=single_product)
-            variant = ProductVariation.objects.get(product=single_product, size=size)
-            print(variant)
-            print(variant.id)
-        except Exception as e:
-            raise e
-        context = {
-            'single_product': single_product,
-            'images':images,
-            'user_id':user_id,
-            'user_name': username, 
-            'variant':variant.id, 
-            'stock':variant.stock,
-            'category_slug':category_slug,
-            'product_slug':product_slug
-        }
-        return render(request,'reid/product-details.html',context)
-    
 
 class userProfile(View):
     def get(self, request, user_name):

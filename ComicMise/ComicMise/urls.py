@@ -26,7 +26,7 @@ urlpatterns = [
     path('accounts/',include('accounts.urls')),
     path('store/',include('store.urls')),
     path('cart/',include('cart.urls')),
-    path('razorpay/',include('razorpay.urls')),
+    path('razorpay/',include('RazorpayManagement.urls')),
     path('coupon/',include('coupon.urls')),
     path('user_wishlist/',include('user_wishlist.urls')),
     path('admin_product_management/',include('AdminProductManagement.urls')),

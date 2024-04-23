@@ -1,3 +1,6 @@
+import calendar
+import datetime
+from django.db.models import Sum, Count, Prefetch
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login as auth_login
 from django.views import View
@@ -57,17 +60,148 @@ class Login(View):
 #         logout(request)
 #         return redirect('login')
 
+
+
 class adminDashboard(View):
+    def monthly_earnings(self):
+        current_year = timezone.now().year
+        current_month = timezone.now().month
+
+        # Get the number of days in the current month
+        _, num_days = calendar.monthrange(current_year, current_month)
+
+        # Calculate the start and end dates for the current month
+        start_date = timezone.datetime(current_year, current_month, 1)
+        end_date = timezone.datetime(current_year, current_month, num_days, 23, 59, 59)
+
+        # Calculate the total earnings for the current month
+        monthly_earnings = (
+            Order.objects.filter(order_date__range=(start_date, end_date)).aggregate(
+                total_earnings=Sum("total_price")
+            )["total_earnings"]
+            or 0
+        )
+        return monthly_earnings
+    
+#============= Best selling PRODUCT ===================================================
+
+    def get_most_ordered_products_with_count(self):
+        # Aggregate the number of orders for each product
+        ordered_products = OrderItem.objects.values('product').annotate(total_orders=Count('product'))
+
+        # Order the products by total order count in descending order and retrieve the top 10
+        most_ordered_products = ordered_products.order_by('-total_orders')[:10]
+
+        # Create a list to store tuples of (Product object, total order count)
+        products_with_count = []
+
+        # Retrieve the Product objects and total order count for the most ordered products
+        for product_data in most_ordered_products:
+            product_id = product_data['product']
+            total_orders = product_data['total_orders']
+            product_obj = Product.objects.get(pk=product_id)
+            products_with_count.append((product_obj, total_orders))
+
+        return products_with_count
+#========================================================================================
+#=================== Best Selling CATEGORY ==============================================
+
+
+    def get_most_ordered_categories_with_count(self):
+        # Aggregate the number of orders for each category
+        ordered_categories = OrderItem.objects.values('product__category').annotate(total_orders=Count('product__category'))
+
+        # Order the categories by total order count in descending order and retrieve the top 10
+        most_ordered_categories = ordered_categories.order_by('-total_orders')[:10]
+
+        # Create a list to store tuples of (Category object, total order count)
+        categories_with_count = []
+
+        # Retrieve the Category objects and total order count for the most ordered categories
+        for category_data in most_ordered_categories:
+            category_id = category_data['product__category']
+            total_orders = category_data['total_orders']
+            category_obj = Category.objects.get(pk=category_id)
+            categories_with_count.append((category_obj, total_orders))
+
+        return categories_with_count
+
+
+#==========================================================================================
     def get(self,request):
         user_id = request.session.get('user_id')
-        print(user_id)
         user = Account.objects.get(id = user_id)
         try:
             if not user.is_admin:
                 return redirect("login")
         except :
             return redirect("login")
-        return render(request, 'evara-backend/index.html')
+        orders = Order.objects.filter(order_status="Delivered")
+        order_count = orders.count()
+
+        revenue = (
+            orders.aggregate(total_revenue=Sum("total_price"))["total_revenue"] or 0
+        )
+
+        chart_month = [0] * 12
+        new_users = [0] * 12
+        orders_count = [0] * 12
+
+        for order in orders:
+            month = order.order_date.month - 1
+            chart_month[month] += order.total_price
+            orders_count[month] += 1
+        # print(month, chart_month, orders_count)
+
+        for user in Account.objects.all():
+            month = user.date_joined.month - 1
+            new_users[month] += 1
+
+        all_orders = Order.objects.all().order_by("-order_date")[:10]
+
+        date = request.GET.get("date")
+        # order_filter = request.GET.get("order_filter")
+
+        # if order_filter and order_filter != "All":
+        #     all_orders = all_orders.filter(payment_status=order_filter)
+
+        # if date:
+        #     date_obj = datetime.strptime(date, "%Y-%m-%d").date()
+        #     all_orders = all_orders.filter(order_date__date=date_obj)
+
+        products_count = Product.objects.all().count()
+        categories_count = (
+            Product.objects.values("category").distinct().count()
+        )
+
+        monthly_earning = self.monthly_earnings()
+
+        most_ordered_products_with_count = self.get_most_ordered_products_with_count()
+        most_ordered_categories_with_count = self.get_most_ordered_categories_with_count()
+       
+
+
+        context = {
+           "revenue": revenue,
+           "order_count": order_count,
+           "products_count": products_count,
+           "categories_count": categories_count,
+           "monthly_earning": monthly_earning,
+           "month": chart_month,
+           "new_users": new_users,
+           "orders_count": orders_count,
+           "users": Account.objects.filter(is_admin=False).order_by("-date_joined")[:5],
+           "most_ordered_products_with_count":most_ordered_products_with_count,
+           "most_ordered_categories_with_count":most_ordered_categories_with_count,
+        #    "orders": all_orders,
+        #    "date": date,
+        #    "order_filter": order_filter,
+           
+           
+           
+        }
+
+        return render(request, 'evara-backend/index.html',context)
     
 class categoryView(View):
     def get(self,request):
@@ -116,12 +250,17 @@ class order_detail(View):
     def get(self, request, order_id):
         order = Order.objects.get(id = order_id)
         order_items = OrderItem.objects.filter(order = order)
-
+        payment_status = order.payment_method
+        payment_method_choice = order.PAYMENT_METHOD_CHOICES
+        pay_method = [choice[1] for choice in payment_method_choice if choice[0] == payment_status ]
         order_status_choices = Order.ORDER_STATUS_CHOICES
         
+        print(order.payment_status)
+        print(order.total_price)
         context = {
             'order':order,
             'order_items':order_items,
+            'pay_method':pay_method[0],
             'order_status_choices':order_status_choices,
             'order_cancel_status':order.canceled,
         }
@@ -139,11 +278,15 @@ class order_status_change(View):
     
 class admin_cancel_order(View):
     def get(self, request, order_id):
+        user = Account.objects.get(email=request.user)
         order = Order.objects.get(id = order_id)
         if order.canceled is False:
             order.canceled = True
-        else:
-            order.canceled = False            
+            if order.payment_status == 'Success':
+                wallet = wallet.objects.get(user=user)
+                wallet.amount += order.total_price
+                wallet.save()
+                  
         order.save()
         return redirect('order_detail', order_id=order_id)
     

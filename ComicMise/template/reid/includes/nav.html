@@ -52,17 +52,10 @@
                         <div class="search_bar">
                             <form action="#">
                                 <select class="select_option" name="select">
-                                    <option selected value="1">All Categories</option>
-                                    <option  value="2">Accessories</option>
-                                    <option  value="3">Bridge</option>
-                                    <option  value="4">Hub</option>
-                                    <option  value="5">Repeater</option>
-                                    <option  value="6">Switch</option>
-                                    <option  value="7">Video Games</option>
-                                    <option  value="8">PlayStation 3</option>
-                                    <option  value="9">PlayStation 4</option>
-                                    <option  value="10">Xbox 360</option>
-                                    <option  value="11">Xbox One</option>
+                                    <option selected value="all_category">All Categories</option>
+                                    {% for cate in category_filter %}
+                                    <option  value={{cate.slug}} >{{cate}}</option>
+                                    {% endfor %}
                                 </select>
                                 <input placeholder="Search entire store here..." type="text">
                                 <button type="submit"><i class="ion-ios-search-strong"></i></button>
@@ -296,21 +289,14 @@
                     </div>
                     <div class="col-lg-6 col-md-12">
                         <div class="search_bar">
-                            <form action="{% url 'search' %}" method = 'get'>
-                                <select class="select_option" name="select">
-                                    <option selected value="1">All Categories</option>
-                                    <option  value="2">Accessories</option>
-                                    <option  value="3">Bridge</option>
-                                    <option  value="4">Hub</option>
-                                    <option  value="5">Repeater</option>
-                                    <option  value="6">Switch</option>
-                                    <option  value="7">Video Games</option>
-                                    <option  value="8">PlayStation 3</option>
-                                    <option  value="9">PlayStation 4</option>
-                                    <option  value="10">Xbox 360</option>
-                                    <option  value="11">Xbox One</option>
+                            <form action="{% url 'store' %}" method="get">
+                                <select name="category_filter" class="select_option" name="">
+                                    <option selected value="all_category">All Categories</option>
+                                    {% for cate in category_filter %}
+                                    <option value={{cate.slug}} >{{cate}}</option>
+                                    {% endfor %}
                                 </select>
-                                <input placeholder="Search entire store here..." type="text" name="keyword">
+                                <input name="keyword" placeholder="Search entire store here..." type="text">
                                 <button type="submit"><i class="ion-ios-search-strong"></i></button>
                             </form>
                         </div>
@@ -340,7 +326,7 @@
                             <div class="cart_link">
                                 <a href="{% url 'cart' %}"><i class="fa fa-shopping-basket"></i>2 item(s)</a>
                                 <!--mini cart-->
-                                 <div class="mini_cart">
+                                 <!-- <div class="mini_cart">
                                     <div class="cart_item top">
                                        <div class="cart_img">
                                            <a href="#"><img src="{% static 'reid_assets/img/s-product/product.jpg' %}" alt=""></a>
@@ -389,7 +375,7 @@
                                     <div class="cart_button checkout">
                                         <a href="checkout.html">Checkout</a>
                                     </div>
-                                </div>
+                                </div> -->
                                 <!--mini cart end-->
                             </div>
                         </div>
@@ -410,7 +396,7 @@
                                     <nav>  
                                         <ul>
                                             <li class="active"><a href="{% url 'home' %}">Home <i class="fa fa-angle-down"></i></a>
-                                                <ul class="sub_menu">
+                                                <!-- <ul class="sub_menu">
                                                     <li><a href="index.html">Home 1</a></li>
                                                     <li><a href="index-2.html">Home 2</a></li>
                                                     <li><a href="index-3.html">Home 3</a></li>
@@ -420,10 +406,10 @@
                                                     <li><a href="index-7.html">Home 7</a></li>
                                                     <li><a href="index-8.html">Home 8</a></li>
                                                      <li><a href="index-9.html">Home 9</a></li>
-                                                </ul>
+                                                </ul> -->
                                             </li>
                                             <li class="mega_items"><a href="{% url 'store' %}">shop <i class="fa fa-angle-down"></i></a>
-                                                <ul class="mega_menu">
+                                                <!-- <ul class="mega_menu">
                                                     <li><a href="#">Shop Layouts</a>
                                                         <ul>
                                                             <li><a href="shop-fullwidth.html">Full Width</a></li>
@@ -465,7 +451,7 @@
                                                         </ul>
                                                     </li>
                                                     <li class="banner_menu"><a href="#"><img src="{% static 'reid_assets/img/bg/banner1.jpg' %}" alt=""></a></li>
-                                                </ul>
+                                                </ul> -->
                                             </li>
                                             <li><a href="blog.html">blog <i class="fa fa-angle-down"></i></a>
                                                 <ul class="sub_menu pages">

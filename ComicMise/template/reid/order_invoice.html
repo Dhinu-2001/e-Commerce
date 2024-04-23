@@ -1,0 +1,134 @@
+{% extends 'reid/base-reid.html' %}
+{%load static%}
+{% block content %}
+
+<div class="container" style="margin-top: 50px;">
+    
+    <h2 class="text-center">Payment Successful</h2>
+    <br>
+    
+    <div class="text-center">
+        <a href="{% url 'home' %}" class="btn btn-success">Shop more</a>
+    </div>
+</div>
+
+<div id="invoice-content" class="container" style="margin-top: 50px;">
+    <div class="container" style="margin: 0 auto;width: 50%;padding: 50px;background: #f1f1f1;margin-top: 50px;margin-bottom: 50px;">
+        <div class="row invoice row-printable">
+            <div class="col-md-12">
+                <div class="panel panel-default plain" id="dash_0">
+                    <div class="panel-body p30">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="invoice-logo"><img src="{% static 'reid_assets/img/logo/logo.png' %}" alt="Invoice logo" style="max-height: 40px;"></div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="invoice-from">
+                                    <ul class="list-unstyled text-right">
+                                        <li><strong>Invoiced To</strong></li>
+                                        <li>{{ order.shipping_address.name }}</li>
+                                        <li>{{ order.shipping_address.locality }}</li>
+                                        <li>{{ order.shipping_address.city }}</li>
+                                        <li>{{ order.shipping_address.state }}</li>
+                                        <li>{{ order.shipping_address.pincode }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="invoice-details mt25">
+                                    <div class="well">
+                                        <ul class="list-unstyled mb0">
+                                            <li><strong>Order:</strong> #{{ order.id }}</li>
+                                            <li><strong>Order Date:</strong> {{ order.order_date }}</li>
+                                            <li><strong>Payment Method Chosen:</strong> {{ order.payment_method }}</li>
+                                            {% if order.payment_status == 'SUCCESS' %}
+                                                <li><strong>Payment Status:</strong> Paid</li>
+                                                {% if order.payment_method == 'RAZORPAY' %}
+                                                <li><strong>Razorpay Transaction Id:</strong> {{order.razorpay_payment_id}}</li>
+                                                {% endif %}
+                                            {% else %}
+                                            <li><strong>Payment Status:</strong> Pending</li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                </div>
+                               
+                                <div class="invoice-items">
+                                    <div class="table-responsive" style="overflow: hidden; outline: none;" tabindex="0">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th class="per70 text-center">Products</th>
+                                                    <th class="per5 text-center">Qty</th>
+                                                    <th class="per25 text-center">Price</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for item in order_items %}
+                                                <tr>
+                                                    <td>{{ item.product }}
+                                                        <p class="text-muted small">
+                                                            <!-- {% if item.variations.first %}
+                                                                Color: {{ item.variations.first.color | capfirst }} <br>
+                                                            {% endif %} -->
+                                                        </p>
+                                                    </td>
+                                                    <td class="text-center">{{ item.quantity }}</td>
+                                                    <td class="text-center">₹{{ item.price }} INR</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th colspan="2" class="text-right">Sub Total:</th>
+                                                    <th class="text-center">₹{{ order.total_price }} INR</th>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2" class="text-right">Shipping fee:</th>
+                                                    <th class="text-center"> Free </th>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <th colspan="2" class="text-right">Grand Total:</th>
+                                                    <th class="text-center">₹{{ order.total_price  }} INR</th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="invoice-footer mt25">
+                                    <p class="text-center">Thank you for shopping with us!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-center">
+    <button id="download-invoice" class="btn btn-primary mb-4" onclick="initializePdfDownload()">Download Invoice</button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script>
+    function initializePdfDownload() {
+            const invoice = document.getElementById('invoice-content');
+            const opt = {
+                margin: 2,
+                filename: `invoice_{{ order.id }}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation:'Landscape' }
+            };
+
+            html2pdf().set(opt).from(invoice).save();
+        
+    }
+
+</script>
+
+{% endblock %}

@@ -43,7 +43,7 @@
                                     <tbody>
                                         {% for cart_item, variation in cart_items_variations  %}
                                         <tr>
-                                           <td class="product_remove"><a href="#"><i class="fa fa-trash-o"></i></a></td>
+                                           <td class="product_remove"><a href="{% url 'remove_cart_item' product=cart_item.product.id variant=variation.id %}"><i class="fa fa-trash-o"></i></a></td>
                                             <td class="product_thumb"><a href="#"><img src="{{ cart_item.product.images.first.image.url }}" style="max-width: 23%;height: auto;" alt=""></a></td>
                                             <td class="product_name"><a href="#">{{ cart_item.product }}</a></td>
                                             <td class="product-price">Rs.{{ cart_item.product.promotion_price }}</td>
@@ -92,7 +92,7 @@
                                     <p>Select your coupon code if you have one.</p>
                                     <div class="form-group col-lg-6">
                                         <select class="nice-select niceselect_option" id="dropdown-field" name="coupon_code">
-                                          <option value="">-- Select an option --</option>
+                                          <option selected disabled  value=''>-- Select an option --</option>
                                           {% for coupon in coupon_list %}
                                           <option value={{coupon.code}}>{{coupon.code}}-{{coupon.discount}}%</option>
                                           {% endfor %}
@@ -104,8 +104,9 @@
                                      -->
                                     {% else %}
                                     <div class="form-group col-lg-6">
+                                        {% if coupon != None %}
                                         <input class="font-medium" name="coupon_code" placeholder='{{ coupon.code }}-  {{coupon.discount}}%' disabled>
-                                    
+                                        {% endif %}
                                     
                                         <a href="{% url 'remove_coupon' %}" type="button" class="btn  btn-sm" style="background: #242424;
                                         border: 0;
@@ -133,7 +134,7 @@
                                 <div class="coupon_inner">
                                    <div class="cart_subtotal">
                                        <p>Subtotal</p>
-                                       <p class="cart_amount">Rs.<span id="cart_total">{{cart_total}}</span></p>
+                                       <p class="cart_amount">Rs.{{cart_total}}</p>
                                     </div>
                                    <div class="cart_subtotal">
                                         <p>Coupon</p>
@@ -145,7 +146,7 @@
                                     </div>
                                    <div class="cart_subtotal ">
                                        <p>Shipping</p>
-                                       <p class="cart_amount"><span>Flat Rate:</span> Free shipping</p>
+                                       <p class="cart_amount"> Free shipping</p>
                                    </div>
                                    <a href="#">Calculate shipping</a>
 

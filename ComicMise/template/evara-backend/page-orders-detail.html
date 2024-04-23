@@ -62,7 +62,7 @@
                                 <div class="text">
                                     <h6 class="mb-1">Order info</h6>
                                     <p class="mb-1">
-                                        Shipping: Fargo express <br> Pay method: {{order.payment_method}} <br>Order date: {{order.order_date}}
+                                        Shipping: Fargo express <br> Pay method: {{pay_method}} <br>Order date: {{order.order_date}}
                                     </p>
                                     <a href="#">Download info</a>
                                 </div>
@@ -129,13 +129,13 @@
                                                     </dl>
                                                     <dl class="dlist">
                                                         <dt class="text-muted">Status:</dt>
-                                                        {% if order.payment is 'CASH_ON_DELIVERY' %}
+                                                        {% if order.payment_status == 'SUCCESS' %}
                                                         <dd>
-                                                            <span class="badge rounded-pill alert-danger">Pending</span>
+                                                            <span class="badge rounded-pill alert-success text-success">Payment done</span>
                                                         </dd>
                                                         {% else %}
                                                         <dd>
-                                                            <span class="badge rounded-pill alert-success text-success">Payment done</span>
+                                                            <span class="badge rounded-pill alert-danger">Pending</span>
                                                         </dd>
                                                         {% endif %}
                                                     </dl>
@@ -196,8 +196,6 @@
                                 </div>
                                 {% elif not order.canceled and order.order_status != 'Delivered' %}
                                 <a class="btn btn-primary" href="{% url 'admin_cancel_order' order_id=order.id %}" >Cancel order</a>
-                                {% elif order.canceled and order.order_status != 'Delivered' %}
-                                <a class="btn btn-primary" href="{% url 'admin_cancel_order' order_id=order.id %}" >Uncancel order</a>
                                 {% endif %}
                             </div>
                         </div> <!-- col// -->
