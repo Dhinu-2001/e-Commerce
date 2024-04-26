@@ -36,7 +36,7 @@
                                                     <th class="product_name">Product</th>
                                                     <th class="product-price">Price</th>
                                                     <th class="product_quantity">Stock Status</th>
-                                                    <th class="product_total">Add To Cart</th>
+                                                    <th class="product_total">Add To Cart</th>KW
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -45,7 +45,7 @@
                                                    <td class="product_remove"><a href="{% url 'remove_wishlist' product_id=product.id %}">X</a></td>
                                                     <td class="product_thumb"><a href="#"><img src="{{ product.images.first.image.url }}" style="max-width: 40%;height: auto;" alt=""></a></td>
                                                     <td class="product_name"><a href="#">{{ product }}</a></td>
-                                                    <td class="product-price">Rs.{{ product.price }}</td>
+                                                    <td class="product-price">Rs.{{ product.promotion_price }}</td>
                                                     <td class="product_quantity">
                                                         {{stock_status}}
                                                     </td>  

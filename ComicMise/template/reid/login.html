@@ -12,7 +12,7 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="{% static 'reid_assets/img/favicon.ico' %}">
+    <link rel= "shortcut icon" type="image/x-icon" href="{% static 'reid_assets/img/favicon.ico' %}">
     
     <!-- CSS 
     ========================= -->
@@ -355,6 +355,13 @@
     <!-- customer login start -->
     <div class="customer_login">
         <div class="container">
+            {% if request.GET.command == 'verification' %}
+                <div class ='container mx-auto alert alert-info text-center' role="alert" style="max-width:1024px; margin-top:100px;">
+                    Thank you for registering with us. We have sent you a verification email to your email address [{{request.GET.email}}].Please verify it.
+                    <br><br>
+                    Already verified? <a href="{% url 'login' %}">Login</a>
+                </div>
+            {% else %}
             <div class="row">
                <!--login area start-->
                 <div class="col-lg-6 col-md-6">
@@ -372,7 +379,7 @@
                                 <input  type="password" name="password" >
                              </p> 
 
-                             <div class="d-flex justify-content-center text-danger">
+                            <div class="d-flex justify-content-center text-danger">
                                 {% for message in messages %}
                                    
                                         {{message}}
@@ -381,7 +388,7 @@
                             </div>
                              
                             <div class="login_submit">
-                               <a href="#">Lost your password?</a>
+                               <a href="{% url 'forgotPassword' %}">Lost your password?</a>
                                 <label for="remember">
                                     <input id="remember" type="checkbox">
                                     Remember me
@@ -398,6 +405,7 @@
 
      
             </div>
+            {% endif %}
         </div>    
     </div>
     <!-- customer login end -->

@@ -17,13 +17,9 @@ Including another URLconf
 
 from django.urls import path
 from . import views
-from accounts.views import home,logout
 
 urlpatterns = [
-    # path('',views.login, name='login'),
-    path('', views.Login.as_view(), name='login'),
-    path('logout/',logout.as_view(), name='logout'),
-    path('home/',home.as_view(), name='home'),
+    path('', views.home.as_view(), name='home'),
     path('adminDashboard/',views.adminDashboard.as_view(), name='adminDashboard'),
     path('categoryView/',views.categoryView.as_view(), name='categoryView'),
     path('order_list/', views.order_list.as_view(), name = 'order_list'),

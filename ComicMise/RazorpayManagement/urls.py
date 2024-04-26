@@ -16,7 +16,9 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    # path('razorpay_name/<int:order_id>/',razorpay_name,name='razorpay_name'),
     path('handlerequest/',handlerequest, name = 'handlerequest'),
     path('razorpay_success/<int:order_id>/',razorpay_success,name='razorpay_success'),
+    path('razorpay_retry/<int:order_id>/',razorpay_retry,name='razorpay_retry'),
+    path('handlerequest_retry/',handlerequest_retry, name = 'handlerequest_retry'),
+    path('razorpay_success__retry/<int:order_id>/',razorpay_success__retry,name='razorpay_success__retry'),
     ]

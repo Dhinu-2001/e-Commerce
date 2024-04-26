@@ -44,7 +44,7 @@
                         <tr>
                             <td class="cart_total_label">Payment status</td>
                             {% if order.payment_status == 'SUCCESS' %}
-                                <td class="cart_total_amount"> Paid</td>
+                                <td class="cart_total_amount"> Payment done</td>
                             {% else %}
                                 <td class="cart_total_amount"> Pending</td>
                             {% endif %}
@@ -143,7 +143,7 @@
                                                     <td class="cart_total_amount">{{order.coupon_used}} -{{ order.coupon_used.discount }}%</td>
                                                     {% else %}
                                                     <td class="cart_total_amount">{{order.coupon_used}}</td>
-                                                    
+                                                    {% endif %}
                                                 </tr>
                                                 <tr>
                                                     <td class="cart_total_label">Shipping</td>
@@ -171,13 +171,40 @@
                                         Pay method: {{order.payment_method}}
                                         <br>
                                         Payment Status:
-                                        {% if order.payment is 'CASH_ON_DELIVERY' %}
-                                        Pending
-                                        {% else %}
+                                        {% if order.payment_status == 'SUCCESS' %}
                                         Payment done
+                                        {% else %}
+                                        Pending 
+                                        <a href="{% url 'razorpay_retry' order_id=order.id %}" type="button" style="background: #242424;
+                                        border: 0;
+                                        color: #ffffff;
+                                        display: inline-block;
+                                        font-size: 12px;
+                                        font-weight: 600;
+                                        height: 38px;
+                                        line-height: 18px;
+                                        padding: 10px 15px;
+                                        text-transform: uppercase;
+                                        cursor: pointer;
+                                        -webkit-transition: 0.3s;
+                                        transition: 0.3s;" >
+                                        Pay using Razorpay</a>
                                         {% endif %}
                                     </p>
-                                
+                                    <a href="{% url 'order_invoice' order_id=order.id %}" type="button" style="background: #242424;
+                                    border: 0;
+                                    color: #ffffff;
+                                    display: inline-block;
+                                    font-size: 12px;
+                                    font-weight: 600;
+                                    height: 38px;
+                                    line-height: 18px;
+                                    padding: 10px 15px;
+                                    text-transform: uppercase;
+                                    cursor: pointer;
+                                    -webkit-transition: 0.3s;
+                                    transition: 0.3s;" >
+                                    Order Invoice</a>
                             </div>
                             
                         </div>

@@ -201,7 +201,6 @@
                                 </table>     
                             </div>
                             <div class="payment_method">
-                                
                                <div class="panel-default">
                                 {% if total > 1000 %}
                                     <input disabled required="" checked="" id="exampleRadios3" name="payment_option" type="radio" value = "CASH_ON_DELIVERY" data-bs-target="createp_account" />
@@ -217,18 +216,21 @@
                                         </div>
                                     </div>
                                 </div>
-                                {% if wallet_balance >= total %}
                                 <div class="panel-default">
+                                {% if wallet_balance >= total %}
                                     <input required="" checked="" id="exampleRadios4" name="payment_option" type="radio" value = "WALLET" data-bs-target="createp_account" />
                                     <label for="payment_defult" data-bs-toggle="collapse" data-bs-target="#collapsedefult" aria-controls="collapsedefult">Pay using Wallet </label>
-      
+                                {% else %}
+                                    <input  disabled required="" checked="" id="exampleRadios4" name="payment_option" type="radio" value = "WALLET" data-bs-target="createp_account" />
+                                    <label for="payment_defult" data-bs-toggle="collapse" data-bs-target="#collapsedefult" aria-controls="collapsedefult">Pay using Wallet </label> (Wallet balance is insufficient.)
+                                {% endif %}
                                     <div id="collapsedefult" class="collapse one" data-bs-parent="#accordion">
                                         <div class="card-body1">
                                            <p>Pay via PayPal; you can pay with your credit card if you don’t have a PayPal account.</p> 
                                         </div>
                                     </div>
                                 </div> 
-                                {% endif %}
+                                
                                 <div class="panel-default">
                                     <input required="" checked="" id="exampleRadios4" name="payment_option" type="radio" value = "RAZORPAY" data-bs-target="createp_account" />
                                     <label for="payment_defult" data-bs-toggle="collapse" data-bs-target="#collapsedefult" aria-controls="collapsedefult">Razorpay </label>

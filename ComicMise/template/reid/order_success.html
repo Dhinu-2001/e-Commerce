@@ -2,20 +2,52 @@
 {%load static%}
 {% block content %}
 
-<div style=" justify-content: center; align-items: center;" class="col-12"  >
-     <h3 class="title-detail" style="text-align: center;">Thank You!!<br></h3>
-      <h2 class="title-detail" style="text-align: center;">YOUR ORDER IS CONFIRMED.</h2>
-      <div  class="col-12"
-       style="flex: 0 0 auto;
-       width: 100%;
-       display: flex;
-       align-content: center;
-       flex-wrap: wrap;
-       flex-direction: column;
-       justify-content: space-around;" >
-       <img src="{% static 'images/images.png' %}" alt="Girl in a jacket" width="100" height="100"> 
-       </div>
-</div> 
+{% if template_for == 'first_payment' %}
+    <div style=" justify-content: center; align-items: center;" class="col-12"  >
+            <h3 class="title-detail" style="text-align: center;">Thank You!!<br></h3>
+            <h2 class="title-detail" style="text-align: center;">YOUR ORDER IS CONFIRMED.</h2>
+            <div  class="col-12"
+                style="flex: 0 0 auto;
+                width: 100%;
+                display: flex;
+                align-content: center;
+                flex-wrap: wrap;
+                flex-direction: column;
+                justify-content: space-around;" >
+                <img src="{% static 'images/images.png' %}" alt="Girl in a jacket" width="100" height="100"> 
+            </div>
+    </div> 
+{% else %}
+    {% if order.payment_status == 'SUCCESS' %}
+        <div style=" justify-content: center; align-items: center;" class="col-12"  >
+            <h3 class="title-detail" style="text-align: center;">Payment is successfully done!!<br></h3>
+            <div  class="col-12"
+                style="flex: 0 0 auto;
+                width: 100%;
+                display: flex;
+                align-content: center;
+                flex-wrap: wrap;
+                flex-direction: column;
+                justify-content: space-around;" >
+                <img src="{% static 'images/images.png' %}" alt="Girl in a jacket" width="100" height="100"> 
+            </div>
+        </div>
+    {% else %}
+        <div style=" justify-content: center; align-items: center;" class="col-12"  >
+            <h3 class="title-detail" style="text-align: center;">Payment is failed.<br></h3>
+            <!-- <div  class="col-12"
+                style="flex: 0 0 auto;
+                width: 100%;
+                display: flex;
+                align-content: center;
+                flex-wrap: wrap;
+                flex-direction: column;
+                justify-content: space-around;" >
+                <img src="{% static 'images/images.png' %}" alt="Girl in a jacket" width="100" height="100"> 
+            </div> -->
+        </div>
+    {% endif %}
+{% endif %}
 <div class="container">
 <div class="row mb-50">
     
@@ -48,7 +80,7 @@
                         <tr>
                             <td class="cart_total_label">Payment status</td>
                             {% if order.payment_status == 'SUCCESS' %}
-                                <td class="cart_total_amount"> Paid</td>
+                                <td class="cart_total_amount"> Payment done</td>
                             {% else %}
                                 <td class="cart_total_amount"> Pending</td>
                             {% endif %}

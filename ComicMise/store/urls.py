@@ -17,7 +17,6 @@ Including another URLconf
 
 from django.urls import path
 from .views import *
-from accounts.views import home
 
 urlpatterns = [
     path('',store.as_view(), name='store'),

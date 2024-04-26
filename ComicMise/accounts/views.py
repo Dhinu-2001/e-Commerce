@@ -14,7 +14,16 @@ from django.http import JsonResponse
 from datetime import datetime, timedelta
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
-#Model importing
+#For link verification
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import EmailMessage
+
+
+#Model importingfrom django.
 from store.models import Product, ProductImage, ProductVariation
 from category.models import Category
 from .models import Account, Profile, Address
@@ -48,27 +57,61 @@ class register(View):
     
     def post(self,request):
         form =RegistrationForm(request.POST)
-        if form.is_valid():
-            first_name=form.cleaned_data['first_name']
-            last_name=form.cleaned_data['last_name']
-            phone_number=form.cleaned_data['phone_number']
-            email=form.cleaned_data['email']
-            password=form.cleaned_data['password']
-            username=email.split('@')[0]
-            user = Account.objects.create_user(first_name=first_name, last_name=last_name, email=email, username=username, password=password)
-            otp=random.randint(1000,9999)
-            user.phone_number=phone_number
-            user.save()
-            profile=Profile.objects.create(user=user, phone_number=phone_number, otp=f'{otp}')
-            messagehandler=MessageHandler( phone_number, otp).send_otp_via_message()
-            # profile.uid = uuid4()
-            expiry_time = datetime.now() + timedelta(minutes=2)
-            profile.otp_expiry = expiry_time
-            red=redirect('otp', pk=profile.pk)
-            # red=redirect(f'/accounts/otp/{profile.uid}/')
-            red.set_cookie("can_otp_enter", True, max_age=120)
-            return red  
-                     
+        verification_option = request.POST.get('verification_option')
+        print(verification_option)
+        if verification_option is None:
+            print(1)
+            messages.error(request, 'Please choose one of the verification method.')
+            return redirect('register')
+        else:
+            if form.is_valid():
+                first_name=form.cleaned_data['first_name']
+                last_name=form.cleaned_data['last_name']
+                phone_number=form.cleaned_data['phone_number']
+                email=form.cleaned_data['email']
+                password=form.cleaned_data['password']
+                username=email.split('@')[0]
+                user = Account.objects.create_user(first_name=first_name, last_name=last_name, email=email, username=username, password=password)
+                print(2)
+                if verification_option  == 'OTP':
+                    user.phone_number=phone_number
+                    user.save()
+                    otp=random.randint(1000,9999)
+                    profile=Profile.objects.create(user=user, phone_number=phone_number, otp=f'{otp}')
+                    messagehandler=MessageHandler( phone_number, otp).send_otp_via_message()
+                    # profile.uid = uuid4()
+                    expiry_time = datetime.now() + timedelta(minutes=2)
+                    profile.otp_expiry = expiry_time
+                    red=redirect('otp', pk=profile.pk)
+                    # red=redirect(f'/accounts/otp/{profile.uid}/')
+                    red.set_cookie("can_otp_enter", True, max_age=120)
+                    return red 
+                elif verification_option == 'EMAIL_LINK':
+                    print(3)
+                    current_site = get_current_site(request)
+                    mail_subject = 'Please activate your account'
+                    message = render_to_string('reid/link_verification.html',{
+                        'user':user,
+                        'domain': current_site,
+                        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                        'token' : default_token_generator.make_token(user),
+                    })
+                    to_email = email
+                    send_email = EmailMessage(mail_subject, message, to=[to_email])
+                    send_email.send()
+                    print('sent')
+                    #messages.success(request, 'Thank you for registering with us. We have sent you a verification email to your email address.Please verify it.')
+                    return redirect('/accounts/login/?command=verification&email='+email)
+                else:
+                    print(4)
+                    # Handle other verification options here
+                    # For example, you might want to return a different HttpResponse or redirect
+                    return redirect('register')
+            else:
+                print(5)
+                # Handle other verification options here
+                # For example, you might want to return a different HttpResponse or redirect
+                return redirect('register')
         
 class otpVerify(View):
     @method_decorator(no_cache)
@@ -115,7 +158,117 @@ class resend_otp(View):
         red=redirect('otp', pk=profile.pk)
         red.set_cookie("can_otp_enter", True, max_age=120)
         return red
+    
+class link_verification(View):
+    def get(self, request, uidb64, token):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = Account._default_manager.get(pk=uid)
+        except(TypeError, ValueError, OverflowError, Account.DoesNotExist):
+            user = None
+        
+        if user is not None and default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.is_user=True
+            user.save()
+            messages.success(request, 'Congratulations! Your account is activated.')
+            return redirect('login')
 
+class Login(View):
+    def get(self,request):
+        return render(request,'reid/login.html')
+    
+    def post(self, request):
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        if not email or not password:
+            messages.error(request, 'Enter email and password')
+            return render(request, 'reid/login.html')
+        user = authenticate(request, email=email, password=password)
+        if user is not None:
+            if user.is_active:
+                print(user.is_active, user.is_admin, user.is_user)
+                # Check user permissions
+                if user.is_admin:
+                    # User is an admin
+                    request.session['user_id'] = user.id
+                    auth_login(request, user)
+                    return redirect('adminDashboard')
+                elif user.is_user:
+                    # User is a regular user
+                    print(request.session.keys())   
+                    request.session['user_id'] = user.id
+                    red=redirect('home')#, pk=user.pk
+                    auth_login(request, user)
+                    return red
+            else:
+                print('not activated')
+                messages.error(request, 'Your account is inactive.')
+        else:
+            print('not authenticated')
+            messages.error(request, 'Invalid login details supplied.')
+        return render(request, 'reid/login.html')
+    
+class forgotPassword(View):
+    def get(self, request):
+        return render(request, 'reid/forgotPassword.html')
+
+    def post(self, request):
+        email = request.POST.get('email')
+        if Account.objects.filter(email = email).exists():
+            user = Account.objects.get(email__exact = email)
+            # Reset Password===================================
+            current_site = get_current_site(request)
+            mail_subject = 'Reset your password'
+            message = render_to_string('reid/reset_password_email.html',{
+                'user':user,
+                'domain': current_site,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token' : default_token_generator.make_token(user),
+            })
+            to_email = email
+            send_email = EmailMessage(mail_subject, message, to=[to_email])
+            send_email.send()
+            print('sent')
+            messages.success(request, 'Password reset email has been sent to your email address.')
+            return redirect('login')
+        else:
+            message.error(request, 'Account does not exist!')
+            return redirect('forgotPassword')
+        
+class resetpassword_validate(View):
+    def get(self, request , uidb64, token):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = Account._default_manager.get(pk=uid)
+        except(TypeError, ValueError, OverflowError, Account.DoesNotExist):
+            user = None
+        
+        if user is not None and default_token_generator.check_token(user, token):
+            request.session['uid'] = uid
+            messages.success(request, 'Please reset your password')
+            return redirect('resetPassword')
+        else:
+            messages.error(request, 'This link has been expired')
+            return redirect('login')
+        
+class resetPassword(View):
+    def get(self,request):
+        return render(request, 'reid/resetPassword.html')
+    def post(self, request):
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if password == confirm_password:
+            uid = request.session.get('uid')
+            user = Account.objects.get(pk = uid)
+            user.set_password(password)
+            user.save()
+            messages.success(request, 'Password reset successful')
+            return redirect('login')
+        else:
+            messages.error(request, 'Password do not match!')
+            return redirect('resetPassword')
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class logout(View):
@@ -125,29 +278,16 @@ class logout(View):
             messages.success(request, 'You are logged out.')
         return redirect('login')
 
-class home(View):
-    def get(self,request):
-        #user_id = Account.objects.get(pk=pk)
-        products = Product.objects.all().filter(is_available=True)
-        user_id = request.session['user_id'] 
-        print(user_id)
-        user = get_object_or_404(Account, pk=user_id)
-        print(user.username)
-        category_filter = Category.objects.all()
-
-        context = {
-            'products': products,
-            'user_name': user.username,
-            'category_filter':category_filter
-        }
-        return render(request, 'reid/index.html', context)
-
 
 
 class userProfile(View):
     def get(self, request, user_name):
-        user_id = request.session['user_id']
-        user = Account.objects.get(pk=user_id)
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
+
         username = user.username
         addresses = user.addresses.all()
         try:
@@ -166,8 +306,8 @@ class userProfile(View):
         #     total_price = order.calculate_total_price()
           
         context={
-            'user':user,
-            'user_name': username,
+            'user_id':user_id,
+            'user': user,
             'addresses': addresses,
             'orders':orders,
             'wallet':wallet
@@ -208,13 +348,18 @@ class userProfile(View):
         
 class userside_order_detail(View):
     def get(self, request, order_id):
-        user_id = request.session.get('user_id')
-        user = Account.objects.get(id = user_id)
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
+
 
         order = Order.objects.get(id = order_id)
         order_items = OrderItem.objects.filter(order=order)
         context ={
-            'user_name':user.username,
+            'user_id':user_id,
+            'user': user,
             'order':order,
             'order_items':order_items,
 
@@ -223,8 +368,11 @@ class userside_order_detail(View):
     
 class cancel_order(View):
     def get(self, request, order_id):
-        user_id = request.session['user_id']
-        user = Account.objects.get(pk=user_id)
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
 
         order = Order.objects.get(id = order_id)
         order.canceled = True

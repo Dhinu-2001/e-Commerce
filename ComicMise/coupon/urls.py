@@ -17,7 +17,6 @@ Including another URLconf
 
 from django.urls import path
 from . import views
-from accounts.views import home,logout
 
 urlpatterns = [
     path('add_coupon/', views.add_coupon.as_view(), name = 'add_coupon'),

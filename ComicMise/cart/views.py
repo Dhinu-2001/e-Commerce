@@ -1,5 +1,5 @@
 from django.utils import timezone
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from . models import Cart, CartItem, Order, OrderItem
 from store.models import Product, ProductVariation
@@ -81,8 +81,12 @@ class cart(View):
     def get(self,request, total_price=0, quantity=0, cart_items=None):
 
         try:
-            user_id = request.session['user_id']
-            user = Account.objects.get(pk=user_id)
+            user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+            user = None  # Initialize user to None
+
+            if user_id is not None:  # Check if user_id exists
+                user = get_object_or_404(Account, pk=user_id)
+
             try:
                 cart = Cart.objects.get(cart_id = cart_id(request))
             except Cart.DoesNotExist:
@@ -122,7 +126,8 @@ class cart(View):
             'coupon_code':coupon_code,
             'quantity':quantity,
             'cart_items_variations': cart_items_variations,
-            'user_name': user.username,
+            'user_id':user_id,
+            'user': user,
             'csrf_token': get_token(request)
         }
         
@@ -136,9 +141,12 @@ class cart(View):
     
     def post(self,request, total_price=0, quantity=0, cart_items=None):
         try:
-            user_id = request.session['user_id']
-            user = Account.objects.get(pk=user_id)
-            
+            user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+            user = None  # Initialize user to None
+
+            if user_id is not None:  # Check if user_id exists
+                user = get_object_or_404(Account, pk=user_id)
+
             cart = Cart.objects.get(cart_id=cart_id(request))
             print('1'+cart_id(request))
             cart_items = CartItem.objects.filter(cart = cart, is_active=True)
@@ -181,16 +189,20 @@ class cart(View):
             'coupon_code':coupon_code,
             'quantity':quantity,
             'cart_items_variations': cart_items_variations,
-            'user_name': user.username,
+            'user_id':user_id,
+            'user': user,
         }
         
         return render(request, 'reid/cart.html',context)
     
 class place_order(View):
     def get(self, request, total_price=0, quantity=0, cart_items=None):
-        user_id = request.session['user_id']
-        user = Account.objects.get(pk=user_id)
-        username = user.username
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
+
         addresses = user.addresses.all()
         try:
             cart = Cart.objects.get(cart_id=cart_id(request))
@@ -230,7 +242,8 @@ class place_order(View):
             'quantity':quantity,
             'cart':cart.id,
             'cart_items_variations': cart_items_variations,
-            'user_name': username,
+            'user_id':user_id,
+            'user': user,
             'addresses': addresses,
             'coupon_code':coupon_code,
             'wallet_balance':wallet_balance,
@@ -284,8 +297,12 @@ class order_success(View):
             address = fd
         else:
             address =Address.objects.get(id=deli_address_id) 
-        user_id = request.session['user_id']
-        user = Account.objects.get(pk=user_id)
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
+
         # variations = 
 
 #-------------------------------------------------Order database insertion---------------------------------------------------
@@ -435,8 +452,8 @@ class order_success(View):
             print(callback_url)
                 
             context ={
-                'user_name':user.username,
                 'user_id':user_id,
+                'user': user,
                 'order':order,
                 'razorpay_order_id':order.razorpay_order_id,
                 'order_id':order.id,
@@ -464,6 +481,7 @@ class order_success(View):
         delete_discount_total = request.session.pop('discount_total', None)
 
         context={
+            'template_for':'first_payment',
             'coupon_code':coupon_code,
             'order_no': order_submit.id,
             'order_date': order_submit.order_date,
@@ -473,7 +491,8 @@ class order_success(View):
             'shipping_address': order_submit.shipping_address,
             'order_items_variations':order_items_variations,
             'total':total,
-            'user_name':user.username ,
+            'user_id':user_id,
+            'user': user,
             'wallet':wallet, 
         }
         return render(request, 'reid/order_success.html',context)
@@ -541,14 +560,19 @@ def update_cart_item(request):
 
 class order_invoice(View):
     def get(self, request, order_id):
-        user_id =request.session.get('user_id')
-        user = Account.objects.get(id=user_id)
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
+
         print(user.username)
 
         order = Order.objects.get(id = order_id)
         order_items = OrderItem.objects.filter(order = order)
         context={
-            'user_name':user.username,
+            'user_id':user_id,
+            'user': user,
             'order':order,
             'order_items':order_items,
         }

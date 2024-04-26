@@ -1,7 +1,7 @@
 import calendar
 import datetime
 from django.db.models import Sum, Count, Prefetch
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
 from django.views import View
 from django.utils.decorators import method_decorator
@@ -18,40 +18,27 @@ from django.http import HttpResponse
 from django.contrib import messages
 # Create your views here.
 
-class Login(View):
-    def get(self,request):
-        
-        return render(request,'reid/login.html')
-    
-    def post(self, request):
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        if not email or not password:
-            messages.error(request, 'Enter email and password')
-            return render(request, 'reid/login.html')
 
-        user = authenticate(request, email=email, password=password)
-        if user is not None:
-            if user.is_active:
-                print(user.is_active, user.is_admin, user.is_user)
-                # Check user permissions
-                if user.is_admin:
-                    # User is an admin
-                    request.session['user_id'] = user.id
-                    auth_login(request, user)
-                    return redirect('adminDashboard')
-                elif user.is_user:
-                    # User is a regular user
-                    print(request.session.keys())   
-                    request.session['user_id'] = user.id
-                    red=redirect('home')#, pk=user.pk
-                    auth_login(request, user)
-                    return red
-            else:
-                messages.error(request, 'Your account is inactive.')
-        else:
-            messages.error(request, 'Invalid login details supplied.')
-        return render(request, 'reid/login.html')
+
+class home(View):
+    def get(self,request):
+        #user_id = Account.objects.get(pk=pk)
+        products = Product.objects.all().filter(is_available=True)
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
+
+        category_filter = Category.objects.all()
+
+        context = {
+            'products': products,
+            'user_id':user_id,
+            'user': user,
+            'category_filter':category_filter
+        }
+        return render(request, 'reid/index.html', context)
 
 
 # class logout(View):
@@ -271,6 +258,8 @@ class order_status_change(View):
     def post(self, request, order_id):
         order = Order.objects.get(id = order_id)
         order_status = request.POST.get('order_status')
+        if order_status == 'Delivered':
+            order.payment_status = 'SUCCESS'
         order.order_status=order_status
         print(order_status)
         order.save()

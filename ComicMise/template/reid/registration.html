@@ -402,10 +402,29 @@
                                     </p>
                                 </div>
                             </div>
-                            <br>
-
-                            <p>An OTP will be sent to your registered phone number for the verification:</p>
-                            <br>
+                     
+                            <p>For verification, select one of the below option*:</p>
+                           
+                            <div class="payment_method">
+                                <div class="panel-default">
+                                    <input  id="exampleRadios4" name="verification_option" type="radio" value = "OTP" data-bs-target="createp_account" />
+                                    <label for="verification_defult" data-bs-toggle="collapse" data-bs-target="#collapsedefult" aria-controls="collapsedefult">OTP </label>
+                                    <div id="collapsedefult" class="collapse one" data-bs-parent="#accordion">
+                                        <div class="card-body1">
+                                           <p>An OTP will be sent to your registered phone number for the verification.</p> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-default">
+                                    <input  id="exampleRadios4" name="verification_option" type="radio" value = "EMAIL_LINK" data-bs-target="createp_account" />
+                                    <label for="verification_defult" data-bs-toggle="collapse" data-bs-target="#collapsedefult" aria-controls="collapsedefult">Verification email</label>
+                                    <div id="collapsedefult" class="collapse one" data-bs-parent="#accordion">
+                                        <div class="card-body1">
+                                           <p>A verification link will be sent to your registered email for the verification.</p> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="login_submit">
                                 <button type="submit">Register</button>

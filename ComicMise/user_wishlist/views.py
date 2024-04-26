@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 
 # Create your views here.
 from django.shortcuts import render, redirect
@@ -10,8 +10,11 @@ from cart.models import Cart, CartItem
 # Create your views here.
 class wishlist(View):
     def get(self, request):
-        user_id = request.session.get('user_id')
-        user = Account.objects.get(id = user_id)
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
 
         try:
             wishlist = User_wishlist.objects.get(user = user)
@@ -35,15 +38,19 @@ class wishlist(View):
             
         
         context={
-            'user_name':user.username,
+            'user_id':user_id,
+            'user': user,
             'wishlist_products':wishlist_products,
         }
         return render(request,'reid/wishlist.html',context)
 
 class add_wishlist(View):
     def get(self, request, product_id):
-        user_id = request.session.get('user_id')
-        user = Account.objects.get(id = user_id)
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
 
         product = Product.objects.get(id = product_id)
 
@@ -57,8 +64,11 @@ class add_wishlist(View):
     
 class remove_wishlist(View):
     def get(self, request, product_id):
-        user_id = request. session.get('user_id')
-        user = Account.objects.get(id = user_id)
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
         wishlist = User_wishlist.objects.get(user = user)
         product = Product.objects.get(id = product_id)
 

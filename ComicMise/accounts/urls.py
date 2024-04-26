@@ -17,11 +17,17 @@ from .views import *
 
 urlpatterns = [
     path('register/',register.as_view(), name='register'),
-    path('logout/',logout.as_view(), name='logout'),
-    path('home/',home.as_view(), name='home'),
-    
+    path('link_verification/<uidb64>/<token>/',link_verification.as_view(), name = 'link_verification'),
     path('otp/<int:pk>/', otpVerify.as_view(), name='otp'),
     path('resend-otp/<int:pk>/', resend_otp.as_view(), name='resend-otp'),
+    
+    path('login/', Login.as_view(), name='login'),
+    path('logout/',logout.as_view(), name='logout'),
+
+    path('forgotPassword/',forgotPassword.as_view(), name='forgotPassword'),
+    path('resetpassword_validate/<uidb64>/<token>/',resetpassword_validate.as_view(), name = 'resetpassword_validate'),
+    path('resetPassword/',resetPassword.as_view(), name='resetPassword'),
+    
     path('userprofile/<str:user_name>/', userProfile.as_view(), name = 'userProfile' ),
     path('userside_order_detail/<int:order_id>/',userside_order_detail.as_view(),name = 'userside_order_detail'),
     path('cancel_order/<int:order_id>/', cancel_order.as_view(), name = 'cancel_order'),

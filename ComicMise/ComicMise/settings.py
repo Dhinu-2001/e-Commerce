@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+# from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -160,6 +161,15 @@ from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.ERROR: "danger",
 }
+
+#SMTP configuration
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'dhinucphilip1022001@gmail.com'
+EMAIL_HOST_PASSWORD = 'oovl svhi ikvi iovi'
+EMAIL_USE_TLS = True
 
 ACCOUNT_SID='AC38e237931389c83c8622cf7221ab5332'
 AUTH_TOKEN='c2acc9e8174a44a1ccf7ddce8b63720d'

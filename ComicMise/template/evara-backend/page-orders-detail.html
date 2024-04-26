@@ -127,7 +127,7 @@
                                                         <dt>Grand total:</dt>
                                                         <dd> <b class="h5"> Rs.{{order.total_price}} </b> </dd>
                                                     </dl>
-                                                    <dl class="dlist">
+                                                    <!-- <dl class="dlist">
                                                         <dt class="text-muted">Status:</dt>
                                                         {% if order.payment_status == 'SUCCESS' %}
                                                         <dd>
@@ -138,7 +138,7 @@
                                                             <span class="badge rounded-pill alert-danger">Pending</span>
                                                         </dd>
                                                         {% endif %}
-                                                    </dl>
+                                                    </dl> -->
                                                 </article>
                                             </td>
                                         </tr>
@@ -154,10 +154,10 @@
                                     Pay method: {{order.payment_method}}
                                     <br>
                                     Payment Status:
-                                    {% if order.payment is 'CASH_ON_DELIVERY' %}
-                                    Pending
+                                    {% if order.payment_status == 'SUCCESS' %}
+                                    <span class="badge rounded-pill alert-success text-success">Payment done</span>
                                     {% else %}
-                                    Payment done
+                                    <span class="badge rounded-pill alert-danger">Pending</span>
                                     {% endif %}
                                 </p>
                                 <!-- <p>
