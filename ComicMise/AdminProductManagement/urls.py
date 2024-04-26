@@ -17,5 +17,6 @@ from .views import *
 
 urlpatterns = [
     path('admin_product_management/product_listing/<int:product_id>/',product_listing.as_view(), name='product_listing'),
+    path('edit_product/<int:product_id>/',edit_product.as_view(),name='edit_product'),
    
 ]

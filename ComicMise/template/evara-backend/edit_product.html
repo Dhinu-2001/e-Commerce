@@ -3,13 +3,13 @@
 {% block content %}
         <section class="content-main">
             <div class="row">
-                <form method="post" action="{% url 'add_product' %}" enctype="multipart/form-data">
+                <form method="post" action="{% url 'edit_product' product_id=product.id %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="col-9">
                     <div class="content-header">
-                        <h2 class="content-title">Add New Product</h2>
+                        <h2 class="content-title">Edit Product</h2>
                         <div>
-                            <button type="submit" class="btn btn-primary">Publish</button>
+                            <button type="submit" class="btn btn-primary">Save Change</button>
                         </div>
                     </div>
                     <div class="d-flex justify-content-center text-danger">
@@ -29,19 +29,20 @@
                             
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Product title</label>
-                                    <input  type="text" placeholder="Type here"  class="form-control" id="product_name" name="product_name">
+                                    <input value="{{product.product_name}}" type="text" placeholder="Type here" class="form-control" id="product_name" name="product_name">
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Full description</label>
-                                    <textarea placeholder="Type here" class="form-control" rows="4" name="product_description" ></textarea>
+                                    <textarea value="{{product.description}}" placeholder="Type here" class="form-control" rows="4" name="product_description" ></textarea>
                                 </div>
                                 
                                 <div class="row">
                                     <div class="col-lg-4">
                                         <label class="form-label">Category</label>
                                         <select name="product_category" class="form-select" >
-                                            {% for obj in category_list %}
-                                            <option value="{{ obj.slug}}" > {{ obj.category_name }}</option>
+                                            <option value="{{ product.category.slug }}" > {{ product.category }}</option>
+                                            {% for product in category_list %}
+                                            <option value="{{ product.slug}}" > {{ product.category_name }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -49,22 +50,17 @@
                                         <div class="mb-4">
                                             <label class="form-label">Promotion price</label>
                                             <div class="row gx-2">
-                                                <input placeholder="Rs." type="text" class="form-control" name="promotion_price">
+                                                <input value="{{product.promotion_price}}" placeholder="Rs." type="text" class="form-control" name="promotion_price">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="mb-4">
                                             <label class="form-label">Regular price</label>
-                                            <input placeholder="Rs." type="text" class="form-control" name="regular_price">
+                                            <input value="{{product.regular_price}}" placeholder="Rs." type="text" class="form-control" name="regular_price">
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="mb-4">
-                                    <label class="form-label">Tax rate</label>
-                                    <input type="text" placeholder="%" class="form-control" id="product_name">
-                                </div> -->
-                            <!-- </form> -->
                         </div>
                     </div> <!-- card end// -->
                     
@@ -72,7 +68,7 @@
                 <div class="col-lg-3">
                     <div class="card mb-4">
                         <div class="card-header">
-                            <h4>Media</h4><p>Must upload 3 images</p>
+                            <h4>Media</h4>
                         </div>
                         <div class="card-body">
                             <div class="input-upload">
@@ -82,46 +78,14 @@
                                 <input class="form-control" type="file" name="image2" id="image2" ><br><br>
                                 <label class="form-label" for="image3">Image 3:</label>
                                 <input class="form-control" type="file" name="image3" id="image3" ><br><br>
-                                <!-- <img src="{% static 'assets/imgs/theme/upload.svg' %}" alt=""> -->
-                                <!--<input class="form-control" type="file" id="product_image" name="product_image" > multiple-->
+                                
                             </div>
                         </div>
                     </div> <!-- card end// -->
-                    <!-- <div class="card mb-4">
-                        <div class="card-header">
-                            <h4>Organization</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="row gx-2">
-                                <div class="col-sm-6 mb-3">
-                                    <label class="form-label">Category</label>
-                                    <select name="product_category" class="form-select" >
-                                        {% for obj in category_list %}
-                                        <option value="{{ obj.slug}}" > {{ obj.category_name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-sm-6 mb-3">
-                                    <label class="form-label">Size</label>                                    
-                                    <select class="form-select" name="product_size" id="size">
-                                        <option value="small">Small</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="large">Large</option>
-                                    </select>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="product_name" class="form-label">Stock</label>
-                                    <input type="text" class="form-control" name="product_stock">
-                                </div>
-                            </div> 
-                        </div>
-                    </div>  -->
-                    <!-- card end// -->
                 </div>
             </form>
             </div>
         </section> <!-- content-main end// -->
-
     </main>
     <script src="{% static 'assets/js/vendors/jquery-3.6.0.min.js' %}"></script>
     <script src="{% static 'assets/js/vendors/bootstrap.bundle.min.js' %}"></script>

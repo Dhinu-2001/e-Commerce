@@ -22,6 +22,5 @@ urlpatterns = [
     path('',store.as_view(), name='store'),
     path('store/category/<slug:category_slug>/',store.as_view(), name='products_by_category'),
     path('store/category/<slug:category_slug>/<slug:product_slug>/<str:size>/',product_detail.as_view(), name='product_detail'),
-    path('store/search/',search.as_view(), name='search'),
     path('sort/',sort.as_view(), name='sort'),
 ]

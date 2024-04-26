@@ -150,7 +150,7 @@
                                 <div class="login">
                                     <div class="login_form_container">
                                         <div class="account_login_form">
-                                            <form method="post" name="add address" action="{% url 'userProfile' user_name=user_name %}">
+                                            <form method="post" name="add address" action="{% url 'userProfile' user_name=user.username %}">
                                             {% csrf_token %}
                                                 <!-- <p>Already have an account? <a href="#">Log in instead!</a></p> -->
                                                 <!-- <div class="input-radio">

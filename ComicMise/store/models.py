@@ -3,6 +3,7 @@ from category.models import Category
 from django.utils.text import slugify
 from django.urls import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
+from PIL import Image
 
 # Create your models here.
 class YourModelManager(models.Manager):
@@ -46,6 +47,50 @@ class Product(models.Model):
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='photos/products')
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        img = Image.open(self.image.path)
+
+        target_width = 510
+        target_height = 600
+
+        width, height = img.size
+        aspect_ratio = width / height
+
+        # Calculate the cropping box
+        if width / height > target_width / target_height:
+            # Image is wider than the target aspect ratio
+            new_width = int(height * (target_width / target_height))
+            left = (width - new_width) / 2
+            top = 0
+            right = left + new_width
+            bottom = height
+        else:
+            # Image is taller than the target aspect ratio
+            new_height = int(width * (target_height / target_width))
+            left = 0
+            top = (height - new_height) / 2
+            right = width
+            bottom = top + new_height
+
+        # Crop the image
+        img = img.crop((left, top, right, bottom))
+
+        # Resize the image to the target dimensions
+        img = img.resize((target_width, target_height), Image.BICUBIC)
+
+        # Save the cropped and resized image back to the same path
+        img.save(self.image.path)
+
+    # def save(self, *args, **kwargs):
+    #     super().save(*args, **kwargs)
+    #     img = Image.open(self.image.path)
+
+        # if img.height > 300 or img.width > 300:
+        #     output_size = (300,300)
+        #     img.thumbnail(output_size)
+        #     img.save(self.image.path)
 
 class Variants(models.Model):
     variant = models.CharField(max_length=50, unique=True)

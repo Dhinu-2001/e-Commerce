@@ -72,7 +72,7 @@
                             </div>
                             <div class="product_desc">
                                 <p>{{ single_product.description }}</p>
-                                <p>Availability:<span class="in-stock text-success ml-5">{{ stock }} Items In Stock</span></p>
+                                <!-- <p>Availability:<span class="in-stock text-success ml-5">{{ variant.stock }} Items In Stock</span></p> -->
                             
                             </div>
 
@@ -97,7 +97,7 @@
                             </div>
 
                             <div class="product_variant quantity">
-                                {% if stock > 0  %}
+                                {% if variant.stock > 0 and variant is not None %}
                                 <label>quantity</label>
                                 <input min="1" max="100" value="1" type="number" name="quantity" >
                                 <button class="button" type="submit">add to cart</button>  

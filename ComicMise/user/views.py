@@ -309,7 +309,7 @@ class admin_return_decision(View):
 
 class product_list(View):
     def get(self,request):
-        productlist = Product.objects.all()
+        productlist = Product.objects.all().order_by('-modified_date')
   
         context={
             'productlist': productlist
@@ -322,7 +322,7 @@ class add_product(View):
         category_list = Category.objects.all()
         
         context = {
-            'category_list': category_list
+            'category_list': category_list,
         }
         return render(request,'evara-backend/page-form-product-1.html', context)
     
@@ -353,35 +353,13 @@ class add_product(View):
 
                 #getting Instance
                 product_inst = Product.objects.get(product_name=prod_name)
-                # size_inst    = SizeVariant.objects.get(size=prod_size)
-
-                # variation = ProductVariation.objects.filter(product=product_inst, size=prod_size)
                 
-                # if variation:
-                # If the variation exists, update the stock_quantity
-                #     variation.stock += prod_stock
-                #     variation.save()
-                # else:
-                # If the variation doesn't exist, create a new entry
-                    # ProductVariation.objects.create(product=product_inst, size=prod_size, stock=prod_stock)
-                    # variation.save()
                 for img in prod_images:
                     ProductImage.objects.create(product=product_inst, image=img)    
                 return redirect('product_list')
             else:
                 messages.error(request,'Please upload 3 images.')
                 return redirect('add_product')
-                        
-            # return redirect('product_detail', product_id=product_id)
-                
-        # category_list = Category.objects.all()
-        
-        # context = {
-        #     'category_list': category_list
-            
-        # }
-        # return render(request,'evara-backend/page-form-product-1.html', context)
-    
     
 class product_detail(View):
     def get(self,request, product_id):
