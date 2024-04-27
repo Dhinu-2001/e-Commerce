@@ -67,10 +67,8 @@
                                                 {% for item in order_items %}
                                                 <tr>
                                                     <td>{{ item.product }}
-                                                        <p class="text-muted small">
-                                                            <!-- {% if item.variations.first %}
-                                                                Color: {{ item.variations.first.color | capfirst }} <br>
-                                                            {% endif %} -->
+                                                        <p >
+                                                            {{variation.size}}
                                                         </p>
                                                     </td>
                                                     <td class="text-center">{{ item.quantity }}</td>

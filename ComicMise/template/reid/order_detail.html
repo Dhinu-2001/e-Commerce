@@ -106,8 +106,9 @@
                                         <!--  -->
                                         <td class="product_name">
                                             <a href="">{{ item.product }}</a>
-                                            <p style="font-size: smaller;">
-                                            </p>
+                                            
+                                                {{variation.size}}
+                                           
                                         </td>
                                         <td class="product-price" data-title="Price"><span>Rs.{{ item.product.promotion_price }}</span></td>
                                         <td class="product-price" data-title="Stock">
@@ -288,7 +289,7 @@
 
                         </div>  
                         <div  class="checkout_btn">
-                            <a href="{% url 'userProfile' user_name=user_name %}">Back to dashboard</a>
+                            <a href="{% url 'userProfile' user_name=user.username %}">Back to dashboard</a>
                         </div>
                     </div>
                 

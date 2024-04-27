@@ -141,7 +141,7 @@
                                         <!--  -->
                                         <td class="product_name">
                                             <a href="">{{ order_item.product }}</a>
-                                            <p style="font-size: smaller;">Maboriosam in a tonto nesciung eget<br> distingy magndapibus.
+                                            <p style="font-size: smaller;">{{variation.size}}
                                             </p>
                                         </td>
                                         <td class="product-price" data-title="Price"><span>Rs.{{ order_item.product.promotion_price }}</span></td>
@@ -173,8 +173,8 @@
                                             <tbody>
                                                 <tr>
                                                     <td class="cart_total_label"> Coupon</td>
-                                                    {% if order.coupon_code %}
-                                                        <td class="cart_total_amount">{{order.coupon_code}}  -  {{order.coupon_code.discount}} %</td>
+                                                    {% if order.coupon_used %}
+                                                        <td class="cart_total_amount">{{order.coupon_used}}  -  {{order.coupon_used.discount}} %</td>
                                                     {% else %}
                                                     <td class="cart_total_amount">None</td>
                                                     {% endif %}
@@ -208,7 +208,7 @@
                                         transition: 0.3s;" >
                                         Order Invoice</a>
 
-                                        <a href="{% url 'userProfile' user_name=user_name %}" type="button" style="background: #242424;
+                                        <a href="{% url 'userProfile' user_name=user.username %}" type="button" style="background: #242424;
                                         border: 0;
                                         color: #ffffff;
                                         display: inline-block;

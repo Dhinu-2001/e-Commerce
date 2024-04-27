@@ -390,3 +390,14 @@ class cancel_order(View):
         wallet.save()        
         return redirect('userside_order_detail', order_id=order_id)
     
+class delete_address(View):
+    def get(self, request, address_id):
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
+
+        address = Address.objects.get(id = address_id)
+        address.delete()
+        return redirect('userProfile', user_name=user.username)

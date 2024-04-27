@@ -47,7 +47,8 @@
                                 <h3>Dashboard </h3>
                                 <p>From your account dashboard. you can easily check &amp; view your <a href="#">recent orders</a>, manage your <a href="#">shipping and billing addresses</a> and <a href="#">Edit your password and account details.</a></p>
                             </div>
-                            <div class="tab-pane fade show active" id="wallet">
+                            <!-- show active -->
+                            <div class="tab-pane fade " id="wallet">
                                 <h3>Wallet Balance: </h3>
                                 <p>{{ wallet.amount }}</p>
                             </div>
@@ -138,7 +139,8 @@
                                                 <p>{{address.city}},</p>
                                                 <p>{{address.state}}</p>
                                                 <p>Pin Code:{{address.pincode}}</p>
-                                                <a href="#" class="view">Edit</a>
+                                                <!-- <a href="#" class="view">Edit</a>  |   -->
+                                                <a href="{% url 'delete_address' address_id=address.id %}" class="view">Delete</a>
                                             </div>
                                         </div>
                                     </div>
@@ -158,7 +160,7 @@
                                                     <span class="custom-radio"><input type="radio" value="1" name="id_gender"> Mrs.</span>
                                                 </div> <br> -->
                                                 <input type="hidden" name="form_identifier" value="add address">
-
+ 
                                                         <div class="form-group col-md-12">
                                                             <label>Address title <span class="required">*</span></label>
                                                             <input required="" class="form-control square" name="address_title" type="text">
@@ -228,26 +230,26 @@
                                     <div class="login_form_container">
                                         <div class="account_login_form">
                                             <form action="#">
-                                                <p>Already have an account? <a href="#">Log in instead!</a></p>
+                                                <!-- <p>Already have an account? <a href="#">Log in instead!</a></p>
                                                 <div class="input-radio">
                                                     <span class="custom-radio"><input type="radio" value="1" name="id_gender"> Mr.</span>
                                                     <span class="custom-radio"><input type="radio" value="1" name="id_gender"> Mrs.</span>
-                                                </div> <br>
+                                                </div> <br> -->
                                                 <label>First Name</label>
-                                                <input type="text" name="first-name">
+                                                <input value="{{user.first_name}}" type="text" name="first-name">
                                                 <label>Last Name</label>
-                                                <input type="text" name="last-name">
+                                                <input value="{{user.last_name}}" type="text" name="last-name">
                                                 <label>Email</label>
-                                                <input type="text" name="email-name">
-                                                <label>Password</label>
-                                                <input type="password" name="user-password">
-                                                <label>Birthdate</label>
+                                                <input value="{{user.email}}" type="text" name="email-name">
+                                                <label>Phone number</label>
+                                                <input value="{{user.phone_number}}" type="text" name="phone-number">
+                                                <!-- <label>Birthdate</label>
                                                 <input type="text" placeholder="MM/DD/YYYY" value="" name="birthday">
                                                 <span class="example">
                                                   (E.g.: 05/31/1970)
-                                                </span>
+                                                </span> -->
                                                 <br>
-                                                <span class="custom_checkbox">
+                                                <!-- <span class="custom_checkbox">
                                                     <input type="checkbox" value="1" name="optin">
                                                     <label>Receive offers from our partners</label>
                                                 </span>
@@ -255,10 +257,10 @@
                                                 <span class="custom_checkbox">
                                                     <input type="checkbox" value="1" name="newsletter">
                                                     <label>Sign up for our newsletter<br><em>You may unsubscribe at any moment. For that purpose, please find our contact info in the legal notice.</em></label>
-                                                </span>
-                                                <div class="save_button primary_btn default_button">
+                                                </span> -->
+                                                <!-- <div class="save_button primary_btn default_button">
                                                     <a href="#">Save</a>
-                                                </div>
+                                                </div> -->
                                             </form>
                                         </div>
                                     </div>

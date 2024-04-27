@@ -30,6 +30,7 @@ urlpatterns = [
     
     path('userprofile/<str:user_name>/', userProfile.as_view(), name = 'userProfile' ),
     path('userside_order_detail/<int:order_id>/',userside_order_detail.as_view(),name = 'userside_order_detail'),
+    path('delete_address/<int:address_id>/', delete_address.as_view(), name = 'delete_address'),
     path('cancel_order/<int:order_id>/', cancel_order.as_view(), name = 'cancel_order'),
 
 ]

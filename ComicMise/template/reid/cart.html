@@ -45,7 +45,7 @@
                                         <tr>
                                            <td class="product_remove"><a href="{% url 'remove_cart_item' product=cart_item.product.id variant=variation.id %}"><i class="fa fa-trash-o"></i></a></td>
                                             <td class="product_thumb"><a href="#"><img src="{{ cart_item.product.images.first.image.url }}" style="max-width: 23%;height: auto;" alt=""></a></td>
-                                            <td class="product_name"><a href="#">{{ cart_item.product }}</a></td>
+                                            <td class="product_name"><a href="#">{{ cart_item.product }}</a><br>{{variation.size}}</td>
                                             <td class="product-price">Rs.{{ cart_item.product.promotion_price }}</td>
                                             <td class="product_quantity"><input id="quantity-input" min="1" max="100" value="{{ cart_item.quantity }}" type="number" data-cart-item-id="{{ cart_item.id }}"></td>
                                             <td class="product_total">Rs.<span id="subtotal-{{ cart_item.id }}">{{ cart_item.sub_total }}</span></td>
@@ -219,7 +219,7 @@
             console.log(updatedSubtotal)
 
             const updatedCartTotal = data.updated_cart_total
-            const cartTotalElement = document.getElementById(`cart_total`);
+            const cartTotalElement = document.getElementById(`cart_total-${cartItemId}`);
             cartTotalElement.textContent = updatedCartTotal;
             console.log(updatedCartTotal)
 
