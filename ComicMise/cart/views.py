@@ -11,6 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 from coupon.models import Coupon
 from wallet.models import Wallet
 from django.middleware.csrf import get_token
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 
 # Create your views here.
@@ -194,7 +196,8 @@ class cart(View):
         }
         
         return render(request, 'reid/cart.html',context)
-    
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class place_order(View):
     def get(self, request, total_price=0, quantity=0, cart_items=None):
         user_id = request.session.get('user_id')  # Use get method to avoid KeyError
@@ -258,7 +261,7 @@ import razorpay
 
 razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class order_success(View):
     @csrf_exempt
     def post(self, request, cart, user_name):
@@ -549,6 +552,7 @@ def update_cart_item(request):
                     grand_total = cart_total
             else:
                 grand_total = cart_total
+                
 
 
             return JsonResponse({'success': True, 'updated_subtotal': updated_subtotal, 'updated_cart_total':cart_total, 'updated_grand_total':grand_total})
@@ -557,7 +561,7 @@ def update_cart_item(request):
         except ValueError:
             return JsonResponse({'error': 'Invalid quantity'}, status=400)
         
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class order_invoice(View):
     def get(self, request, order_id):
         user_id = request.session.get('user_id')  # Use get method to avoid KeyError

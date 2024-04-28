@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
+
 # from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -21,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-x6w4gnw=7t6zm_e2m%r7v87afcbsmdn&r9et8nz)1p=!m2&xak'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG')
 
 ALLOWED_HOSTS = []
 
@@ -92,13 +94,14 @@ AUTH_USER_MODEL = 'accounts.Account'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'comicmise_db',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
+        'NAME': config('NAME'),
+        'USER': config('USER'),
+        'PASSWORD': config('PASSWORD'),
         'HOST': 'localhost',
         'PORT': '5432'
     }
 }
+
 
 
 # Password validation
@@ -167,16 +170,17 @@ MESSAGE_TAGS = {
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'dhinucphilip1022001@gmail.com'
-EMAIL_HOST_PASSWORD = 'oovl svhi ikvi iovi'
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 
-ACCOUNT_SID='AC38e237931389c83c8622cf7221ab5332'
-AUTH_TOKEN='c2acc9e8174a44a1ccf7ddce8b63720d'
-COUNTRY_CODE='+91'
-# TWILIO_WHATSAPP_NUMBER='whatsapp:+14155238886'
-TWILIO_PHONE_NUMBER='+19786088113'
+
+ACCOUNT_SID=config('ACCOUNT_SID')
+AUTH_TOKEN=config('AUTH_TOKEN')
+COUNTRY_CODE=config('COUNTRY_CODE')
+
+TWILIO_PHONE_NUMBER=config('TWILIO_PHONE_NUMBER')
 
 #PAYMENT GATEWAY SETTINGS
-RAZORPAY_KEY_ID = "rzp_test_z9Zk1Kzr1QlpyW"
-RAZORPAY_KEY_SECRET = "IPWEFlPjTeMxDGZ1DRlr3GFp"
+RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID')
+RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET')

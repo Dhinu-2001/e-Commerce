@@ -279,7 +279,7 @@ class logout(View):
         return redirect('login')
 
 
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class userProfile(View):
     def get(self, request, user_name):
         user_id = request.session.get('user_id')  # Use get method to avoid KeyError
@@ -345,7 +345,8 @@ class userProfile(View):
             user = Account.objects.get(pk=user_id)
             user.addresses.add(fd)
             return redirect('userProfile', user_name=user_name)
-        
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class userside_order_detail(View):
     def get(self, request, order_id):
         user_id = request.session.get('user_id')  # Use get method to avoid KeyError
@@ -365,7 +366,8 @@ class userside_order_detail(View):
 
         }
         return render(request, 'reid/order_detail.html',context)
-    
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class cancel_order(View):
     def get(self, request, order_id):
         user_id = request.session.get('user_id')  # Use get method to avoid KeyError
@@ -389,7 +391,8 @@ class cancel_order(View):
         wallet.amount += total_price
         wallet.save()        
         return redirect('userside_order_detail', order_id=order_id)
-    
+
+@method_decorator(login_required(login_url='login'), name='dispatch') 
 class delete_address(View):
     def get(self, request, address_id):
         user_id = request.session.get('user_id')  # Use get method to avoid KeyError

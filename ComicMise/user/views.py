@@ -5,6 +5,7 @@ from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
 from django.views import View
 from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 #Import Models
 from accounts.models import Account
 from category.models import Category
@@ -13,12 +14,15 @@ from cart.models import Order, OrderItem
 from wallet.models import Wallet
 from django.utils import timezone
 from django.middleware.csrf import get_token
+from django.contrib.auth.decorators import user_passes_test
 
 from django.http import HttpResponse
 from django.contrib import messages
 # Create your views here.
 
-
+# Create your views here.
+def is_admin(user):
+    return user.is_admin
 
 class home(View):
     def get(self,request):
@@ -48,7 +52,7 @@ class home(View):
 #         return redirect('login')
 
 
-
+@method_decorator(login_required(login_url="login"), name="dispatch")
 class adminDashboard(View):
     def monthly_earnings(self):
         current_year = timezone.now().year
@@ -189,7 +193,8 @@ class adminDashboard(View):
         }
 
         return render(request, 'evara-backend/index.html',context)
-    
+
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class categoryView(View):
     def get(self,request):
         category_set = Category.objects.all()
@@ -217,6 +222,7 @@ class categoryView(View):
             }
         return render(request,'evara-backend/page-categories.html', context)
 
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class order_list(View):
     def get(self, request):
         order_list = Order.objects.all().order_by('-order_date')
@@ -232,7 +238,8 @@ class order_list(View):
             'orders':orders,
         }
         return render(request, 'evara-backend/page-orders-1.html', context)
-    
+
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class order_detail(View):
     def get(self, request, order_id):
         order = Order.objects.get(id = order_id)
@@ -253,7 +260,8 @@ class order_detail(View):
         }
 
         return render(request, 'evara-backend/page-orders-detail.html', context)
-    
+
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class order_status_change(View):
     def post(self, request, order_id):
         order = Order.objects.get(id = order_id)
@@ -264,7 +272,8 @@ class order_status_change(View):
         print(order_status)
         order.save()
         return redirect('order_detail', order_id=order_id)
-    
+
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class admin_cancel_order(View):
     def get(self, request, order_id):
         user = Account.objects.get(email=request.user)
@@ -278,7 +287,8 @@ class admin_cancel_order(View):
                   
         order.save()
         return redirect('order_detail', order_id=order_id)
-    
+
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class admin_return_decision(View):
     def get(self, request, order_id, dec):
         order =Order.objects.get(id = order_id)
@@ -306,7 +316,7 @@ class admin_return_decision(View):
         print(dec, return_choices[2][0], return_choices[0][0])
         return redirect('order_detail', order_id=order_id)
 
-
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class product_list(View):
     def get(self,request):
         productlist = Product.objects.all().order_by('-modified_date')
@@ -317,6 +327,7 @@ class product_list(View):
         }
         return render(request,'evara-backend/page-products-list.html', context)
 
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class add_product(View):
     def get(self,request):
         category_list = Category.objects.all()
@@ -360,7 +371,8 @@ class add_product(View):
             else:
                 messages.error(request,'Please upload 3 images.')
                 return redirect('add_product')
-    
+
+@method_decorator(user_passes_test(is_admin), name='dispatch') 
 class product_detail(View):
     def get(self,request, product_id):
         product = Product.objects.get(id = product_id)
@@ -376,7 +388,8 @@ class product_detail(View):
             'csrf_token': get_token(request)
         }
         return render(request,'evara-backend/product-detail.html', context)
-    
+
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class stock_update(View):
     def get(self, request, product_id):
         product = Product.objects.get(id = product_id)
@@ -404,6 +417,7 @@ class stock_update(View):
             Prod_Vari_stock.save()
         return redirect('stock_update', product_id=product_id)
 
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class add_new_variant(View):
     def post(self, request, product_id):
         new_variant = request.POST.get('new_variant')
@@ -417,11 +431,13 @@ class add_new_variant(View):
             
         return redirect('stock_update', product_id=product_id)
 
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class customers_list(View):
     def get(self,request):
         user_set = Account.objects.all().order_by('-date_joined')
         return render(request,'evara-backend/page-customers-list.html',{'userlist':user_set})
 
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class user_block(View):
     def get(self, request, user_id):
         user = Account.objects.get(pk=user_id)
@@ -430,6 +446,7 @@ class user_block(View):
         print(user.is_active)
         return redirect('customers_list')
     
+@method_decorator(user_passes_test(is_admin), name='dispatch') 
 class user_unblock(View):
     def get(self, request, user_id):
         user = Account.objects.get(pk=user_id)
@@ -438,6 +455,7 @@ class user_unblock(View):
         print(user.is_active)
         return redirect('customers_list')
     
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class sales_report(View):
     def get(self, request):
         sales_from = request.GET.get('sales_from')

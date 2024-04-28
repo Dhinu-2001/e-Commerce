@@ -7,7 +7,11 @@ from accounts.models import Account
 from .models import User_wishlist
 from store.models import Product, ProductVariation
 from cart.models import Cart, CartItem
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 # Create your views here.
+
+@method_decorator(login_required(login_url="login"), name="dispatch")
 class wishlist(View):
     def get(self, request):
         user_id = request.session.get('user_id')  # Use get method to avoid KeyError
@@ -44,6 +48,7 @@ class wishlist(View):
         }
         return render(request,'reid/wishlist.html',context)
 
+@method_decorator(login_required(login_url="login"), name="dispatch")
 class add_wishlist(View):
     def get(self, request, product_id):
         user_id = request.session.get('user_id')  # Use get method to avoid KeyError
@@ -62,6 +67,7 @@ class add_wishlist(View):
         wishlist.save()
         return redirect('wishlist')
     
+@method_decorator(login_required(login_url="login"), name="dispatch")
 class remove_wishlist(View):
     def get(self, request, product_id):
         user_id = request.session.get('user_id')  # Use get method to avoid KeyError
@@ -86,6 +92,7 @@ def cart_id(request):
         cart_id = request.session.create()
     return cart_id
 
+@method_decorator(login_required(login_url="login"), name="dispatch")
 class wishlist_add_cart(View):
     def get(self,request,product_id):
         product = Product.objects.get(pk = product_id)

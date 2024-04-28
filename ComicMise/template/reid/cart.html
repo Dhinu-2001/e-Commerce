@@ -178,7 +178,6 @@
     <script>
         var csrfToken = '{{ csrf_token }}';
     </script>
-
 </head>
 
 <script>
@@ -219,7 +218,7 @@
             console.log(updatedSubtotal)
 
             const updatedCartTotal = data.updated_cart_total
-            const cartTotalElement = document.getElementById(`cart_total-${cartItemId}`);
+            const cartTotalElement = document.getElementById(`cart_total`);
             cartTotalElement.textContent = updatedCartTotal;
             console.log(updatedCartTotal)
 

@@ -3,11 +3,17 @@ from django.views import View
 from django.http import JsonResponse
 from category.models import Category
 from django.contrib import messages
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
 
 # Model importing
 from store.models import Product, ProductImage
 # Create your views here.
 
+def is_admin(user):
+    return user.is_admin
+
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class product_listing(View):
     def post(self, request, product_id):
         try:
@@ -25,7 +31,8 @@ class product_listing(View):
             return JsonResponse({'success': True,'list_status': list_status})
         except Product.DoesNotExist:
             return JsonResponse({'error':'Product not found'}, status=404)
-        
+    
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class edit_product(View):
     def get(self, request, product_id):
         product = Product.objects.get(id = product_id)

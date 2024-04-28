@@ -4,8 +4,14 @@ from django.views import View
 from datetime import datetime
 from django.contrib import messages
 from coupon.models import Coupon
+from django.contrib.auth.decorators import user_passes_test
+from django.utils.decorators import method_decorator
 # Create your views here.
 
+def is_admin(user):
+    return user.is_admin
+
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class add_coupon(View):
     def get(self, request):
         return render(request, 'evara-backend/add_coupon.html')
@@ -37,6 +43,7 @@ class add_coupon(View):
         coupon_submit.save()
         return redirect('add_coupon')
 
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class coupon_list(View):
     def get(self, request):
         coupon_list = Coupon.objects.all().order_by('-valid_from')
@@ -44,7 +51,8 @@ class coupon_list(View):
             'coupon_list': coupon_list
         }
         return render(request,'evara-backend/coupon_list.html',context)
-    
+
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class coupon_action(View):
     def get(self, request, coupon_id):
         coupon = Coupon.objects.get(id = coupon_id)
