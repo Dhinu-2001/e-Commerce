@@ -5,7 +5,7 @@
             <div class="content-header">
                 <div>
                     <h2 class="content-title card-title">Order detail</h2>
-                    <p>Details for Order ID: {{order.id}}</p>
+                    <p>Details for Order ID: #{{order.id}}</p>
                 </div>
             </div>
             <div class="card">
@@ -30,12 +30,9 @@
                                     </span>
                                 {% endif %}
                              <br>
-                            <small class="text-muted">Order ID: {{order.id}}</small>
+                            <small class="text-muted">Order ID: #{{order.id}}</small>
                         </div>
-                        <div class="col-lg-6 col-md-6 ms-auto text-md-end">
-                           
-                            <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i></a>
-                        </div>
+                        
                     </div>
                 </header> <!-- card-header end// -->
                 <div class="card-body">
@@ -50,7 +47,6 @@
                                     <p class="mb-1">
                                         {{order.user.first_name}} {{order.user.last_name}} <br> <template class="__cf_email__" data-cfemail="e2838e879aa2879a838f928e87cc818d8f">[email&#160;protected]</template> <br> {{order.user.email}}
                                     </p>
-                                    <a href="#">View profile</a>
                                 </div>
                             </article>
                         </div> <!-- col// -->
@@ -64,7 +60,6 @@
                                     <p class="mb-1">
                                         Shipping: Fargo express <br> Pay method: {{pay_method}} <br>Order date: {{order.order_date}}
                                     </p>
-                                    <a href="#">Download info</a>
                                 </div>
                             </article>
                         </div> <!-- col// -->

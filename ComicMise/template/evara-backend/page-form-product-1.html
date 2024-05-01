@@ -12,12 +12,8 @@
                             <button type="submit" class="btn btn-primary">Publish</button>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-center text-danger">
-                        {% for message in messages %}
-                           
-                                {{message}}
-                            
-                        {% endfor %}
+                    <div class="d-flex justify-content-center ">
+                        {% include 'reid/includes/alerts.html' %}
                     </div>
                 </div>
                 <div class="col-lg-6">
@@ -30,10 +26,16 @@
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Product title</label>
                                     <input  type="text" placeholder="Type here"  class="form-control" id="product_name" name="product_name">
+                                    {% if errors.prod_name %}
+                                        <span style="color: red;">{{ errors.prod_name }}</span>
+                                    {% endif %}
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Full description</label>
                                     <textarea placeholder="Type here" class="form-control" rows="4" name="product_description" ></textarea>
+                                    {% if errors.prod_description %}
+                                        <span style="color: red;">{{ errors.prod_description }}</span>
+                                    {% endif %}
                                 </div>
                                 
                                 <div class="row">
@@ -52,19 +54,20 @@
                                                 <input placeholder="Rs." type="text" class="form-control" name="promotion_price">
                                             </div>
                                         </div>
+                                        {% if errors.prom_price %}
+                                            <span style="color: red;">{{ errors.prom_price }}</span>
+                                        {% endif %}
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="mb-4">
                                             <label class="form-label">Regular price</label>
                                             <input placeholder="Rs." type="text" class="form-control" name="regular_price">
                                         </div>
+                                        {% if errors.reg_price %}
+                                            <span style="color: red;">{{ errors.reg_price }}</span>
+                                        {% endif %}
                                     </div>
                                 </div>
-                                <!-- <div class="mb-4">
-                                    <label class="form-label">Tax rate</label>
-                                    <input type="text" placeholder="%" class="form-control" id="product_name">
-                                </div> -->
-                            <!-- </form> -->
                         </div>
                     </div> <!-- card end// -->
                     
@@ -82,41 +85,9 @@
                                 <input class="form-control" type="file" name="image2" id="image2" ><br><br>
                                 <label class="form-label" for="image3">Image 3:</label>
                                 <input class="form-control" type="file" name="image3" id="image3" ><br><br>
-                                <!-- <img src="{% static 'assets/imgs/theme/upload.svg' %}" alt=""> -->
-                                <!--<input class="form-control" type="file" id="product_image" name="product_image" > multiple-->
                             </div>
                         </div>
                     </div> <!-- card end// -->
-                    <!-- <div class="card mb-4">
-                        <div class="card-header">
-                            <h4>Organization</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="row gx-2">
-                                <div class="col-sm-6 mb-3">
-                                    <label class="form-label">Category</label>
-                                    <select name="product_category" class="form-select" >
-                                        {% for obj in category_list %}
-                                        <option value="{{ obj.slug}}" > {{ obj.category_name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-sm-6 mb-3">
-                                    <label class="form-label">Size</label>                                    
-                                    <select class="form-select" name="product_size" id="size">
-                                        <option value="small">Small</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="large">Large</option>
-                                    </select>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="product_name" class="form-label">Stock</label>
-                                    <input type="text" class="form-control" name="product_stock">
-                                </div>
-                            </div> 
-                        </div>
-                    </div>  -->
-                    <!-- card end// -->
                 </div>
             </form>
             </div>

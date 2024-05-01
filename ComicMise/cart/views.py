@@ -28,8 +28,12 @@ class add_cart(View):
         product = Product.objects.get(pk = product_id)
         size = request.GET.get('size')
         print(size)
-        variant = ProductVariation.objects.get(product=product, size=size)
-        print(variant)
+        try:
+            variant = ProductVariation.objects.get(product=product, size=size)
+        except:
+            messages.error(request, 'Selected size of product is not available.')
+            return redirect('product_detail' , category_slug=product.category.slug, product_slug=product.slug, size='small')
+       
         try:
             cart = Cart.objects.get(cart_id = cart_id(request))
         except Cart.DoesNotExist:
@@ -210,6 +214,9 @@ class place_order(View):
         try:
             cart = Cart.objects.get(cart_id=cart_id(request))
             cart_items = CartItem.objects.filter(cart = cart, is_active=True)
+            if len(cart_items) == 0:
+                messages.error(request, 'Your cart is empty!')
+                return redirect('cart')
             cart_items_variations = []
             for cart_item in cart_items:
                 total_price += (cart_item.product.promotion_price * cart_item.quantity)
@@ -289,9 +296,46 @@ class order_success(View):
             state            = request.POST['state']
             landmark         = request.POST['landmark']
             alt_phone_number = request.POST['alternate_phone_numbel']
-            if not address_title or not ph_number or not pincode or not address or not locality or not city or not state or not name:
-                messages.error(request,'Enter the required fields')
+
+# FORM VALIDATION===============================================
+        # CHECKING MANDATORY FIELDS
+            if not address_title or not name or not ph_number or not pincode or not locality or not address or not city or not state:
+                messages.error(request,'Please, enter the required fields')
                 return redirect('place_order' )
+            
+        # CHECKING PHONE NUMBERS
+            if ph_number:
+                if not ph_number.isdigit():
+                    messages.error(request,'Give valid phone number.(Phone number should be integers)')
+                    return redirect('place_order' ) 
+                elif len(ph_number) != 10:
+                    messages.error(request,'Give valid phone number.(Phone number should contain 10 digits)')
+                    return redirect('place_order' )
+                elif len(set(ph_number)) == 1 and ph_number[0] == '0':
+                    messages.error(request, "Phone number can't contain only 0s ")
+                    return redirect('place_order')
+            if alt_phone_number:
+                if not alt_phone_number.isdigit():
+                    messages.error(request,'Give valid phone number.(Phone number should be integers)')
+                    return redirect('place_order' ) 
+                elif len(alt_phone_number) != 10:
+                    messages.error(request,'Give valid phone number.(Phone number should contain 10 digits)')
+                    return redirect('place_order' )
+                elif len(set(alt_phone_number))==1 and alt_phone_number[0]=='0':
+                    messages.error(request, "Phone number can't contain only 0s.")
+                    return redirect('place_order')
+        # CHECKING PINCODE
+            if pincode:
+                if not pincode.isdigit():
+                    messages.error(request,'Give valid phone number.(Pin code should be integers)')
+                    return redirect('place_order' ) 
+                elif len(pincode) != 6:
+                    messages.error(request,'Give valid phone number.(Pin code should contain 6 digits)')
+                    return redirect('place_order' )
+                elif len(set(pincode))==1 and pincode[0]=='0':
+                    messages.error(request, "Pin code can't contain only 0s.")
+                    return redirect('place_order')
+
             fd = Address(address_title=address_title, name=name, ph_number=ph_number, pincode=pincode, locality=locality, address=address, city=city, state=state, landmark=landmark, alt_phone_number=alt_phone_number)
             fd.save()
             user_id = request.session['user_id']

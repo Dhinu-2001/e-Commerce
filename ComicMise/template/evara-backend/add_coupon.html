@@ -9,17 +9,12 @@
                     <div class="content-header">
                         <h2 class="content-title">Add Coupon</h2>
                         <div>
-                            <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
                             <button type="submit" class="btn btn-primary">Save</button>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-center text-danger">
-                        {% for message in messages %}
-                           
-                                {{message}}
-                            
-                        {% endfor %}
-                    </div>
+                </div>
+                <div class="d-flex justify-content-center ">
+                    {% include 'reid/includes/alerts.html' %}
                 </div>
                 <div class="col-lg-6">
                     <div class="card mb-4">
@@ -28,19 +23,25 @@
                             
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Coupon Code</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="code" name="code" maxlength="15" required>
+                                    <input type="text" placeholder="Type here" class="form-control" id="code" name="code" maxlength="15" >
+                                    {% if errors.code %}
+                                        <span style="color: red;">{{ errors.code }}</span>
+                                    {% endif %}
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Valid From</label>
-                                    <input class="form-control" type="datetime-local" id="valid_from" name="valid_from" required>
+                                    <input class="form-control" type="datetime-local" id="valid_from" name="valid_from" >
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Valid To</label>
-                                    <input class="form-control" type="datetime-local" id="valid_to" name="valid_to" required>
+                                    <input class="form-control" type="datetime-local" id="valid_to" name="valid_to" >
+                                    {% if errors.valid_to %}
+                                        <span style="color: red;">{{ errors.valid_to }}</span>
+                                    {% endif %}
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Discount (%)</label>
-                                    <input class="form-control" type="number" id="discount" name="discount" min="1" max="70" required>
+                                    <input class="form-control" type="number" id="discount" name="discount" min="1" max="70" >
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Active</label>

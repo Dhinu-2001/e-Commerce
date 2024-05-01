@@ -1,13 +1,13 @@
-from django.shortcuts import render, redirect
-# Create your views here.
+from django.shortcuts import render, redirect, get_object_or_404
+
 from django.conf import settings
 import razorpay
 razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 from django.views.decorators.csrf import csrf_exempt
 from cart.models import Cart, OrderItem, Order
-
+from accounts.models import Account
 from django.contrib.sites.shortcuts import get_current_site
-
+# Create your views here.
 
 @csrf_exempt
 def handlerequest(request):
@@ -88,7 +88,11 @@ def cart_id(request):
     return cart_id
 
 def razorpay_success(request,  order_id):
-    user = request.user
+    user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+    user = None  # Initialize user to None
+
+    if user_id is not None:  # Check if user_id exists
+        user = get_object_or_404(Account, pk=user_id)
     order_id_session = request.session.get('order_id',2)
     print(order_id_session)
     order = Order.objects.get(id = order_id_session)
@@ -132,14 +136,19 @@ def razorpay_success(request,  order_id):
             'shipping_address': order.shipping_address,
             'order_items_variations':order_items_variations,
             'total':order.total_price,
-            'user_name':user.username  
+            'user_id':user_id,
+            'user': user,  
         }
     return render(request, 'reid/order_success.html',context)
 
 #============================= RETRY RAZORPAY ==================================================================
 
 def razorpay_retry(request, order_id):
-    user = request.user
+    user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+    user = None  # Initialize user to None
+
+    if user_id is not None:  # Check if user_id exists
+        user = get_object_or_404(Account, pk=user_id)
     order = Order.objects.get(id = order_id )
     request.session['order_id_retry'] = order_id
     if order.razorpay_order_id is None:
@@ -166,8 +175,8 @@ def razorpay_retry(request, order_id):
     print(callback_url)
         
     context ={
-        'user_name':user.username,
-        'user_id':user.id,
+        'user_id':user_id,
+        'user': user,
         'order':order,
         'razorpay_order_id':order.razorpay_order_id,
         'order_id':order.id,
@@ -251,7 +260,11 @@ def handlerequest_retry(request):
             return redirect('razorpay_success__retry', order_id=order_id_session)
 
 def razorpay_success__retry(request,  order_id):
-    user = request.user
+    user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+    user = None  # Initialize user to None
+
+    if user_id is not None:  # Check if user_id exists
+        user = get_object_or_404(Account, pk=user_id)
     order_id_session = request.session.get('order_id_retry',2)
     print(order_id_session)
     order = Order.objects.get(id = order_id_session)
@@ -290,7 +303,8 @@ def razorpay_success__retry(request,  order_id):
             'shipping_address': order.shipping_address,
             'order_items_variations':order_items_variations,
             'total':order.total_price,
-            'user_name':user.username  
+            'user_id':user_id,
+            'user': user, 
         }
     return render(request, 'reid/order_success.html',context)
 

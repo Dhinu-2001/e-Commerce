@@ -8,7 +8,7 @@
                 <div class="col-12">
                     <div class="breadcrumb_content">
                         <ul>
-                            <li><a href="index.html">home</a></li>
+                            <li><a href="{% url 'home' %}">home</a></li>
                             <li>/</li>
                             <li>checkout</li>
                         </ul>
@@ -22,7 +22,7 @@
     <!--Checkout page section-->
     <div class="Checkout_section" id="accordion">
        <div class="container">
-            <div class="row">
+            <!-- <div class="row">
                <div class="col-12">
                     <div class="user-actions">
                         <h3> 
@@ -72,7 +72,7 @@
                         </div>    
                     </div>    
                </div>
-            </div>
+            </div> -->
             <div class="checkout_form">
                 <div class="row">
                     <div class="col-lg-6 col-md-6">
@@ -101,21 +101,22 @@
                                 
                                 <div class="col-12 mb-20">
                                     <div class="panel-default">
-                                    <input required="" type="radio" name="delivery_address" id="address-{{ address.id }}" checked="" value="new address">
+                                    <input required="" type="radio" name="delivery_address" id="address-{{ address.id }}"  value="new address">
                                     <label class="righ_0" for="address" data-bs-toggle="collapse" data-bs-target="#collapsetwo" aria-controls="collapseOne">Ship to a different address?</label>
                                     </div>
                                     <div id="collapsetwo" class="collapse one" data-bs-parent="#accordion">
                                         <div class="row">
+                                            <label>(<span>*</span>) Marked fields are mandatory.</label>
                                             <div class="col-lg-6 mb-20">
                                                 <label>Address title <span>*</span></label>
-                                                <input type="text"  name="address_title" placeholder="Address title *">   
+                                                <input type="text"  name="address_title" placeholder="Address title">   
                                             </div>
                                             <div class="col-lg-6 mb-20">
                                                 <label>Name  <span>*</span></label>
-                                                <input type="text"  name="name" placeholder="Name *">
+                                                <input type="text"  name="name" placeholder="Name">
                                             </div>
                                             <div class="col-12 mb-20">
-                                                <label>Phone Number</label>
+                                                <label>Phone Number <span>*</span></label>
                                                 <input  type="text" name="ph_number" placeholder="Phone Number">  
                                             </div>
                                             <div class="col-12 mb-20">
@@ -128,35 +129,35 @@
                                             </div>
                                             <div class="col-12 mb-20">
                                                 <label>Locality <span>*</span></label>
-                                                <input  type="text" name="locality" placeholder="Locality *">
+                                                <input  type="text" name="locality" placeholder="Locality">
                                             </div>
                                             <div class="col-12 mb-20">
                                                 <label>City <span>*</span></label>
-                                                <input  type="text" name="city" placeholder="City *">
+                                                <input  type="text" name="city" placeholder="City">
                                             </div> 
                                              <div class="col-12 mb-20">
                                                 <label>State <span>*</span></label>
-                                                <input  type="text" name="state" placeholder="State *"> 
+                                                <input  type="text" name="state" placeholder="State"> 
                                             </div> 
                                             <div class="col-lg-6 mb-20">
-                                                <label>Landmark<span>*</span></label>
-                                                <input type="text" name="landmark" placeholder="Landmark *">
+                                                <label>Landmark</label>
+                                                <input type="text" name="landmark" placeholder="Landmark">
             
                                             </div> 
                                              <div class="col-lg-6 mb-20">
-                                                <label> "Alternate Phone Number   <span>*</span></label>
-                                                <input type="text" name="alternate_phone_numbel" placeholder="Alternate Phone Number *">
+                                                <label> Alternate Phone Number  </label>
+                                                <input type="text" name="alternate_phone_numbel" placeholder="Alternate Phone Number">
             
                                             </div> 
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <!-- <div class="col-12">
                                     <div class="order-notes">
                                          <label for="order_note">Order Notes</label>
                                         <textarea id="order_note" placeholder="Notes about your order, e.g. special notes for delivery."></textarea>
                                     </div>    
-                                </div>     	    	    	    	    	    	    
+                                </div>   -->
                             </div>
                           
                     </div>
@@ -203,10 +204,10 @@
                             <div class="payment_method">
                                <div class="panel-default">
                                 {% if total > 1000 %}
-                                    <input disabled required="" checked="" id="exampleRadios3" name="payment_option" type="radio" value = "CASH_ON_DELIVERY" data-bs-target="createp_account" />
+                                    <input disabled required="" id="exampleRadios3" name="payment_option" type="radio" value = "CASH_ON_DELIVERY" data-bs-target="createp_account" />
                                     <label for="payment" data-bs-toggle="collapse" data-bs-target="#method" aria-controls="method">Cash on delivery</label> (For order above Rs.1000, Cash on delivery is not available.)
                                 {% else %}
-                                    <input required="" checked="" id="exampleRadios3" name="payment_option" type="radio" value = "CASH_ON_DELIVERY" data-bs-target="createp_account" />
+                                    <input required="" id="exampleRadios3" name="payment_option" type="radio" value = "CASH_ON_DELIVERY" data-bs-target="createp_account" />
                                     <label for="payment" data-bs-toggle="collapse" data-bs-target="#method" aria-controls="method">Cash on delivery</label>
                             
                                 {% endif %}
@@ -218,10 +219,10 @@
                                 </div>
                                 <div class="panel-default">
                                 {% if wallet_balance >= total %}
-                                    <input required="" checked="" id="exampleRadios4" name="payment_option" type="radio" value = "WALLET" data-bs-target="createp_account" />
+                                    <input required="" id="exampleRadios4" name="payment_option" type="radio" value = "WALLET" data-bs-target="createp_account" />
                                     <label for="payment_defult" data-bs-toggle="collapse" data-bs-target="#collapsedefult" aria-controls="collapsedefult">Pay using Wallet </label>
                                 {% else %}
-                                    <input  disabled required="" checked="" id="exampleRadios4" name="payment_option" type="radio" value = "WALLET" data-bs-target="createp_account" />
+                                    <input  disabled required="" id="exampleRadios4" name="payment_option" type="radio" value = "WALLET" data-bs-target="createp_account" />
                                     <label for="payment_defult" data-bs-toggle="collapse" data-bs-target="#collapsedefult" aria-controls="collapsedefult">Pay using Wallet </label> (Wallet balance is insufficient.)
                                 {% endif %}
                                     <div id="collapsedefult" class="collapse one" data-bs-parent="#accordion">
@@ -232,7 +233,7 @@
                                 </div> 
                                 
                                 <div class="panel-default">
-                                    <input required="" checked="" id="exampleRadios4" name="payment_option" type="radio" value = "RAZORPAY" data-bs-target="createp_account" />
+                                    <input required="" id="exampleRadios4" name="payment_option" type="radio" value = "RAZORPAY" data-bs-target="createp_account" />
                                     <label for="payment_defult" data-bs-toggle="collapse" data-bs-target="#collapsedefult" aria-controls="collapsedefult">Razorpay </label>
                                     <img src="{% static 'reid_assets/img/icon/papyel.png' %}" alt="">
 
@@ -245,13 +246,7 @@
                                 <div class="order_button">
                                     <button  type="submit">Place Order</button> 
                                 </div> 
-                                <div class="d-flex justify-content-center text-danger">
-                                    {% for message in messages %}
-                                       
-                                            {{message}}
-                                        
-                                    {% endfor %}
-                                </div>   
+                                {% include 'reid/includes/alerts.html' %}   
                             </div> 
                         </form>         
                     </div>

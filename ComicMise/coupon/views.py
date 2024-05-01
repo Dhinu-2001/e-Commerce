@@ -18,30 +18,40 @@ class add_coupon(View):
     
     def post(self, request):
         code = request.POST.get('code')
-        valid_from = request.POST.get('valid_from')
+        valid_from_str = request.POST.get('valid_from')
         valid_to_str = request.POST.get('valid_to')
         discount = request.POST.get('discount')
         active = request.POST.get('is_active',False)
-        print(active)
-        if not code or not valid_from or not valid_to_str or not discount:
-            messages.error(request, 'Enter the required fields.')
+        if not code or not valid_from_str or not valid_to_str or not discount:
+            messages.error(request, 'Enter the all fields.')
             return render(request, 'evara-backend/add_coupon.html')
-        print(valid_to_str)
+        
+        print(valid_from_str, valid_to_str)
+        errors = {}
+        if ' ' in set(code) and len(set(code)) == 1:
+            errors['code'] ="Code name cannot contain only white space"
+        if len(code) <= 2:
+            errors['code'] ="Code name must be longer than 2 characters."
+
+        # valid_from = datetime.strptime(valid_from_str, '%Y-%m-%d')
+        # valid_to = datetime.strptime(valid_to_str, '%Y-%m-%d')
+
+        if valid_to_str < valid_from_str:
+            errors['valid_to'] ="'Valid to' date cannot be less than 'Valid from' date."
+
         # valid_to = datetime.strptime(valid_to_str, '%Y-%m-%dT%H:%M')
-
-        # if timezone.now() > valid_to:
-        #     messages.error(request, 'Valid to date must start from tomorrow.')
-        #     return render(request, 'evara-backend/add_coupon.html')
-
-        coupon_submit = Coupon(
-            code       = code,
-            valid_from = valid_from,
-            valid_to   = valid_to_str,
-            discount   = discount,
-            active     = active
-        )
-        coupon_submit.save()
-        return redirect('add_coupon')
+        if errors:
+            return render(request, 'evara-backend/add_coupon.html', {'errors': errors})
+        else:
+            coupon_submit = Coupon(
+                code       = code,
+                valid_from = valid_from_str,
+                valid_to   = valid_to_str,
+                discount   = discount,
+                active     = active
+            )
+            coupon_submit.save()
+            return redirect('add_coupon')
 
 @method_decorator(user_passes_test(is_admin), name='dispatch')
 class coupon_list(View):

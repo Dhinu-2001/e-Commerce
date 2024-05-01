@@ -1,0 +1,133 @@
+{% extends 'reid/base-reid.html' %}
+{%load static%}
+{% block content %}
+
+<!--breadcrumbs area start-->
+<div class="breadcrumbs_area other_bread">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="index.html">home</a></li>
+                        <li>/</li>
+                        <li>Add address details</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs area end-->
+
+<!-- my account start  -->
+<section class="main_content_area">
+    <div class="container">
+        <div class="account_dashboard">
+            <div class="row">
+                <div class="col-sm-12 col-md-9 col-lg-9">
+                    <div id="add_address">
+                        <h3>Add address details </h3>
+                        <div class="login">
+                            <div class="login_form_container">
+                                <div class="account_login_form">
+                                    <form method="post" name="add address"
+                                        action="{% url 'add_address' %}">
+                                        {% csrf_token %}
+                                        
+                                        <div class="d-flex justify-content-center ">
+                                            {% include 'reid/includes/alerts.html' %}
+                                        </div>
+                                        <label>(<span>*</span>) Marked fields are mandatory.</label>
+                                        <div class="form-group col-md-12">
+                                            <label>Address title <span class="required">*</span></label>
+                                            <input class="form-control square" name="address_title" type="text">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>Name <span class="required">*</span></label>
+                                            <input class="form-control square" name="name">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>Phone Number <span class="required">*</span></label>
+                                            <input class="form-control square" name="ph_number" type="text">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>Address <span class="required">*</span></label>
+                                            <textarea class="form-control square" name="address"></textarea>
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>Pincode <span class="required">*</span></label>
+                                            <input class="form-control square" name="pincode" type="text">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>Locality <span class="required">*</span></label>
+                                            <input class="form-control square" name="locality" type="text">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>City <span class="required">*</span></label>
+                                            <input class="form-control square" name="city" type="text">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>State <span class="required">*</span></label>
+                                            <input class="form-control square" name="state" type="text">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>Landmark </label>
+                                            <input class="form-control square" name="landmark" type="text">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label>Alternate Phone Number</label>
+                                            <input class="form-control square" name="alt_phone_number" type="text">
+                                        </div>
+                                        <div class="col-md-12">
+                                            <button type="submit" name="submit" value="Submit" style="cursor: pointer;
+                                                    color: white;
+                                                    border-color: darkorange;
+                                                    background-color: #ff9420;
+                                                    border: hidden;
+                                                    border-radius: 24px;
+                                                    font-size: larger;
+                                                    width: 69px;">Save</button>
+                                                    <a href="{% url 'userProfile' user_name=user.username %}" name="submit" value="Submit" style="cursor: pointer;
+                                                    color: white;
+                                                    border-color: darkorange;
+                                                    background-color: #ff9420;
+                                                    border: hidden;
+                                                    border-radius: 24px;
+                                                    font-size: larger;
+                                                    width: 80px;">Cancel</a>
+                                            
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+</section>
+<!-- my account end   -->
+
+
+<!-- JS
+============================================ -->
+
+<!-- Plugins JS -->
+<script src="{% static 'reid_assets/js/plugins.js' %}"></script>
+
+<!-- Main JS -->
+<script src="{% static 'reid_assets/js/main.js' %}"></script>
+
+
+
+</body>
+
+
+<!-- Mirrored from htmldemo.net/reid/reid/my-account.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Feb 2024 13:44:34 GMT -->
+
+</html>
+{% endblock %}

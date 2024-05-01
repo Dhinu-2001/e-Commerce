@@ -4,32 +4,11 @@
         <section class="content-main">
             <div class="content-header">
                 <h2 class="content-title">Coupon list</h2>
-                <div>
-                    <a href="#" class="btn btn-primary"><i class="material-icons md-plus"></i> Create new</a>
-                </div>
+                
             </div>
             <div class="card mb-4">
                 <header class="card-header">
-                    <div class="row gx-3">
-                        <div class="col-lg-4 col-md-6 me-auto">
-                            <input type="text" placeholder="Search..." class="form-control">
-                        </div>
-                        <div class="col-lg-2 col-md-3 col-6">
-                            <select class="form-select">
-                                <option>Status</option>
-                                <option>Active</option>
-                                <option>Disabled</option>
-                                <option>Show all</option>
-                            </select>
-                        </div>
-                        <div class="col-lg-2 col-md-3 col-6">
-                            <select class="form-select">
-                                <option>Show 20</option>
-                                <option>Show 30</option>
-                                <option>Show 40</option>
-                            </select>
-                        </div>
-                    </div>
+                   
                 </header> <!-- card-header end// -->
                 <div class="card-body">
                     <div class="table-responsive">
@@ -48,16 +27,15 @@
                             <tbody>
                                 {% for coupon in coupon_list %}
                                 <tr>
-                                    <td> {{ coupon.id }} </td>
-                                    <td width="40%">
-                                        <a href="#" class="itemside">
+                                    <td> {{ forloop.counter }} </td>
+                                    <td >
+                                        
                                             <!-- <div class="left">
                                                 <img src="{% static 'backend-assets/imgs/people/avatar1.jpg' %}" class="img-sm img-avatar" alt="Userpic">
                                             </div> -->
                                             <div class="info pl-3">
                                                 <h6 class="mb-0 title">{{ coupon.code }}</h6>
                                             </div>
-                                        </a>
                                     </td>
                                     <!-- <td><template class="__cf_email__" data-cfemail="2c4940494d42435e1e1c1e1c6c49544d415c4049024f4341">{{ obj.email }}</template></td> -->
                                     <td>{{ coupon.valid_from }}</td>
@@ -86,18 +64,7 @@
                     </div>
                 </div> <!-- card-body end// -->
             </div> <!-- card end// -->
-            <div class="pagination-area mt-15 mb-50">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
-                    </ul>
-                </nav>
-            </div>
+            
         </section> <!-- content-main end// -->
 
     </main>

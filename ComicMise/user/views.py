@@ -24,6 +24,7 @@ from django.contrib import messages
 def is_admin(user):
     return user.is_admin
 
+
 class home(View):
     def get(self,request):
         #user_id = Account.objects.get(pk=pk)
@@ -43,13 +44,6 @@ class home(View):
             'category_filter':category_filter
         }
         return render(request, 'reid/index.html', context)
-
-
-# class logout(View):
-#     @login_required(login_url='login')
-#     def post(self,request):
-#         logout(request)
-#         return redirect('login')
 
 
 @method_decorator(login_required(login_url="login"), name="dispatch")
@@ -204,23 +198,39 @@ class categoryView(View):
         return render(request, 'evara-backend/page-categories.html', context)
     
     def post(self,request):
-        if request.method == 'POST':
-            cat_name =request.POST['category_name']
-            cat_description =request.POST['category_description']
-            cat_image = request.FILES.get('category_image')
+        cat_name =request.POST['category_name']
+        cat_description =request.POST['category_description']
+        cat_image = request.FILES.get('category_image')
+    
+        if not cat_name or not cat_description or not cat_image:
+            messages.error(request,'Enter all fields')
+            return redirect ('categoryView')
+        errors = {}
+        if ' ' in set(cat_name) and len(set(cat_name)) == 1:
+            errors['cat_name'] ="Category name cannot contain only white space"
+        if any(char.isdigit() for char in cat_name):
+            errors['cat_name'] ="Category name cannot contain digits."
+        if '.' in cat_name:
+            errors['cat_name'] ="Category name cannot contain dots."
+        if len(cat_name) <= 2:
+            errors['cat_name'] ="Category name must be longer than 2 characters."
         
-            if not cat_name or not cat_description :# or not cat_image
-                messages.error(request,'Enter all fields')
-                return redirect ('categoryView')
-            fd = Category(category_name=cat_name, description = cat_description, cat_image= cat_image) 
-            fd.save()
-            return redirect('categoryView')
-        else:
+        if ' ' in set(cat_description) and len(set(cat_description)) == 1:
+            errors['cat_description'] ="Category description cannot contain only white space"
+        if len(cat_description) <= 2:
+            errors['cat_description'] ="Category description must be longer than 2 characters."
+        if errors:
             category_set = Category.objects.all()
             context = {
                 'category_set': category_set,
+                'errors' : errors,
             }
-        return render(request,'evara-backend/page-categories.html', context)
+            return render(request,'evara-backend/page-categories.html', context)
+        else:
+            fd = Category(category_name=cat_name, description = cat_description, cat_image= cat_image) 
+            fd.save()
+            messages.success(request,'Category is added')
+            return redirect('categoryView')
 
 @method_decorator(user_passes_test(is_admin), name='dispatch')
 class order_list(View):
@@ -291,6 +301,7 @@ class admin_cancel_order(View):
 @method_decorator(user_passes_test(is_admin), name='dispatch')
 class admin_return_decision(View):
     def get(self, request, order_id, dec):
+        print(dec)
         order =Order.objects.get(id = order_id)
         return_choices = Order.RETURN_STATUS_CHOICES
         if dec == 'accepted':
@@ -298,14 +309,17 @@ class admin_return_decision(View):
             user_id = request.session.get('user_id')
             user = Account.objects.get(id = user_id)
             try:
-                wallet = Wallet.objects.get(user = user)
+                wallet = Wallet.objects.get(user = order.user)
                 print(wallet)
+                print('wallet get')
             except Wallet.DoesNotExist:
-                wallet = Wallet.objects.create(user = user)
+                wallet = Wallet.objects.create(user =  order.user)
                 print(wallet)
+                print('wallet create')
                 wallet.save()
             total_price = order.total_price
             wallet.amount += total_price
+            print(order.total_price, wallet.amount)
             wallet.save()
 
 
@@ -344,33 +358,61 @@ class add_product(View):
             prom_price       = request.POST['promotion_price']
             reg_price       = request.POST['regular_price']
             prod_cat_slug    = request.POST.get('product_category')
-            # prod_size        = request.POST.get('product_size')
-            # prod_stock       = request.POST.get('product_stock')
             prod_images      = [request.FILES.get('image1'), request.FILES.get('image2'), request.FILES.get('image3')]
   
         
             #checking.....
-            if not prod_name or not prod_description or not prom_price  or not prod_cat_slug :
+            if not prod_name or not prod_description or not prom_price  or not prod_cat_slug or not prod_images:
                 messages.error(request,'Enter the required fields')
                 return redirect('add_product')
+            
+            errors = {}
+            if ' ' in set(prod_name) and len(set(prod_name)) == 1:
+                errors['prod_name'] ="Product name cannot contain only white space"
+            if len(prod_name) <= 2:
+                errors['prod_name'] ="Product name must be longer than 2 characters."
         
-            #getting category-Instanse using primary key
-            category_inst=Category.objects.get(slug=prod_cat_slug)
-        
+            if ' ' in set(prod_description) and len(set(prod_description)) == 1:
+                errors['prod_description'] ="Product description cannot contain only white space"
+            if len(prod_description) <= 2:
+                errors['prod_description'] ="Product description must be longer than 2 characters."
 
-            if len(prod_images) == 3 and all(prod_images):
-                fd = Product(product_name=prod_name, description = prod_description, promotion_price= prom_price,regular_price = reg_price, category=category_inst) 
-                fd.save()
+            if not prom_price.isdigit():
+                errors['prom_price'] ="Promotion price must be postive digits."
+            if len(set(prom_price)) == 1 and prom_price[0] == '0':  # Compare as a string
+                errors['prom_price'] ="Promotion price cannot be 0."
 
-                #getting Instance
-                product_inst = Product.objects.get(product_name=prod_name)
-                
-                for img in prod_images:
-                    ProductImage.objects.create(product=product_inst, image=img)    
-                return redirect('product_list')
+            if not reg_price.isdigit():
+                errors['reg_price'] ="Regular price must be postive digits."
+            if len(set(reg_price)) == 1 and reg_price[0] == '0':  # Compare as a string
+                errors['reg_price'] ="Regular price cannot be 0."
+
+            if errors:
+                category_list = Category.objects.all()
+                context = {
+                    'category_list': category_list,
+                    'errors' : errors,
+                }
+                return render(request,'evara-backend/page-form-product-1.html', context)
+
             else:
-                messages.error(request,'Please upload 3 images.')
-                return redirect('add_product')
+                #getting category-Instanse using primary key
+                category_inst=Category.objects.get(slug=prod_cat_slug)
+
+
+                if len(prod_images) == 3 and all(prod_images):
+                    fd = Product(product_name=prod_name, description = prod_description, promotion_price= prom_price,regular_price = reg_price, category=category_inst) 
+                    fd.save()
+
+                    #getting Instance
+                    product_inst = Product.objects.get(product_name=prod_name)
+
+                    for img in prod_images:
+                        ProductImage.objects.create(product=product_inst, image=img)    
+                    return redirect('product_list')
+                else:
+                    messages.error(request,'Please upload 3 images.')
+                    return redirect('add_product')
 
 @method_decorator(user_passes_test(is_admin), name='dispatch') 
 class product_detail(View):
@@ -407,29 +449,83 @@ class stock_update(View):
     def post(self, request, product_id):
         product = Product.objects.get(id = product_id)
         product_variant = request.POST.get('product_size')
-        product_stock = int(request.POST.get('product_stock'))
-        try:
-            variant_checking = ProductVariation.objects.get(product = product, size = product_variant)
-            variant_checking.stock += product_stock
-            variant_checking.save()
-        except ProductVariation.DoesNotExist:
-            Prod_Vari_stock = ProductVariation(product = product, size = product_variant, stock = product_stock)
-            Prod_Vari_stock.save()
-        return redirect('stock_update', product_id=product_id)
+        product_stock = request.POST.get('product_stock')
+
+        if not product_stock:
+            messages.error(request,'Enter the stock field')
+            return redirect('stock_update', product_id=product_id)
+        
+        errors = {}
+        if ' ' in set(product_stock) and len(set(product_stock)) == 1:
+            errors['product_stock'] ="Stock cannot contain only white space"
+        if not product_stock.isdigit():
+            errors['product_stock'] ="Stock must be postive digits."
+        if len(set(product_stock)) == 1 and product_stock[0] == '0':  # Compare as a string
+            errors['product_stock'] ="Stock cannot be 0."
+        
+
+        if errors:
+            product = Product.objects.get(id = product_id)
+            try:
+                table_variations = ProductVariation.objects.filter(product = product_id)
+            except ProductVariation.DoesNotExist:
+                table_variations = None
+            drop_down_variations = Variants.objects.all()
+            context ={
+                'product': product,
+                'drop_down_variations':drop_down_variations,
+                'table_variations':table_variations,
+                'errors':errors,
+            }
+            return render(request, 'evara-backend/stock_update.html',context)
+        else:
+            try:
+                variant_checking = ProductVariation.objects.get(product = product, size = product_variant)
+                variant_checking.stock += product_stock
+                variant_checking.save()
+            except ProductVariation.DoesNotExist:
+                Prod_Vari_stock = ProductVariation(product = product, size = product_variant, stock = product_stock)
+                Prod_Vari_stock.save()
+            return redirect('stock_update', product_id=product_id)
 
 @method_decorator(user_passes_test(is_admin), name='dispatch')
 class add_new_variant(View):
     def post(self, request, product_id):
         new_variant = request.POST.get('new_variant')
-        try:
-            variant_checking = Variants.objects.get(variant=new_variant)
-            messages.error(request,'Variant exists')
+
+        if not new_variant:
+            messages.error(request,'Enter new variant')
             return redirect('stock_update', product_id=product_id)
-        except Variants.DoesNotExist:
-            variant = Variants(variant = new_variant)
-            variant.save()
-            
-        return redirect('stock_update', product_id=product_id)
+        errors = {}
+        if ' ' in set(new_variant) and len(set(new_variant)) == 1:
+            errors['new_variant'] ="Variant name cannot contain only white space"
+        if len(new_variant) <= 2:
+            errors['new_variant'] ="Variant name must be longer than 2 characters."
+        
+        if errors:
+            product = Product.objects.get(id = product_id)
+            try:
+                table_variations = ProductVariation.objects.filter(product = product_id)
+            except ProductVariation.DoesNotExist:
+                table_variations = None
+            drop_down_variations = Variants.objects.all()
+            context ={
+                'product': product,
+                'drop_down_variations':drop_down_variations,
+                'table_variations':table_variations,
+                'errors': errors,
+            }
+            return render(request, 'evara-backend/stock_update.html',context)
+        else:
+            try:
+                variant_checking = Variants.objects.get(variant=new_variant)
+                messages.error(request,'Variant exists')
+                return redirect('stock_update', product_id=product_id)
+            except Variants.DoesNotExist:
+                variant = Variants(variant = new_variant)
+                variant.save()
+
+            return redirect('stock_update', product_id=product_id)
 
 @method_decorator(user_passes_test(is_admin), name='dispatch')
 class customers_list(View):
@@ -479,18 +575,7 @@ class sales_report(View):
             for order in orders:
                 overall_order_amount += order.total_price 
                 overall_order_discount += order.price_discounted
-        
-
-        # trans=[]
-        # total_price_for_each_order=[]
-        # for order in orders:
-        #     order_items = OrderItem.objects.filter(order = order)
-        #     total_price=0
-        #     for order_item in order_items:
-        #         total_price += order_item.price
-        #     total_price_for_each_order.append(total_price)
-
-        
+  
         context={
             'orders':orders,
             'overall_sale_count':overall_sale_count,

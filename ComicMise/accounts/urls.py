@@ -30,7 +30,11 @@ urlpatterns = [
     
     path('userprofile/<str:user_name>/', userProfile.as_view(), name = 'userProfile' ),
     path('userside_order_detail/<int:order_id>/',userside_order_detail.as_view(),name = 'userside_order_detail'),
+    path('add_address/', add_address.as_view(), name = 'add_address'),
+    path('edit_address/<int:address_id>/', edit_address.as_view(), name = 'edit_address'),
     path('delete_address/<int:address_id>/', delete_address.as_view(), name = 'delete_address'),
     path('cancel_order/<int:order_id>/', cancel_order.as_view(), name = 'cancel_order'),
-
+    path('edit_account_details/<str:user_name>/', edit_account_details.as_view(), name = 'edit_account_details'),
+    path('change_password/', change_password.as_view(), name = 'change_password'),
+     
 ]

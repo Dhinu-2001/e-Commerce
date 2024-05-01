@@ -1061,6 +1061,7 @@ input:-ms-input-placeholder, textarea:-ms-input-placeholder {
 @media only screen and (min-width: 1200px) and (max-width: 1600px) {
   .header_middel {
     padding: 40px 30px 18px;
+    background-image: linear-gradient(to bottom right, #000000, #000650);
   }
 }
 @media only screen and (min-width: 768px) and (max-width: 991px) {

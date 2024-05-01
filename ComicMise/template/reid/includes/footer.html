@@ -1,7 +1,7 @@
 {% load static %}
 <!--footer area start-->
 <footer class="footer_widgets">
-    <div class="footer_top">
+    <!-- <div class="footer_top">
         <div class="container">
             <div class="row">
                 <div class="col-lg-2 col-md-6 col-sm-6 col-6">
@@ -61,33 +61,35 @@
                                     <input id="mc-email" type="email" autocomplete="off" placeholder="Enter you email address here..." />
                                     <button id="mc-submit">Subscribe !</button>
                                 </form>
-                                <!-- mailchimp-alerts Start -->
-                                <div class="mailchimp-alerts text-centre">
-                                    <div class="mailchimp-submitting"></div><!-- mailchimp-submitting end -->
-                                    <div class="mailchimp-success"></div><!-- mailchimp-success end -->
-                                    <div class="mailchimp-error"></div><!-- mailchimp-error end -->
-                                </div><!-- mailchimp-alerts end -->
-                            </div>
+                                 mailchimp-alerts Start -->
+                                <!-- <div class="mailchimp-alerts text-centre"> -->
+                                   <!-- <div class="mailchimp-submitting"></div> mailchimp-submitting end -->
+                                    <!--<div class="mailchimp-success"></div><!-- mailchimp-success end -->
+                                   <!-- <div class="mailchimp-error"></div><!-- mailchimp-error end -->
+                               <!-- </div><!-- mailchimp-alerts end -->
+                            <!-- </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </div> -->
+   <!--  </div> -->
     <div class="footer_bottom">
         <div class="container">
            <div class="row">
                 <div class="col-lg-6 col-md-6">
                     <div class="copyright_area">
-                        <p> &copy; 2022 <strong> Reid </strong> Mede with ❤️ by <a href="https://hasthemes.com/" target="_blank"><strong>HasThemes</strong></a></p>
+                        <p> &copy; 2023 <strong> Anime Mise</strong> Mede with ❤️ by <a href="https://dhinu-2001.github.io/My-Portfolio/" target="_blank"><strong>Dhinu C Philip</strong></a></p>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6">
                     <div class="footer_custom_links">
                         <ul>
-                            <li><a href="#">Order History</a></li>
-                            <li><a href="wishlist.html">Wish List</a></li>
-                            <li><a href="#">Newsletter</a></li>
+                            {% if user_id is not None %}
+                            <li><a href="{% url 'userProfile' user_name=user.username %}">My Account</a></li>
+                            {% endif %}
+                            <li><a href="{% url 'wishlist' %}">Wishlist</a></li>
+                            <li><a href="{% url 'cart' %}">Cart</a></li>
                         </ul>
                     </div>
                 </div>

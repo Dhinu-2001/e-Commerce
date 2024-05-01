@@ -2,279 +2,162 @@
 {%load static%}
 {% block content %}
 
-    <!--breadcrumbs area start-->
-    <div class="breadcrumbs_area other_bread">
-        <div class="container">   
+<!--breadcrumbs area start-->
+<div class="breadcrumbs_area other_bread">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="index.html">home</a></li>
+                        <li>/</li>
+                        <li>my account</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs area end-->
+
+<!-- my account start  -->
+<section class="main_content_area">
+    <div class="container">
+        <div class="account_dashboard">
             <div class="row">
-                <div class="col-12">
-                    <div class="breadcrumb_content">
-                        <ul>
-                            <li><a href="index.html">home</a></li>
-                            <li>/</li>
-                            <li>my account</li>
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                    <!-- Nav tabs -->
+                    <div class="dashboard_tab_button">
+                        <ul role="tablist" class="nav flex-column dashboard-list">
+                            <li><a href="#dashboard" data-bs-toggle="tab" class="nav-link active">Dashboard</a></li>
+                            <li> <a href="#wallet" data-bs-toggle="tab" class="nav-link">Wallet</a></li>
+                            <li> <a href="#orders" data-bs-toggle="tab" class="nav-link">Orders</a></li>
+                            <li><a href="#address" data-bs-toggle="tab" class="nav-link">Addresses</a></li>
+                            <li><a href="{% url 'add_address' %}"  class="nav-link">Add Address</a></li>
+                            <li><a href="#account-details" data-bs-toggle="tab" class="nav-link">Account details</a>
+                            </li>
+                            <li><a href="{% url 'logout' %}" class="nav-link">logout</a></li>
                         </ul>
                     </div>
                 </div>
-            </div>
-        </div>         
-    </div>
-    <!--breadcrumbs area end-->
-    
-    <!-- my account start  -->
-    <section class="main_content_area">
-        <div class="container">   
-            <div class="account_dashboard">
-                <div class="row">
-                    <div class="col-sm-12 col-md-3 col-lg-3">
-                        <!-- Nav tabs -->
-                        <div class="dashboard_tab_button">
-                            <ul role="tablist" class="nav flex-column dashboard-list">
-                                <li><a href="#dashboard" data-bs-toggle="tab" class="nav-link active">Dashboard</a></li>
-                                <li> <a href="#wallet" data-bs-toggle="tab" class="nav-link">Wallet</a></li>
-                                <li> <a href="#orders" data-bs-toggle="tab" class="nav-link">Orders</a></li>
-                                <li><a href="#downloads" data-bs-toggle="tab" class="nav-link">Downloads</a></li>
-                                <li><a href="#address" data-bs-toggle="tab" class="nav-link">Addresses</a></li>
-                                <li><a href="#add_address" data-bs-toggle="tab" class="nav-link">Add Address</a></li>
-                                <li><a href="#account-details" data-bs-toggle="tab" class="nav-link">Account details</a></li>
-                                <li><a href="{% url 'logout' %}" class="nav-link">logout</a></li>
-                            </ul>
-                        </div>    
-                    </div>
-                    <div class="col-sm-12 col-md-9 col-lg-9">
-                        <!-- Tab panes -->
-                        <div class="tab-content dashboard_content">
-                            <div class="tab-pane fade show active" id="dashboard">
-                                <h3>Dashboard </h3>
-                                <p>From your account dashboard. you can easily check &amp; view your <a href="#">recent orders</a>, manage your <a href="#">shipping and billing addresses</a> and <a href="#">Edit your password and account details.</a></p>
-                            </div>
-                            <!-- show active -->
-                            <div class="tab-pane fade " id="wallet">
-                                <h3>Wallet Balance: </h3>
-                                <p>{{ wallet.amount }}</p>
-                            </div>
-                            <div class="tab-pane fade" id="orders">
-                                <h3>Orders</h3>
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>Order</th>
-                                                <th>Date</th>
-                                                <th>Status</th>
-                                                <th>Total</th>
-                                                <th>Actions</th> 	 	 	
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for order in orders %}
-                                            <tr>
-                                                <td>#{{ order.id }}</td>
-                                                <td>{{ order.order_date }}</td>
-                                                <td>
+                <div class="col-sm-12 col-md-9 col-lg-9">
+                    <!-- Tab panes -->
+                    <div class="tab-content dashboard_content">
+                        <div class="tab-pane fade show active" id="dashboard">
+                            <h3>Dashboard </h3>
+                            <p>From your account dashboard. you can easily check &amp; view your <a href="#">recent
+                                    orders</a>, manage your <a href="#">shipping and billing addresses</a> and <a
+                                    href="#">Edit your password and account details.</a></p>
+                        </div>
+                        <!-- show active -->
+                        <div class="tab-pane fade " id="wallet">
+                            <h3>Wallet Balance: </h3>
+                            <p>{{ wallet.amount }}.0</p>
+                        </div>
+                        <div class="tab-pane fade" id="orders">
+                            <h3>Orders</h3>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Order</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Total</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for order in orders %}
+                                        <tr>
+                                            <td>#{{ order.id }}</td>
+                                            <td>{{ order.order_date }}</td>
+                                            <td>
                                                 {% if order.canceled %}
-                                                    Cancelled
+                                                Cancelled
                                                 {% elif order.is_returned == 'PROCESSING' %}
-                                                    Return in processing
+                                                Return in processing
                                                 {% elif order.is_returned == 'RETURNED' %}
-                                                    Order returned
+                                                Order returned
                                                 {% else %}
-                                                    {{order.order_status}}
+                                                {{order.order_status}}
                                                 {% endif %}
-                                                </td>
-                                                <td>${{ order.total_price }}</td>
-                                                <td><a href="{% url 'userside_order_detail' order_id=order.id %}" class="view">view</a></td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                            </td>
+                                            <td>${{ order.total_price }}</td>
+                                            <td><a href="{% url 'userside_order_detail' order_id=order.id %}"
+                                                    class="view">view</a></td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
-                            <div class="tab-pane fade" id="downloads">
-                                <h3>Downloads</h3>
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>Product</th>
-                                                <th>Downloads</th>
-                                                <th>Expires</th>
-                                                <th>Download</th>	 	 	 	
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Shopnovilla - Free Real Estate PSD Template</td>
-                                                <td>May 10, 2022</td>
-                                                <td><span class="danger">Expired</span></td>
-                                                <td><a href="#" class="view">Click Here To Download Your File</a></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Organic - ecommerce html template</td>
-                                                <td>Sep 11, 2022</td>
-                                                <td>Never</td>
-                                                <td><a href="#" class="view">Click Here To Download Your File</a></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="tab-pane" id="address">
-                               <p>The following addresses will be used on the checkout page by default.</p>
-                                <h4 class="billing-address">Billing address</h4>
-                                
+                        </div>
+                        <div class="tab-pane" id="address">
+                            <p>The following addresses will be used on the checkout page by default.</p>
+                            <h4 class="billing-address">Billing address</h4>
 
-                                <div class="row">
-                                    {% for address in addresses %}
-                                    <div class="col-lg-6">
-                                        <div class="card mb-3 mb-lg-0">
-                                            
-                                            <div class="card-header">
-                                                <h5 class="mb-0">{{address.address_title}}</h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <address>{{address.address}}</address>
-                                                <p>{{address.name}}</p>
-                                                <p>{{address.ph_number}}</p>
-                                                <p>{{address.locality}},</p>
-                                                <p>{{address.city}},</p>
-                                                <p>{{address.state}}</p>
-                                                <p>Pin Code:{{address.pincode}}</p>
-                                                <!-- <a href="#" class="view">Edit</a>  |   -->
-                                                <a href="{% url 'delete_address' address_id=address.id %}" class="view">Delete</a>
-                                            </div>
+
+                            <div class="row">
+                                {% for address in addresses %}
+                                <div class="col-lg-6">
+                                    <div class="card mb-3 mb-lg-0">
+
+                                        <div class="card-header">
+                                            <h5 class="mb-0">{{address.address_title}}</h5>
                                         </div>
-                                    </div>
-                                    {% endfor %}
-                                </div>  
-                            </div>
-                            <div class="tab-pane fade" id="add_address">
-                                <h3>Add address details </h3>
-                                <div class="login">
-                                    <div class="login_form_container">
-                                        <div class="account_login_form">
-                                            <form method="post" name="add address" action="{% url 'userProfile' user_name=user.username %}">
-                                            {% csrf_token %}
-                                                <!-- <p>Already have an account? <a href="#">Log in instead!</a></p> -->
-                                                <!-- <div class="input-radio">
-                                                    <span class="custom-radio"><input type="radio" value="1" name="id_gender"> Mr.</span>
-                                                    <span class="custom-radio"><input type="radio" value="1" name="id_gender"> Mrs.</span>
-                                                </div> <br> -->
-                                                <input type="hidden" name="form_identifier" value="add address">
- 
-                                                        <div class="form-group col-md-12">
-                                                            <label>Address title <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="address_title" type="text">
-                                                        </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>Name <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="name">
-                                                        </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>Phone Number <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="ph_number" type="text">
-                                                        </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>Address <span class="required">*</span></label>
-                                                            <textarea required="" class="form-control square" name="address" ></textarea>
-                                                        </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>Pincode <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="pincode" type="text">
-                                                        </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>Locality <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="locality" type="text">
-                                                        </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>City <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="city" type="text">
-                                                        </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>State <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="state" type="text">
-                                                        </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>Landmark <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="landmark" type="text">
-                                                        </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>Alternate Phone Number <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="alt_phone_number" type="text">
-                                                        </div>
-                                                        <div class="col-md-12">
-                                                            <button type="submit"  name="submit" value="Submit"
-                                                            style="cursor: pointer;
-                                                            color: white;
-                                                            border-color: darkorange;
-                                                            background-color: #ff9420;
-                                                            border: hidden;
-                                                            border-radius: 24px;
-                                                            font-size: larger;
-                                                            width: 69px;">Save</button>
-                                                            <div class="d-flex justify-content-center text-danger">
-                                                                {% for message in messages %}
-                                                                   
-                                                                        {{message}}
-                                                                    
-                                                                {% endfor %}
-                                                            </div>
-                                                        </div>
-                                            </form>
+                                        <div class="card-body">
+                                            <address>{{address.address}}</address>
+                                            <p>{{address.name}}</p>
+                                            <p>{{address.ph_number}}</p>
+                                            <p>{{address.locality}},</p>
+                                            <p>{{address.city}},</p>
+                                            <p>{{address.state}}</p>
+                                            <p>Pin Code:{{address.pincode}}</p>
+                                            <a href="{% url 'edit_address' address_id=address.id %}" class="view">Edit</a>  |  
+                                            <a href="{% url 'delete_address' address_id=address.id %}" class="view">Delete</a>
                                         </div>
                                     </div>
                                 </div>
+                                {% endfor %}
                             </div>
-                            <div class="tab-pane fade" id="account-details">
-                                <h3>Account details </h3>
-                                <div class="login">
-                                    <div class="login_form_container">
-                                        <div class="account_login_form">
-                                            <form action="#">
-                                                <!-- <p>Already have an account? <a href="#">Log in instead!</a></p>
-                                                <div class="input-radio">
-                                                    <span class="custom-radio"><input type="radio" value="1" name="id_gender"> Mr.</span>
-                                                    <span class="custom-radio"><input type="radio" value="1" name="id_gender"> Mrs.</span>
-                                                </div> <br> -->
-                                                <label>First Name</label>
-                                                <input value="{{user.first_name}}" type="text" name="first-name">
-                                                <label>Last Name</label>
-                                                <input value="{{user.last_name}}" type="text" name="last-name">
-                                                <label>Email</label>
-                                                <input value="{{user.email}}" type="text" name="email-name">
-                                                <label>Phone number</label>
-                                                <input value="{{user.phone_number}}" type="text" name="phone-number">
-                                                <!-- <label>Birthdate</label>
-                                                <input type="text" placeholder="MM/DD/YYYY" value="" name="birthday">
-                                                <span class="example">
-                                                  (E.g.: 05/31/1970)
-                                                </span> -->
-                                                <br>
-                                                <!-- <span class="custom_checkbox">
-                                                    <input type="checkbox" value="1" name="optin">
-                                                    <label>Receive offers from our partners</label>
-                                                </span>
-                                                <br>
-                                                <span class="custom_checkbox">
-                                                    <input type="checkbox" value="1" name="newsletter">
-                                                    <label>Sign up for our newsletter<br><em>You may unsubscribe at any moment. For that purpose, please find our contact info in the legal notice.</em></label>
-                                                </span> -->
-                                                <!-- <div class="save_button primary_btn default_button">
-                                                    <a href="#">Save</a>
-                                                </div> -->
-                                            </form>
-                                        </div>
+                        </div>
+                        <div class="tab-pane fade" id="account-details">
+                            <h3>Account details </h3>
+                            <div class="login">
+                                <div class="login_form_container">
+                                    <div class="account_login_form">
+                                        <form action="#">
+                                            
+                                            <label>First Name</label>
+                                            <input value="{{user.first_name}}" type="text" name="first-name">
+                                            <label>Last Name</label>
+                                            <input value="{{user.last_name}}" type="text" name="last-name">
+                                            <label>Email</label>
+                                            <input value="{{user.email}}" type="text" name="email-name">
+                                            <label>Phone number</label>
+                                            <input value="{{user.phone_number}}" type="text" name="phone-number">
+                                           
+                                            <br>
+                                            
+                                            <div class="save_button primary_btn default_button">
+                                                    <a href="{% url 'edit_account_details' user_name=user.username %}">Edit account details   </a>
+                                                    |  
+                                                    <a href="{% url 'change_password' %}">   Change password</a> 
+                                                </div> 
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>  
-        </div>        	
-    </section>			
-    <!-- my account end   --> 
+            </div>
+        </div>
+    </div>
+</section>
+<!-- my account end   -->
 
-    
+
 <!-- JS
 ============================================ -->
 
@@ -290,5 +173,6 @@
 
 
 <!-- Mirrored from htmldemo.net/reid/reid/my-account.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Feb 2024 13:44:34 GMT -->
+
 </html>
 {% endblock %}

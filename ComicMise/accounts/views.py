@@ -59,7 +59,7 @@ class register(View):
         form =RegistrationForm(request.POST)
         verification_option = request.POST.get('verification_option')
         print(verification_option)
-        if verification_option is None:
+        if verification_option is None: 
             print(1)
             messages.error(request, 'Please choose one of the verification method.')
             return redirect('register')
@@ -71,6 +71,9 @@ class register(View):
                 email=form.cleaned_data['email']
                 password=form.cleaned_data['password']
                 username=email.split('@')[0]
+                if not first_name or not last_name or not phone_number or not email or not password:
+                    messages.error(request, 'Please, enter the required fields')
+                    return redirect('register')
                 user = Account.objects.create_user(first_name=first_name, last_name=last_name, email=email, username=username, password=password)
                 print(2)
                 if verification_option  == 'OTP':
@@ -108,10 +111,10 @@ class register(View):
                     # For example, you might want to return a different HttpResponse or redirect
                     return redirect('register')
             else:
-                print(5)
-                # Handle other verification options here
-                # For example, you might want to return a different HttpResponse or redirect
-                return redirect('register')
+                context = {
+                    'form':form
+                }
+                return render(request,'reid/registration.html',context)
         
 class otpVerify(View):
     @method_decorator(no_cache)
@@ -184,6 +187,7 @@ class Login(View):
         if not email or not password:
             messages.error(request, 'Enter email and password')
             return render(request, 'reid/login.html')
+        print(email , password)
         user = authenticate(request, email=email, password=password)
         if user is not None:
             if user.is_active:
@@ -233,7 +237,7 @@ class forgotPassword(View):
             messages.success(request, 'Password reset email has been sent to your email address.')
             return redirect('login')
         else:
-            message.error(request, 'Account does not exist!')
+            messages.error(request, 'Account does not exist!')
             return redirect('forgotPassword')
         
 class resetpassword_validate(View):
@@ -266,8 +270,11 @@ class resetPassword(View):
             user.save()
             messages.success(request, 'Password reset successful')
             return redirect('login')
-        else:
+        elif password != confirm_password:
             messages.error(request, 'Password do not match!')
+            return redirect('resetPassword')
+        else:
+            messages.error(request, 'Password must be length of 8, must contain an uppercase, lowercase, atleast an integer and a special symbol')
             return redirect('resetPassword')
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -315,37 +322,6 @@ class userProfile(View):
         }
         return render(request, 'reid/my-account.html', context)
 
-    def post(self,request, user_name):
-        form_id = request.POST.get('form_identifier')
-        print(form_id)
-
-        #checking form......
-        if form_id == 'add address':
-            address_title    = request.POST['address_title']
-            name             = request.POST['name']
-            ph_number        = request.POST['ph_number']
-            pincode          = request.POST['pincode']
-            locality         = request.POST['locality']
-            address          = request.POST['address']
-            city             = request.POST['city']
-            state            = request.POST['state']
-            landmark         = request.POST['landmark']
-            alt_phone_number = request.POST['alt_phone_number']
-
-             #checking.....
-            if not address_title or not ph_number or not pincode or not address or not locality or not city or not state or not name:
-                messages.error(request,'Enter the required fields')
-                return redirect('userProfile', user_name=user_name )
-
-            fd = Address(address_title=address_title, name=name, ph_number=ph_number, pincode=pincode, locality=locality, address=address, city=city, state=state, landmark=landmark, alt_phone_number=alt_phone_number)
-            fd.save()
-            
-            user_name=user_name
-            user_id = request.session['user_id']
-            user = Account.objects.get(pk=user_id)
-            user.addresses.add(fd)
-            return redirect('userProfile', user_name=user_name)
-
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class userside_order_detail(View):
     def get(self, request, order_id):
@@ -379,18 +355,203 @@ class cancel_order(View):
         order = Order.objects.get(id = order_id)
         order.canceled = True
         order.save()
-
-        try:
-            wallet = Wallet.objects.get(user = user)
-            print(wallet)
-        except Wallet.DoesNotExist:
-            wallet = Wallet.objects.create(user = user)
-            print(wallet)
-            wallet.save()
-        total_price = order.total_price
-        wallet.amount += total_price
-        wallet.save()        
+        if order.payment_method != 'CASH_ON_DELIVERY':
+            try:
+                wallet = Wallet.objects.get(user = user)
+                print(wallet)
+            except Wallet.DoesNotExist:
+                wallet = Wallet.objects.create(user = user)
+                print(wallet)
+                wallet.save()
+            total_price = order.total_price
+            wallet.amount += total_price
+            wallet.save()        
         return redirect('userside_order_detail', order_id=order_id)
+
+@method_decorator(login_required(login_url='login'), name='dispatch') 
+class add_address(View):
+    def get(self, request):
+        return render(request, 'reid/add_address.html')
+    
+    def post(self, request):
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
+
+        address_title    = request.POST['address_title']
+        name             = request.POST['name']
+        ph_number        = request.POST['ph_number']
+        pincode          = request.POST['pincode']
+        locality         = request.POST['locality']
+        address          = request.POST['address']
+        city             = request.POST['city']
+        state            = request.POST['state']
+        landmark         = request.POST['landmark']
+        alt_phone_number = request.POST['alt_phone_number']
+         #checking.....
+    # FORM VALIDATION===============================================
+    # CHECKING MANDATORY FIELDS
+        if not address_title or not name or not ph_number or not pincode or not locality or not address or not city or not state:
+            messages.error(request,'Please, enter the required fields')
+            return redirect('add_address')
+        
+    # CHECKING PHONE NUMBERS
+        if ph_number:
+            if not ph_number.isdigit():
+                messages.error(request,'Give valid phone number.(Phone number should be integers)')
+                return redirect('add_address')
+            elif len(ph_number) != 10:
+                messages.error(request,'Give valid phone number.(Phone number should contain 10 digits)')
+                return redirect('add_address')
+            elif len(set(ph_number)) == 1 and ph_number[0] == '0':
+                messages.error(request, "Phone number can't contain only 0s ")
+                return redirect('add_address')
+        if alt_phone_number:
+            if not alt_phone_number.isdigit():
+                messages.error(request,'Give valid phone number.(Phone number should be integers)')
+                return redirect('add_address')
+            elif len(alt_phone_number) != 10:
+                messages.error(request,'Give valid phone number.(Phone number should contain 10 digits)')
+                return redirect('add_address')
+            elif len(set(alt_phone_number)) == 1 and alt_phone_number[0] == '0':
+                messages.error(request, "Phone number can't contain only 0s ")
+                return redirect('add_address')
+    # CHECKING PINCODE
+        if pincode:
+            if not pincode.isdigit():
+                messages.error(request,'Give valid phone number.(Pin code should be integers)')
+                return redirect('add_address')
+            elif len(pincode) != 6:
+                messages.error(request,'Give valid phone number.(Pin code should contain 6 digits)')
+                return redirect('add_address')
+            elif len(set(pincode)) == 1 and pincode[0] == '0':
+                messages.error(request, "Pin code can't contain only 0s ")
+                return redirect('add_address')
+    # CHECKING LOCALITY
+        if any(char.isdigit() for char in locality):
+            messages.error(request,"Locality name should not contain numbers")
+            return redirect('add_address')
+    # CHECKING CITY
+        if any(char.isdigit() for char in city):
+            messages.error(request,"City name should not contain numbers")
+            return redirect('add_address')
+    # CHECKING STATE
+        if any(char.isdigit() for char in state):
+            messages.error(request,"State name should not contain numbers")
+            return redirect('add_address')
+        
+        fd = Address(address_title=address_title, name=name, ph_number=ph_number, pincode=pincode, locality=locality, address=address, city=city, state=state, landmark=landmark, alt_phone_number=alt_phone_number)
+        fd.save()
+        user.addresses.add(fd)
+        return redirect('userProfile', user_name=user.username)
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch') 
+class edit_address(View):
+    def get(self, request, address_id):
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
+
+        address = Address.objects.get(id = address_id)
+        context={
+            'user_id':user_id,
+            'user': user,
+            'address':address,
+        }
+        return render(request, 'reid/edit_address.html', context)
+    
+    def post(self, request, address_id):
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
+        
+        address_title    = request.POST['address_title']
+        name             = request.POST['name']
+        ph_number        = request.POST['ph_number']
+        pincode          = request.POST['pincode']
+        locality         = request.POST['locality']
+        address          = request.POST['address']
+        city             = request.POST['city']
+        state            = request.POST['state']
+        landmark         = request.POST['landmark']
+        alt_phone_number = request.POST['alt_phone_number']
+
+             #checking.....
+# FORM VALIDATION===============================================
+        # CHECKING MANDATORY FIELDS
+        if not address_title or not name or not ph_number or not pincode or not locality or not address or not city or not state:
+            messages.error(request,'Please, enter the required fields')
+            return redirect('edit_address', address_id=address_id)
+
+            
+        # CHECKING PHONE NUMBERS
+        if ph_number:
+            if not ph_number.isdigit():
+                messages.error(request,'Give valid phone number.(Phone number should be integers)')
+                return redirect('edit_address', address_id=address_id)
+            elif len(ph_number) != 10:
+                messages.error(request,'Give valid phone number.(Phone number should contain 10 digits)')
+                return redirect('edit_address', address_id=address_id)
+            elif len(set(ph_number)) == 1 and ph_number[0] == '0':
+                messages.error(request, "Phone number can't contain only 0s ")
+                return redirect('edit_address' , address_id=address_id)
+        if alt_phone_number:
+            if not alt_phone_number.isdigit():
+                messages.error(request,'Give valid phone number.(Phone number should be integers)')
+                return redirect('edit_address', address_id=address_id)
+            elif len(alt_phone_number) != 10:
+                messages.error(request,'Give valid phone number.(Phone number should contain 10 digits)')
+                return redirect('edit_address', address_id=address_id)
+            elif len(set(ph_number)) == 1 and ph_number[0] == '0':
+                messages.error(request, "Phone number can't contain only 0s ")
+                return redirect('edit_address' , address_id=address_id)
+        # CHECKING PINCODE
+        if pincode:
+            if not pincode.isdigit():
+                messages.error(request,'Give valid pin code.(Pin code should be integers)')
+                return redirect('edit_address', address_id=address_id)
+            elif len(pincode) != 6:
+                messages.error(request,'Give valid pin code.(Pin code should contain 6 digits)')
+                return redirect('edit_address', address_id=address_id)
+            elif len(set(pincode)) == 1 and pincode[0] == '0':
+                messages.error(request, "Pin code can't contain only 0s ")
+                return redirect('edit_address' , address_id=address_id)
+    # CHECKING LOCALITY
+        if any(char.isdigit() for char in locality):
+            messages.error(request,"Locality name should not contain numbers")
+            return redirect('edit_address' , address_id=address_id)
+    # CHECKING CITY
+        if any(char.isdigit() for char in city):
+            messages.error(request,"City name should not contain numbers")
+            return redirect('edit_address' , address_id=address_id)
+    # CHECKING STATE
+        if any(char.isdigit() for char in state):
+            messages.error(request,"State name should not contain numbers")
+            return redirect('edit_address' , address_id=address_id)
+
+        address_inst = Address.objects.get(id = address_id)
+        address_inst.address_title = address_title
+        address_inst.name = name 
+        address_inst.ph_number = ph_number
+        address_inst.pincode = pincode
+        address_inst.locality = locality
+        address_inst.address = address
+        address_inst.city = city
+        address_inst.state = state
+        if landmark:
+            address_inst.landmark = landmark
+        elif alt_phone_number:
+            address_inst.alt_phone_number = alt_phone_number
+        else:
+            pass
+        address_inst.save()
+        print('end')
+        return redirect('userProfile', user_name=user.username)
 
 @method_decorator(login_required(login_url='login'), name='dispatch') 
 class delete_address(View):
@@ -404,3 +565,159 @@ class delete_address(View):
         address = Address.objects.get(id = address_id)
         address.delete()
         return redirect('userProfile', user_name=user.username)
+    
+# FOR EMAIL VALIDATION ==========================
+import re
+from django.shortcuts import render
+
+def validate_email(email):
+    # Regular expression pattern for email validation
+    pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    return re.match(pattern, email)
+#=================================================
+
+@method_decorator(login_required(login_url='login'), name='dispatch') 
+class edit_account_details(View):
+    def get(self, request, user_name):
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
+        context={
+            'user_id':user_id,
+            'user': user,
+        }
+        return render(request, 'reid/edit_account_detail.html', context)
+    
+    def post(self, request, user_name):
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
+        first_name = request.POST.get('first-name')
+        last_name = request.POST.get('last-name')
+        email = request.POST.get('email-name')
+        ph_number = request.POST.get('phone-number')
+    
+    # VALIDATION ===============================================
+        errors = {}
+        if ' ' in set(first_name) and len(set(first_name)) == 1:
+            errors['first_name'] ="First name cannot contain only white space"
+        if any(first_name[i] == first_name[i+1] == first_name[i+2] for i in range(len(first_name)-2)):
+            errors['first_name'] ="First name cannot contain consecutive three same letters."
+        if any(char.isdigit() for char in first_name):
+            errors['first_name'] ="First name cannot contain digits."
+        if '.' in first_name:
+            errors['first_name'] ="First name cannot contain dots."
+        if len(first_name) <= 2:
+            errors['first_name'] ="First name must be longer than 2 characters."
+
+        if ' ' in set(last_name) and len(set(last_name)) == 1:
+            errors['last_name'] ="Last name cannot contain only white space"
+        if any(last_name[i] == last_name[i+1] == last_name[i+2] for i in range(len(last_name)-2)):
+            errors['last_name'] ="Last name cannot contain consecutive three same letters."
+        if any(char.isdigit() for char in last_name):
+            errors['last_name'] ="Last name cannot contain digits."
+        if '.' in last_name:
+            errors['last_name'] ="Last name cannot contain dots."
+
+        if not validate_email(email):
+            errors['email'] = 'Invalid email address.'
+
+        if not ph_number.isdigit():
+            print(type(ph_number), ph_number)
+            errors['phone_number'] ='Phone number must contain only digits.'
+        elif len(ph_number) != 10:
+            errors['phone_number'] ='Phone number must be exactly 10 digits.'
+        elif len(set(ph_number)) == 1 and ph_number[0] == '0':  # Compare as a string
+            errors['phone_number'] ="Phone number can't contain only 0s."
+        
+        if errors:
+            context={
+                'errors':errors,
+            }
+            return render(request, 'reid/edit_account_detail.html', context)
+        
+        else:   
+            user_inst = Account.objects.get(id = user_id)
+
+            user_inst.first_name = first_name
+            user_inst.last_name = last_name
+            user_inst.email = email
+            user_inst.phone_number = ph_number
+            user_inst.save()
+
+            return redirect('userProfile', user_name=user.username)
+        
+
+@method_decorator(login_required(login_url='login'), name='dispatch') 
+class change_password(View):
+    def get(self, request):
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
+        context={
+            'user_id':user_id,
+            'user': user,
+        }
+        return render(request, 'reid/change_password.html',context)
+    
+    def post(self, request):
+        user_id = request.session.get('user_id')  # Use get method to avoid KeyError
+        user = None  # Initialize user to None
+
+        if user_id is not None:  # Check if user_id exists
+            user = get_object_or_404(Account, pk=user_id)
+        
+        current_pass = request.POST.get('current_password')
+        new_pass = request.POST.get('new_password')
+        confirm_pass = request.POST.get('confirm_password')
+
+        if not current_pass or not new_pass or not confirm_pass:
+            messages.error(request, 'Enter all the required fields.')
+        errors={}
+        #user = Account.objects.get(username__exact=request.user.username)
+        if not user.check_password(current_pass):
+            errors['current_pass'] ='Current password does not match.'
+        if new_pass:
+            if len(new_pass) < 8:
+                errors['new_pass'] ="Password must be at least 8 characters long."
+            # Check if password contains at least one digit
+            if not any(char.isdigit() for char in new_pass):
+                errors['new_pass'] ="Password must contain at least one numeric character."
+            # Check if password contains at least one uppercase letter
+            if not any(char.isupper() for char in new_pass):
+                errors['new_pass'] ="Password must contain at least one uppercase letter."
+            # Check if password contains at least one lowercase letter
+            if not any(char.islower() for char in new_pass):
+                errors['new_pass'] ="Password must contain at least one lowercase letter."
+            # Check if password contains at least one special character
+            if not re.search(r'[!@#$%^&*(),.?":{}|<>]', new_pass):
+                errors['new_pass'] ="Password must contain at least one special character."
+            # Check for whitespaces in the password
+            if ' ' in new_pass:
+                errors['new_pass'] ="Password cannot contain whitespaces."
+        if confirm_pass:
+            if new_pass != confirm_pass:
+                errors['confirm_pass'] ="Passwords do not match."
+        
+        if errors:
+            context={
+                'errors':errors,
+                'user_id':user_id,
+                'user': user,
+            }
+            return render(request,  'reid/change_password.html', context)
+        
+        else:
+            user.set_password(new_pass)
+            user.save()
+            auth_logout(request)
+            messages.success( request, "Password updated successsfully. Please login again" )
+            return redirect('login')
+            
+        

@@ -11,7 +11,7 @@
                         <div class="slider_content content_one">
                             <img src="{% static 'reid_assets/img/slider/content.png' %}" alt="">
                             <p>the wooboom spring collection is back at half price</p>
-                            <a href="shop.html">Discover Now</a>
+                            <a href="{% url 'store' %}">Discover Now</a>
                         </div>    
                     </div>
                 </div>
@@ -24,7 +24,7 @@
                         <div class="slider_content content_two">
                             <img src="{% static 'reid_assets/img/slider/content1.png' %}" alt="Unavailable">
                             <p>the wooboom jacket collection is back at half price</p>
-                            <a href="shop.html">Discover Now</a>
+                            <a href="{% url 'store' %}">Discover Now</a>
                         </div>    
                     </div>
                 </div>
@@ -36,7 +36,7 @@
                     <div class="col-12">
                         <div class="slider_content content_three">  <img src="{% static 'reid_assets/img/slider/content2.png' %}" alt="Unavailable">
                             <p>the wooboom clothing summer collection is back at half price</p>
-                            <a href="shop.html">Discover Now</a>
+                            <a href="{% url 'store' %}">Discover Now</a>
                         </div>    
                     </div>
                 </div>
@@ -52,17 +52,17 @@
                 <div class="col-lg-6 col-md-12">
                     <div class="banner_area">
                         <div class="banner_thumb">
-                            <a href="shop.html"><img src="{% static 'reid_assets/img/bg/banner2.jpg' %}" alt=""></a>
+                            <a href="{% url 'store' %}"><img src="{% static 'reid_assets/img/bg/banner2.jpg' %}" alt=""></a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-12">
                    <div class="section_title">
-                       <h2>For Women’s Collection</h2>
-                       <p>Contemporary, minimal and modern designs embody the Lavish Alice handwriting</p>
+                       <h2 style="color: #e5e5e5;">Anime Dresses</h2>
+                       <p>Your favourite anime characters featured dresses</p>
                    </div>
                     <div class="product_area"> 
-                        <div class="product_tab_button">
+                        <!-- <div class="product_tab_button">
                             <ul class="nav" role="tablist">
                                 <li>
                                     <a class="active" data-bs-toggle="tab" href="#clothing" role="tab" aria-controls="clothing" aria-selected="true">Clothing</a>
@@ -77,7 +77,7 @@
                                     <a data-bs-toggle="tab" href="#accessories" role="tab" aria-controls="accessories" aria-selected="false">Accessories</a>
                                 </li>
                             </ul>
-                        </div>
+                        </div> -->
                          <div class="tab-content">
                               <div class="tab-pane fade show active" id="clothing" role="tabpanel">
                                      <div class="product_container">
@@ -88,7 +88,7 @@
                                                     <div class="product_thumb">
                                                         <a class="primary_img" href="{{ product.get_url }}"><img src="{{ product.images.first.image.url }}" alt=""></a>
                                                         <a class="secondary_img" href="{{ product.get_url }}"><img src="{{ product.images.first.image.url }}" alt=""></a>
-                                                        <div class="product_action">
+                                                        <!-- <div class="product_action">
                                                             <div class="hover_action">
                                                                <a  href="#"><i class="fa fa-plus"></i></a>
                                                                 <div class="action_button">
@@ -103,18 +103,18 @@
                                                                 </div>
                                                            </div>
                                                             
-                                                        </div>
-                                                        <div class="quick_button">
+                                                        </div> -->
+                                                        <!-- <div class="quick_button">
                                                             <a href="#" data-bs-toggle="modal" data-bs-target="#modal_box_{{ product.id }}" title="quick_view">+ quick view</a>
                                                         </div>
 
                                                         <div class="product_sale">
                                                             <span>-7%</span>
-                                                        </div>
+                                                        </div> -->
                                                     </div>
                                                     <div class="product_content">
                                                         <h3><a href="{{ product.get_url }}">{{ product.product_name}}</a></h3>
-                                                        <span class="current_price">Rs.{{product.promotion_price}}</span>
+                                                        <span class="current_price" style="color: #eaeaea;">Rs.{{product.promotion_price}}</span>
                                                         <span class="old_price">Rs.{{product.regular_price}}</span>
                                                     </div>
                                                 </div>
@@ -140,7 +140,7 @@
                    <div class="banner_conteiner">
                        <div class="banner_text">
                             <h1>Game Of Thrones Jaime<br> Lannister <br>Themed Sneakers</h1>
-                            <a href="shop.html">Discover Now</a>
+                            <a href="{% url 'store' %}">Discover Now</a>
                         </div>
                    </div>
                 </div>
@@ -155,26 +155,11 @@
             <div class="row">   
                 <div class="col-lg-6 col-md-12">
                     <div class="section_title">
-                       <h2>For Men’s Collection</h2>
-                       <p>Contemporary, minimal and modern designs embody the Lavish Alice handwriting</p>
+                        <h2 style="color: #e5e5e5;">Anime Dresses</h2>
+                        <p>Your favourite anime characters featured dresses</p>
                     </div>
                     <div class="product_area"> 
-                        <div class="product_tab_button">
-                            <ul class="nav" role="tablist">
-                                <li>
-                                    <a class="active" data-bs-toggle="tab" href="#clothing2" role="tab" aria-controls="clothing2" aria-selected="true">Clothing</a>
-                                </li>
-                                <li>
-                                    <a data-bs-toggle="tab" href="#handbag2" role="tab" aria-controls="handbag2" aria-selected="false">Handbag</a>
-                                </li>
-                                <li>
-                                    <a data-bs-toggle="tab" href="#shoes2" role="tab" aria-controls="shoes2" aria-selected="false">Shoes</a>
-                                </li>
-                                <li>
-                                    <a data-bs-toggle="tab" href="#accessories2" role="tab" aria-controls="accessories2" aria-selected="false">Accessories</a>
-                                </li>
-                            </ul>
-                        </div>
+                        
                          <div class="tab-content">
                               <div class="tab-pane fade show active" id="clothing2" role="tabpanel">
                                      <div class="product_container">
@@ -185,7 +170,7 @@
                                                     <div class="product_thumb">
                                                         <a class="primary_img" href="{{ product.get_url }}"><img src="{{ product.images.first.image.url }}" alt=""></a>
                                                         <a class="secondary_img" href="{{ product.get_url }}"><img src="{{ product.images.first.image.url }}" alt=""></a>
-                                                        <div class="product_action">
+                                                        <!-- <div class="product_action">
                                                             <div class="hover_action">
                                                                <a  href="#"><i class="fa fa-plus"></i></a>
                                                                 <div class="action_button">
@@ -200,18 +185,18 @@
                                                                 </div>
                                                            </div>
                                                             
-                                                        </div>
-                                                        <div class="quick_button">
+                                                        </div> -->
+                                                        <!-- <div class="quick_button">
                                                             <a href="#" data-bs-toggle="modal" data-bs-target="#modal_box" title="quick_view">+ quick view</a>
                                                         </div>
 
                                                         <div class="product_sale">
                                                             <span>-7%</span>
-                                                        </div>
+                                                        </div> -->
                                                     </div>
                                                     <div class="product_content">
                                                         <h3><a href="{{ product.get_url }}">{{ product.product_name}}</a></h3>
-                                                        <span class="current_price">Rs.{{product.promotion_price}}</span>
+                                                        <span class="current_price" style="color: #eaeaea;">Rs.{{product.promotion_price}}</span>
                                                         <span class="old_price">Rs.{{product.regular_price}}</span>
                                                     </div>
                                                 </div>
@@ -227,7 +212,7 @@
                 <div class="col-lg-6 col-md-12">
                     <div class="banner_area">
                         <div class="banner_thumb">
-                            <a href="shop.html"><img src="{% static 'reid_assets/img/bg/banner4.jpg' %}" alt="#"></a>
+                            <a href="{% url 'store' %}"><img src="{% static 'reid_assets/img/bg/banner4.jpg' %}" alt="#"></a>
                         </div>
                     </div>
                 </div>
@@ -237,7 +222,7 @@
     <!--product section area end-->
     
     <!--blog section area start-->
-    <section class="blog_section">
+    <!-- <section class="blog_section">
         <div class="container">
             <div class="row">
                <div class="col-12">
@@ -347,11 +332,11 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
     <!--blog section area end-->
  
     <!--Instagram area start--> 
-    <section class="instagram_area">
+    <!-- <section class="instagram_area">
         <div class="container-fluid">
             <div class="row">
                <div class="col-12">
@@ -422,12 +407,12 @@
                 </div>
            </div>
         </div>
-    </section>
+    </section> -->
     <!--Instagram area end--> 
     
 
     <!-- modal area start-->
-    {% for product in products %}
+    <!-- {% for product in products %}
     <div class="modal fade" id="modal_box_{{ product.id }}"  tabindex="-1" role="dialog"  aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -539,7 +524,7 @@
             </div>
         </div>
     </div> 
-    {% endfor %}
+    {% endfor %} -->
     <!-- modal area start-->
     
 

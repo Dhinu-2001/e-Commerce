@@ -12,12 +12,8 @@
                             <button type="submit" class="btn btn-primary">Save Change</button>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-center text-danger">
-                        {% for message in messages %}
-                           
-                                {{message}}
-                            
-                        {% endfor %}
+                    <div class="d-flex justify-content-center ">
+                        {% include 'reid/includes/alerts.html' %}
                     </div>
                 </div>
                 <div class="col-lg-6">
@@ -30,10 +26,16 @@
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Product title</label>
                                     <input value="{{product.product_name}}" type="text" placeholder="Type here" class="form-control" id="product_name" name="product_name">
+                                    {% if errors.prod_name %}
+                                        <span style="color: red;">{{ errors.prod_name }}</span>
+                                    {% endif %}
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Full description</label>
-                                    <textarea value="{{product.description}}" placeholder="Type here" class="form-control" rows="4" name="product_description" ></textarea>
+                                    <input value="{{product.description}}" placeholder="Type here" class="form-control" rows="4" name="product_description" >
+                                    {% if errors.prod_description %}
+                                        <span style="color: red;">{{ errors.prod_description }}</span>
+                                    {% endif %}
                                 </div>
                                 
                                 <div class="row">
@@ -53,12 +55,18 @@
                                                 <input value="{{product.promotion_price}}" placeholder="Rs." type="text" class="form-control" name="promotion_price">
                                             </div>
                                         </div>
+                                        {% if errors.prom_price %}
+                                            <span style="color: red;">{{ errors.prom_price }}</span>
+                                        {% endif %}
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="mb-4">
                                             <label class="form-label">Regular price</label>
                                             <input value="{{product.regular_price}}" placeholder="Rs." type="text" class="form-control" name="regular_price">
                                         </div>
+                                        {% if errors.reg_price %}
+                                            <span style="color: red;">{{ errors.reg_price }}</span>
+                                        {% endif %}
                                     </div>
                                 </div>
                         </div>

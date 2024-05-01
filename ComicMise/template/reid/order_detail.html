@@ -176,20 +176,22 @@
                                         Payment done
                                         {% else %}
                                         Pending 
-                                        <a href="{% url 'razorpay_retry' order_id=order.id %}" type="button" style="background: #242424;
-                                        border: 0;
-                                        color: #ffffff;
-                                        display: inline-block;
-                                        font-size: 12px;
-                                        font-weight: 600;
-                                        height: 38px;
-                                        line-height: 18px;
-                                        padding: 10px 15px;
-                                        text-transform: uppercase;
-                                        cursor: pointer;
-                                        -webkit-transition: 0.3s;
-                                        transition: 0.3s;" >
-                                        Pay using Razorpay</a>
+                                            {% if order.payment_status != 'SUCCESS' and not order.canceled %}
+                                                <a href="{% url 'razorpay_retry' order_id=order.id %}" type="button" style="background: #242424;
+                                                border: 0;
+                                                color: #ffffff;
+                                                display: inline-block;
+                                                font-size: 12px;
+                                                font-weight: 600;
+                                                height: 38px;
+                                                line-height: 18px;
+                                                padding: 10px 15px;
+                                                text-transform: uppercase;
+                                                cursor: pointer;
+                                                -webkit-transition: 0.3s;
+                                                transition: 0.3s;" >
+                                                Pay using Razorpay</a>
+                                            {% endif %}
                                         {% endif %}
                                     </p>
                                     <a href="{% url 'order_invoice' order_id=order.id %}" type="button" style="background: #242424;
@@ -262,7 +264,7 @@
                                         <div class="checkout_info">
                                             <form action="{% url 'return_order' order_id=order.id %}" method="post">
                                                 {% csrf_token   %}
-                                                <textarea style="width: 60%;" placeholder="Coupon code" type="text" name="return_reason"></textarea><br>
+                                                <textarea style="width: 60%;" placeholder="Reason for return" type="text" name="return_reason"></textarea><br>
                                                 <button type="submit">Submit</button>
                                             </form>
                                         </div>
