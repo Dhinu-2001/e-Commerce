@@ -54,6 +54,12 @@ INSTALLED_APPS = [
    
 ]
 
+# Set the domain for session cookies
+SESSION_COOKIE_DOMAIN = '.dhinu.site'  # Replace 'yourdomain.com' with your actual domain
+
+# Set the domain for CSRF cookies
+CSRF_COOKIE_DOMAIN = '.dhinu.site'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
