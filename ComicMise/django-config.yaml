@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: django-config
+data:
+  DEBUG: "True"
+  ALLOWED_HOSTS: "*"
+  DATABASE_HOST: "host.docker.internal"
+  DATABASE_PORT: "5432"
+  CSRF_COOKIE_DOMAIN: ".yourdomain.com"
+  STATIC_URL: "/static/"
+  MEDIA_URL: "/media/"
+  EMAIL_HOST: "smtp.gmail.com"
+  EMAIL_PORT: "587"
+  EMAIL_USE_TLS: "True"
+  COUNTRY_CODE: "+91"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: django-secrets
+type: Opaque
+stringData:
+  SECRET_KEY: "django-insecure-x6w4gnw=7t6zm_e2m%r7v87afcbsmdn&r9et8nz)1p=!m2&xak"
+  DATABASE_NAME: "comicmise_db"
+  DATABASE_USER: "postgres"
+  DATABASE_PASSWORD: "postgres"
+  EMAIL_HOST_USER: "dhinucphilip1022001@gmail.com"
+  EMAIL_HOST_PASSWORD: "oovl svhi ikvi iovi"
+  ACCOUNT_SID: "AC38e237931389c83c8622cf7221ab5332"
+  AUTH_TOKEN: "c2acc9e8174a44a1ccf7ddce8b63720d"
+  TWILIO_PHONE_NUMBER: "+19786088113"
+  RAZORPAY_KEY_ID: "rzp_test_z9Zk1Kzr1QlpyW"
+  RAZORPAY_KEY_SECRET: "IPWEFlPjTeMxDGZ1DRlr3GFp"

@@ -38,3 +38,4 @@ urlpatterns = [
     path('change_password/', change_password.as_view(), name = 'change_password'),
      
 ]
+ 

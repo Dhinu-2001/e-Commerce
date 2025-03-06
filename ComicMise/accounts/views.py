@@ -189,6 +189,7 @@ class Login(View):
             return render(request, 'reid/login.html')
         print(email , password)
         user = authenticate(request, email=email, password=password)
+        # try:
         if user is not None:
             if user.is_active:
                 print(user.is_active, user.is_admin, user.is_user)
@@ -196,6 +197,7 @@ class Login(View):
                 if user.is_admin:
                     # User is an admin
                     request.session['user_id'] = user.id
+                    print(user.id)
                     auth_login(request, user)
                     return redirect('adminDashboard')
                 elif user.is_user:
@@ -211,7 +213,7 @@ class Login(View):
         else:
             print('not authenticated')
             messages.error(request, 'Invalid login details supplied.')
-        return render(request, 'reid/login.html')
+            return render(request, 'reid/login.html')
     
 class forgotPassword(View):
     def get(self, request):
@@ -259,13 +261,15 @@ class resetpassword_validate(View):
 class resetPassword(View):
     def get(self,request):
         return render(request, 'reid/resetPassword.html')
+    
     def post(self, request):
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
-
+        print(password, confirm_password)
         if password == confirm_password:
             uid = request.session.get('uid')
             user = Account.objects.get(pk = uid)
+            print(user)
             user.set_password(password)
             user.save()
             messages.success(request, 'Password reset successful')

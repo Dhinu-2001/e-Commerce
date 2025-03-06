@@ -104,10 +104,4 @@ class edit_product(View):
             else:
                 return redirect('product_detail', product_id=product_id)
     
-class delete_variant(View):
-    def get(self, request, variant_id):
-        print(variant_id)
-        prod_variation = ProductVariation.objects.get(id = variant_id)
-        product=prod_variation.product
-        prod_variation.delete()
-        return redirect('stock_update', product_id=product.id)
+

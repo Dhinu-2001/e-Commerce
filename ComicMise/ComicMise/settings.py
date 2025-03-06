@@ -10,10 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from pathlib import Path
-from decouple import config
+import environ
+env = environ.Env()
+environ.Env.read_env()
 
-# from decouple import config
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG')
+DEBUG = env.bool("DEBUG", default=True)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost"])
 
 
 # Application definition
@@ -55,10 +56,10 @@ INSTALLED_APPS = [
 ]
 
 # Set the domain for session cookies
-SESSION_COOKIE_DOMAIN = '.dhinu.site'  # Replace 'yourdomain.com' with your actual domain
+# SESSION_COOKIE_DOMAIN = '.dhinu.site'  # Replace 'yourdomain.com' with your actual domain
 
 # Set the domain for CSRF cookies
-CSRF_COOKIE_DOMAIN = '.dhinu.site'
+CSRF_COOKIE_DOMAIN = env('CSRF_COOKIE_DOMAIN')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -100,11 +101,11 @@ AUTH_USER_MODEL = 'accounts.Account'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('NAME'),
-        'USER': config('USER'),
-        'PASSWORD': config('PASSWORD'),
-        'HOST': 'localhost',
-        'PORT': '5432'
+        'NAME': env('DATABASE_NAME'),
+        'USER': env('DATABASE_USER'),
+        'PASSWORD': env('DATABASE_PASSWORD'),
+        'HOST': env('DATABASE_HOST'),
+        'PORT': env('DATABASE_PORT'),
     }
 }
 
@@ -152,6 +153,7 @@ USE_TZ = True
 
 # STATIC_ROOT = os.path.join(BASE_DIR, 'staticfile/')
 
+# STATIC_URL = os.environ.get('STATIC_URL')
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR/ "static"
@@ -163,7 +165,8 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #media files configuration
-MEDIA_URL = '/media/'
+# MEDIA_URL = os.environ.get('MEDIA_URL')
+MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR /'media'
 
 from django.contrib.messages import constants as messages
@@ -173,20 +176,20 @@ MESSAGE_TAGS = {
 
 #SMTP configuration
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-EMAIL_USE_TLS = True
+EMAIL_BACKEND = env('EMAIL_BACKEND')
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = env('EMAIL_USE_TLS')
 
 
-ACCOUNT_SID=config('ACCOUNT_SID')
-AUTH_TOKEN=config('AUTH_TOKEN')
-COUNTRY_CODE=config('COUNTRY_CODE')
+ACCOUNT_SID=env('ACCOUNT_SID')
+AUTH_TOKEN=env('AUTH_TOKEN')
+COUNTRY_CODE=env('COUNTRY_CODE')
 
-TWILIO_PHONE_NUMBER=config('TWILIO_PHONE_NUMBER')
+TWILIO_PHONE_NUMBER=env('TWILIO_PHONE_NUMBER')
 
 #PAYMENT GATEWAY SETTINGS
-RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID')
-RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET')
+RAZORPAY_KEY_ID = env('RAZORPAY_KEY_ID')
+RAZORPAY_KEY_SECRET = env('RAZORPAY_KEY_SECRET')

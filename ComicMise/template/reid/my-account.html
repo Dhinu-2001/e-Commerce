@@ -83,7 +83,7 @@
                                                 {{order.order_status}}
                                                 {% endif %}
                                             </td>
-                                            <td>${{ order.total_price }}</td>
+                                            <td>Rs.{{ order.total_price }}</td>
                                             <td><a href="{% url 'userside_order_detail' order_id=order.id %}"
                                                     class="view">view</a></td>
                                         </tr>

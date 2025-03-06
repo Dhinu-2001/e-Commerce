@@ -483,7 +483,7 @@ class order_success(View):
 
                 #razorpay_order = razorpay_client.order.create(dict(amount= order.total_price*100,currency=order_currency, notes=notes, receipt=order_id, payment_capture='0'))
                 razorpay_order = razorpay_client.order.create(dict(
-                amount=order.total_price * 100,
+                 amount=order.total_price * 100,
                 currency=order_currency,
                 notes=notes,
                 receipt=receipt_maker,
@@ -495,8 +495,9 @@ class order_success(View):
                 print(order.razorpay_order_id, order.id)
                 order.save()
             total_amount =order.total_price * 100
+            # callback_url = 'http://'+str(get_current_site(request))+"/razorpay/handlerequest/"
             callback_url = 'http://'+str(get_current_site(request))+"/razorpay/handlerequest/"
-            print(callback_url)
+            print(callback_url)   
                 
             context ={
                 'user_id':user_id,

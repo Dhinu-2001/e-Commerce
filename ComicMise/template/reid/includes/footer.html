@@ -1,25 +1,36 @@
 {% load static %}
 <!--footer area start-->
 <footer class="footer_widgets">
-    <!-- <div class="footer_top">
+     <div class="footer_top">
         <div class="container">
             <div class="row">
-                <div class="col-lg-2 col-md-6 col-sm-6 col-6">
+                <div class="col-lg-4 col-md-6 col-sm-6 col-6">
                     <div class="widgets_container">
-                        <h3>Information</h3>
+                        <h3>Explore</h3>
                         <div class="footer_menu">
                             <ul>
-                                <li><a href="about.html">About Us</a></li>
-                                <li><a href="#">Delivery Information</a></li>
-                                <li><a href="privacy-policy.html">Privacy Policy</a></li>
-                                <li><a href="#">Terms & Conditions</a></li>
-                                <li><a href="contact.html">Contact Us</a></li>
-                                <li><a href="#">Returns</a></li>
+                                <li class="active"><a href="{% url 'home' %}">Home </a>
+
+                                </li>
+                                <li class="mega_items"><a href="{% url 'store' %}">shop </a>
+
+                                </li>
+                                <li><a href="{% url 'wishlist' %}">Wishlist</a>
+
+                                </li>
+
+                                <li><a href="{% url 'cart' %}">Cart</a>
+
+                                </li>
+                                {% if user_id is not None %}
+                                <li><a href="{% url 'userProfile' user_name=user.username %}">My Account</a>
+                                </li>
+                                {% endif %}
                             </ul>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-6 col-sm-6 col-6">
+                <!-- <div class="col-lg-2 col-md-6 col-sm-6 col-6">
                     <div class="widgets_container">
                         <h3>Extras</h3>
                         <div class="footer_menu">
@@ -33,7 +44,7 @@
                             </ul>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <div class="col-lg-4 col-md-6">
                     <div class="widgets_container contact_us">
                         <h3>Contact Us</h3>
@@ -51,29 +62,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
+                 <div class="col-lg-4 col-md-6">
                     <div class="widgets_container newsletter">
-                        <h3>Join Our Newsletter Now</h3>
-                        <div class="newleter-content">
-                            <p>Exceptional quality. Ethical factories. Sign up to enjoy free U.S. shipping and returns on your first order.</p>
-                            <div class="subscribe_form">
-                                <form id="mc-form" class="mc-form footer-newsletter" >
-                                    <input id="mc-email" type="email" autocomplete="off" placeholder="Enter you email address here..." />
-                                    <button id="mc-submit">Subscribe !</button>
-                                </form>
-                                 mailchimp-alerts Start -->
-                                <!-- <div class="mailchimp-alerts text-centre"> -->
-                                   <!-- <div class="mailchimp-submitting"></div> mailchimp-submitting end -->
-                                    <!--<div class="mailchimp-success"></div><!-- mailchimp-success end -->
-                                   <!-- <div class="mailchimp-error"></div><!-- mailchimp-error end -->
-                               <!-- </div><!-- mailchimp-alerts end -->
-                            <!-- </div>
+                        <div class="logo">
+                            <a href="{% url 'home' %}"><img
+                                    src="{% static 'reid_assets/img/logo/Anime Mise logo png.png' %}" alt=""></a>
                         </div>
                     </div>
-                </div>
+                </div> 
             </div>
-        </div> -->
-   <!--  </div> -->
+        </div> 
+   </div> 
     <div class="footer_bottom">
         <div class="container">
            <div class="row">

@@ -46,7 +46,7 @@ class home(View):
         return render(request, 'reid/index.html', context)
 
 
-@method_decorator(login_required(login_url="login"), name="dispatch")
+# @method_decorator(login_required(login_url="login"), name="dispatch")
 class adminDashboard(View):
     def monthly_earnings(self):
         current_year = timezone.now().year
@@ -114,7 +114,9 @@ class adminDashboard(View):
 
 #==========================================================================================
     def get(self,request):
+        print('worked')
         user_id = request.session.get('user_id')
+        print(user_id)
         user = Account.objects.get(id = user_id)
         try:
             if not user.is_admin:
@@ -530,7 +532,7 @@ class add_new_variant(View):
 @method_decorator(user_passes_test(is_admin), name='dispatch')
 class customers_list(View):
     def get(self,request):
-        user_set = Account.objects.all().order_by('-date_joined')
+        user_set = Account.objects.filter(is_admin=False).order_by('-date_joined')
         return render(request,'evara-backend/page-customers-list.html',{'userlist':user_set})
 
 @method_decorator(user_passes_test(is_admin), name='dispatch')
@@ -582,4 +584,4 @@ class sales_report(View):
             'overall_order_amount':overall_order_amount,
             'overall_order_discount':overall_order_discount,
         }
-        return render(request,'evara-backend/sales_report.html', context)
+        return render(request,'evara-backend/sales_report.html', context) 
